@@ -9,8 +9,80 @@ datasource db {
 }
 
 
+
+//pour la newsletter
 model newsletter {
   id                Int     @id @default(autoincrement())
   email             String  @unique
   unsubscribeToken  String? 
 }
+
+//pour les utilisateurs
+
+model user {
+  id                 Int            @id @default(autoincrement())
+  nom                String
+  prenom             String
+  email              String         @unique
+  phone              String         @unique
+  hashPassword       String
+  statutUser         statutUser
+  role               role
+  profileImages      profileImage[]
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  companyId          Int?
+  company            company?       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
+
+enum statutUser {
+  ACTIF
+  SUSPENDU
+}
+
+model company {
+  id              Int          @id @default(autoincrement())
+  siret           String       @unique
+  nomSociete      String       @unique
+  codePostal      String
+  adresse         String
+  ville           String
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  secteurActivite secteurActivite
+  typeSociete     typeSociete
+  users           user[]       
+}
+
+enum secteurActivite {
+  IMMOBILIER
+  VETEMENT
+  EMPLOI
+  SERVICE
+  VOITURE
+  LOISIR
+  MATERIEL
+  MOBILIER
+}
+
+enum role {
+  PERSO     
+  PRO 
+  ADMIN       
+}
+
+enum typeSociete {
+  ENTREPRISE_INDIVIDUELLE
+  SOCIETE_PRIVEE
+  SOCIETE_PUBLIQUE
+  COOPERATIVE
+  ASSOCIATION
+}
+
+model profileImage {
+  id        Int      @id @default(autoincrement())
+  path      String   
+  userId    Int      
+  user      user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
