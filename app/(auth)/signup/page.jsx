@@ -1,63 +1,74 @@
-import { Button } from "@/components/ui/button";
+"use client";
 
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 const SignUpPage = () => {
+  const router = useRouter();
+
+  const handlePersonnel = () => {
+    router.push("/signup/personnel");
+  };
+
+  const handleProfessionnel = () => {
+    router.push("/signup/professionnel");
+  };
+
+  const handleAdmin = () => {
+    router.push("/signup/admin");
+  };
   return (
-    <div className="w-full h-screen lg:grid lg:grid-cols-2">
-      <Image
-        src="/assets/logo.svg"
-        width="200"
-        height="100"
-        alt="Logo Lilee"
-        className="absolute top-4 left-40 max-md:left-8 h-[70px]"
-      />
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="mx-auto grid w-[350px] gap-6 max-md:px-8">
-          <div className="flex items-start justify-between">
-            <div className="grid gap-2 text-center">
-              <h1 className="text-2xl font-bold max-md:text-start">
-                Bienvenue parmi nous
-              </h1>
-              <p className="text-balance text-[16px] text-muted-foreground max-md:text-start">
-                Veuillez suivre les étapes afin de créer votre compte
-              </p>
-            </div>
+    <div className="flex min-h-screen ">
+      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8">
+          <div className="text-center">
+            <Image
+              src="/assets/logo.svg"
+              width={150}
+              height={100}
+              alt="Logo Lilee"
+              className="mx-auto h-24 w-auto"
+            />
+
+            <p className="mt-2 text-base text-gray-600 dark:text-gray-400">
+              Choisissez le type de compte que vous souhaitez créer
+            </p>
           </div>
 
-          <div className="grid gap-4 h-fit">
-            <div className="flex items-center flex-col gap-4">
-              <Button asChild className="w-full text-[16px]">
-                <Link href={"/signup/personnel"}>Personnel</Link>
-              </Button>
-              <Button asChild className="w-full text-[16px]">
-                <Link href={"/signup/professionnel"}>Professionel</Link>
-              </Button>
-              <Button asChild className="w-full text-[16px]">
-                <Link href={"/signup/admin"}>Administrateur</Link>
-              </Button>
-            </div>
+          <div className="mt-8 space-y-6">
+            <Button onClick={handlePersonnel} className="w-full text-base">
+              Personnel
+            </Button>
+            <Button onClick={handleProfessionnel} className="w-full text-base">
+              Professionel
+            </Button>
+            <Button onClick={handleAdmin} className="w-full text-base">
+              Administrateur
+            </Button>
           </div>
 
-          <div className="mt-2 text-center text-[16px]">
-            Vous êtes déjà membre?
-            <br />
-            <br />
-            <Link href="/login" className="hover:underline">
+          <div className="mt-6 text-center text-base">
+            <span className="text-gray-600 dark:text-gray-400">
+              Vous avez déjà un compte? {""}
+            </span>
+            <Link
+              href="/login"
+              className="font-medium text-[#15213d] focus:ring-[#15213d] dark:text-[#15213d] dark:hover:text-[#15213d] hover:underline"
+            >
               Se connecter
             </Link>
           </div>
         </div>
       </div>
-      <div className="block max-lg:hidden bg-muted overflow-hidden">
+      <div className="hidden lg:block relative w-0 flex-1">
         <Image
+          className="absolute inset-0 h-full w-full object-cover"
           src="/assets/marcus-aurelius.jpg"
-          alt="Image"
-          width="1920"
-          height="1080"
-          className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+          alt="Marcus Aurelius"
+          layout="fill"
         />
       </div>
     </div>
