@@ -33,6 +33,11 @@ model user {
   updatedAt          DateTime       @updatedAt
   companyId          Int?
   company            company?       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  annonces           annonces[]
+  commentaire        commentaire[]
+  favoris            favoris[]
+  temoignages        temoignages[]
+  moyenpaiement      moyenpaiement[]
 }
 
 enum statutUser {
@@ -86,3 +91,117 @@ model profileImage {
   user      user     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+
+
+//pour les favoris
+model favoris {
+  id                Int         @id @default(autoincrement())
+  saveDate          DateTime    @default(now())
+  userId            Int
+  annonceId         Int
+  user              user        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  annonce           annonces    @relation(fields: [annonceId], references: [id], onDelete: Cascade)
+  
+}
+
+
+//pour les annonces
+model annonces {
+  id                Int          @id @default(autoincrement())
+  titre             String       @unique
+  description       String
+  prix              Decimal?
+  typeTarif         typeTarif?  
+  priority          priority?
+  localisation      String?
+  adresse           String
+  statut            statut?      @default(EN_ATTENTE_DE_VALIDATION)
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  imageAnnonces     imageAnnonce[]
+  categorieAnnonce  categorieAnnonce
+  sousCategorie     String
+  userId            Int         
+  user              user          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  commentaire       commentaire[] 
+  favoris           favoris[]  
+
+  
+}
+
+enum statut {
+  PUBLIEE       
+  DESACTIVEE  
+  EN_ATTENTE_DE_VALIDATION      
+}
+
+enum typeTarif {
+  JOURNALIER
+  NUITEE
+  FIXE
+  MENSUEL
+}
+
+enum priority {
+  URGENT
+  POPULAIRE
+  RECOMMANDATION
+}
+
+model imageAnnonce {
+  id            Int      @id @default(autoincrement())
+  path          String   
+  annoncesId    Int      
+  annonces      annonces  @relation(fields: [annoncesId], references: [id], onDelete: Cascade)
+}
+
+enum categorieAnnonce {
+  IMMOBILIER
+  VETEMENT
+  EMPLOI_SERVICE
+  VOITURE
+  LOISIR
+  MATERIEL
+  MOBILIER
+  DONS
+}
+
+
+//pour les commentaires
+model commentaire { 
+  id                Int       @id @default(autoincrement())
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  commentaire       String
+  note              Int?
+  annoncesId        Int
+  annonces          annonces   @relation(fields: [annoncesId], references: [id])
+  userId            Int
+  user              user      @relation(fields: [userId], references: [id])
+}
+
+
+//pour les témoignages
+model temoignages{
+  id                Int @id @default(autoincrement())
+  temoignage        String
+  noteLilee         Int
+  ville             String?
+  pays              String?
+  userId            Int
+  user              user      @relation(fields: [userId], references: [id])
+}
+
+
+//pour les moyens de paiement
+model moyenpaiement {
+  id              Int       @id @default(autoincrement())
+  cardNumber      String    @unique
+  nameOnCard      String
+  cardCVC         Int       @unique
+  cardExpiry      DateTime
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  userId          Int
+  user            user      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

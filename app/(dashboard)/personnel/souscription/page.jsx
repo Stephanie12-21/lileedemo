@@ -1,5 +1,4 @@
 "use client";
-
 import PricingCard from "@/components/MainComponents/Pricing/PricingCard";
 import { useEffect, useState } from "react";
 
