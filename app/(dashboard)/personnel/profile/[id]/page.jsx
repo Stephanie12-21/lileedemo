@@ -19,8 +19,9 @@ import { useRouter } from "next/navigation";
 import { getSession, useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import AnimatedSymbol from "@/components/MainComponent/Loading/Loading";
+
 import Link from "next/link";
+import AnimatedSymbol from "@/components/MainComponents/Sections/Loading/AnimatedSymbol";
 
 const UserProfilePreview = () => {
   const router = useRouter();
