@@ -15,9 +15,10 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { useSession } from "next-auth/react";
-import RichTextEditor from "@/components/MainComponent/TextEditor/RichEditor";
+
 import { Alert } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
+import RichTextEditor from "@/components/MainComponents/TextEditor/RichEditor";
 
 const ArticleDetailPageModif = ({ params }) => {
   const { id } = params;
