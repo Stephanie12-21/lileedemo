@@ -16,7 +16,6 @@ import ConfirmDeleteModal from "@/app/(dialog)/delete/page";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/swiper-bundle.css";
-import { typeTarif } from "@prisma/client";
 
 const InfoAnnonces = ({ params }) => {
   const { id } = params;
