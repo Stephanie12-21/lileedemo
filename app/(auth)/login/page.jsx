@@ -54,12 +54,12 @@ export default function Login() {
         return;
       }
 
-      console.log("Login successful:", loginData);
+     // console.log("Login successful:", loginData);
 
       const updatedSession = await getSession();
 
       const statutUser = updatedSession?.user?.statutUser;
-      console.log("Role associé à l'email:", statutUser);
+      //console.log("Role associé à l'email:", statutUser);
 
       if (statutUser !== "ACTIF") {
         setAlertMessage(
@@ -69,7 +69,7 @@ export default function Login() {
         return;
       } else {
         const role = updatedSession?.user?.role;
-        console.log("Role associé à l'email:", role);
+        //console.log("Role associé à l'email:", role);
 
         if (role === "PERSO") {
           router.push("/personnel/annonces");
