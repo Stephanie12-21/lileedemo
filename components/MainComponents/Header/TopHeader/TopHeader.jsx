@@ -51,7 +51,7 @@ export const ListButton = () => {
   const getRolePath = () => {
     const role = session?.user?.role;
     if (role === "PERSO") return "/personnel/";
-    if (role === "PRO") return "/professionel";
+    if (role === "PRO") return "/professionnel";
     if (role === "ADMIN") return "/admin";
     return "";
   };

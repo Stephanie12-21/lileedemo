@@ -205,3 +205,62 @@ model moyenpaiement {
   userId          Int
   user            user      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+//pour les partenariats
+
+model engagement {
+  id              Int       @id @default(autoincrement())
+  nom             String    @unique
+  logo            logo[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  statutPartenaire statutPartenaire @default(ACTIF)
+  siteWeb         String?
+  adresse         String
+  email           String    @unique
+  phone           String    @unique
+  facebook        String?
+  instagram       String?
+  twitter         String?
+  linkedin        String?
+  tikTok          String?
+  youtube         String?
+  duree           duree   
+  description     String?
+  contenuPartenaire       contenuPartenaire[]
+  videoPartenaire     videoPartenaire[]
+}
+
+enum duree {
+  MENSUEL
+  TRIMESTRIEL
+  SEMESTRIEL
+  ANNUEL
+}
+
+enum statutPartenaire {
+ ACTIF
+ SUSPENDU
+}
+
+model contenuPartenaire {
+  id              Int           @id @default(autoincrement())
+  path            String
+  partenariatId    Int
+  partenariat      engagement    @relation(fields: [partenariatId], references: [id], onDelete: Cascade)
+}
+
+model videoPartenaire {
+  id              Int           @id @default(autoincrement())
+  path            String
+  partenariatId    Int
+  partenariat      engagement    @relation(fields: [partenariatId], references: [id], onDelete: Cascade)
+}
+
+
+model logo {
+  id              Int       @id @default(autoincrement())
+  path            String
+  partenariatId    Int
+  partenaire      engagement @relation(fields: [partenariatId], references: [id], onDelete: Cascade)
+}

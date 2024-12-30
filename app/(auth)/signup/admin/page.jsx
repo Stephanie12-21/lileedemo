@@ -147,7 +147,7 @@ const Personnel = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const role = "PERSO";
+    const role = "ADMIN";
     const statutUser = "ACTIF";
     const Phone = `+${phone}`;
     const formData = new FormData();
