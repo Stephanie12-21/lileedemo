@@ -9,6 +9,7 @@ import { ref, get, set } from "firebase/database";
 import { db } from "@/firebaseconfig";
 import { MessageCircleMore, UserCircle } from "lucide-react";
 import Image from "next/image";
+import AnimatedSymbol from "@/components/MainComponents/Sections/Loading/AnimatedSymbol";
 
 function UserCard({ name, avatarUrl, latestMessageText, time, type }) {
   return (
@@ -225,7 +226,11 @@ const User = ({ userData, setSelectedChatroom }) => {
   };
 
   if (loading) {
-    return <p>Chargement des données...</p>;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-[#15213d]">
+        <AnimatedSymbol />
+      </div>
+    );
   }
 
   return (

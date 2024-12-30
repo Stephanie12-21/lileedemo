@@ -246,13 +246,6 @@ const Annonces = () => {
 
                 <div className="flex justify-between items-center w-full pt-8 mt-auto">
                   <Link
-                    href={`/personnel/annonces/boostAnnonce/id=${annonce.id}`}
-                    className="text-blue-500 hover:text-blue-700 transition-colors"
-                    title="Booster"
-                  >
-                    <Rocket className="h-6 w-6" />
-                  </Link>
-                  <Link
                     href={`/personnel/annonces/id=${annonce.id}`}
                     className="text-green-500 hover:text-green-700 transition-colors"
                     title="Voir"

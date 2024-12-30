@@ -19,6 +19,8 @@ import { useSession } from "next-auth/react";
 import { Alert } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import RichTextEditor from "@/components/MainComponents/TextEditor/RichEditor";
+import AnimatedSymbol from "@/components/MainComponents/Sections/Loading/AnimatedSymbol";
+import { Button } from "@/components/ui/button";
 
 const ArticleDetailPageModif = ({ params }) => {
   const { id } = params;
@@ -159,7 +161,11 @@ const ArticleDetailPageModif = ({ params }) => {
   }
 
   if (!article) {
-    return <p>Chargement...</p>;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-[#15213d]">
+        <AnimatedSymbol />
+      </div>
+    );
   }
 
   const categoriesWithSubcategories = {
@@ -408,13 +414,12 @@ const ArticleDetailPageModif = ({ params }) => {
           >
             Images de l&apos;annonce
           </label>
-          <input
+          <Input
             type="file"
             id="files"
-            name="files"
-            multiple
             onChange={handleChange}
-            className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+            accept="image/*"
+            multiple
           />
         </div>
 
@@ -431,7 +436,7 @@ const ArticleDetailPageModif = ({ params }) => {
               <button
                 type="button"
                 onClick={() => handleRemoveImage(index)}
-                className="absolute top-0 right-0 bg-red-700 rounded-full p-1"
+                className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
               >
                 <X className="w-5 h-5 text-white" />
               </button>
@@ -440,12 +445,12 @@ const ArticleDetailPageModif = ({ params }) => {
         </div>
 
         <div>
-          <button
+          <Button
             type="submit"
-            className="px-4 py-2 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-700"
+            className="bg-[#15213d] text-white hover:bg-[#15213d] hover:text-white w-full py-2 px-4 rounded-md mt-5"
           >
             Mettre à jour l&apos;annonce
-          </button>
+          </Button>
         </div>
       </form>
     </div>
