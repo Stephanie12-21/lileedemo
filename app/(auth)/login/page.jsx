@@ -72,9 +72,9 @@ export default function Login() {
         //console.log("Role associé à l'email:", role);
 
         if (role === "PERSO") {
-          router.push("/personnel/annonces");
+          router.push("/personnel/");
         } else if (role === "PRO") {
-          router.push("/professionel/annonces");
+          router.push("/professionel/");
         } else if (role === "ADMIN") {
           router.push(`/admin/`);
         } else {

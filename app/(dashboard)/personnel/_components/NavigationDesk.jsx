@@ -17,11 +17,11 @@ const Navigation = () => {
       name: "Messages",
       href: session ? `/personnel/messages/${session.user.id}` : "#",
     },
-    {
-      icon: Info,
-      name: "Informations de paiement",
-      href: session ? `/personnel/InfoPaiement` : "#",
-    },
+    // {
+    //   icon: Info,
+    //   name: "Informations de paiement",
+    //   href: session ? `/personnel/InfoPaiement` : "#",
+    // },
     {
       icon: TrendingUp,
       name: "Transactions",
