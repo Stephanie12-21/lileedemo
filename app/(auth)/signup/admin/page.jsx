@@ -11,8 +11,9 @@ import Image from "next/image";
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-const Administrator = () => {
+const Personnel = () => {
   const [step, setStep] = useState(1);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [nom, setNom] = useState("");
@@ -146,7 +147,7 @@ const Administrator = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const role = "ADMIN";
+    const role = "PERSO";
     const statutUser = "ACTIF";
     const Phone = `+${phone}`;
     const formData = new FormData();
@@ -207,19 +208,17 @@ const Administrator = () => {
   };
 
   return (
-    <div className="w-full h-screen lg:grid lg:grid-cols-2">
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="mx-auto grid  gap-6 max-md:px-8">
-          <div className="flex items-start justify-between">
-            <div className="flex items-start justify-center text-center h-full">
-              <Image
-                src="/assets/logo.svg"
-                width="200"
-                height="100"
-                alt="Logo Lilee"
-                className="absolute top-4 left-40 max-md:left-8 h-[70px]"
-              />
-            </div>
+    <div className="flex min-h-screen ">
+      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8">
+          <div className="text-center ">
+            <Image
+              src="/assets/logo.svg"
+              width={150}
+              height={100}
+              alt="Logo Lilee"
+              className="mx-auto h-24 w-auto"
+            />
           </div>
 
           <motion.div
@@ -233,9 +232,6 @@ const Administrator = () => {
           >
             {step === 1 && (
               <div className="grid gap-4 h-full w-[400px]">
-                <h1 className="text-2xl font-bold max-md:text-start">
-                  Bienvenue parmi nous
-                </h1>
                 <div className="grid space-y-4">
                   {/* nom */}
                   <div className="space-y-2">
@@ -288,6 +284,18 @@ const Administrator = () => {
                       Suivant
                     </Button>
                   </div>
+                </div>
+                {/* ============= */}
+                <div className="mt-6 text-center text-base">
+                  <span className="text-gray-600 dark:text-gray-400">
+                    Vous êtes déjà membre?{" "}
+                  </span>
+                  <Link
+                    href="/login"
+                    className="font-medium text-[#15213d] focus:ring-[#15213d] dark:text-[#15213d] dark:hover:text-[#15213d] hover:underline"
+                  >
+                    Se connecter
+                  </Link>
                 </div>
               </div>
             )}
@@ -460,17 +468,17 @@ const Administrator = () => {
           </motion.div>
         </div>
       </div>
-      <div className="block max-lg:hidden bg-muted overflow-hidden">
+
+      <div className="hidden lg:block relative w-0 flex-1">
         <Image
+          className="absolute inset-0 h-full w-full object-cover"
           src="/assets/marcus-aurelius.jpg"
-          alt="Image"
-          width="1920"
-          height="1080"
-          className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+          alt="Marcus Aurelius"
+          layout="fill"
         />
       </div>
     </div>
   );
 };
 
-export default Administrator;
+export default Personnel;

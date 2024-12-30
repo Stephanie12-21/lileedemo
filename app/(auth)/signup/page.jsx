@@ -45,9 +45,9 @@ const SignUpPage = () => {
             <Button onClick={handleProfessionnel} className="w-full text-base">
               Professionel
             </Button>
-            {/* <Button onClick={handleAdmin} className="w-full text-base">
+            <Button onClick={handleAdmin} className="w-full text-base">
               Administrateur
-            </Button> */}
+            </Button>
           </div>
 
           <div className="mt-6 text-center text-base">

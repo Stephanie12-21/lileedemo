@@ -19,6 +19,8 @@ import { z } from "zod";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { Eye, EyeOff } from "lucide-react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SignUpPage = () => {
   const [step, setStep] = useState(1);
@@ -56,9 +58,6 @@ const SignUpPage = () => {
       100000 + Math.random() * 900000
     ).toString();
 
-    console.log("Generated Email Verification Code:", emailVerificationCode);
-    console.log("Generated Phone Verification Code:", phoneVerificationCode);
-
     return { emailVerificationCode, phoneVerificationCode };
   }
 
@@ -66,33 +65,7 @@ const SignUpPage = () => {
     if (step > 1) {
       const previousStep = step - 1;
       setStep(previousStep);
-      console.log(`Retour à l'étape ${previousStep}`);
     }
-  };
-
-  const checkAndShowAlert = () => {
-    const otpCodeTel = otpTel.join("");
-    const otpCodeEmail = otpEmail.join("");
-    if (
-      !nom ||
-      !prenom ||
-      !email ||
-      otpCodeTel.length < 6 ||
-      otpCodeEmail.length < 6
-    ) {
-      alert("Veuillez remplir tous les champs.");
-    } else {
-      alert(`Informations remplies :
-      - Nom: ${nom}
-      - Prénom: ${prenom}
-      - Email: ${email}
-      - OTP Tel: ${otpCodeTel}
-      - OTP Email: ${otpCodeEmail}`);
-    }
-  };
-
-  const finishOnboarding = () => {
-    checkAndShowAlert();
   };
 
   const handleNextStep = async () => {
@@ -100,7 +73,6 @@ const SignUpPage = () => {
       verifySiret();
     } else if (step === 4) {
       const generatedCodes = generateVerificationCodes();
-      console.log("données reçues :", email, prenom);
       try {
         const response = await fetch("/api/user/emailVerif/", {
           method: "POST",
@@ -119,11 +91,10 @@ const SignUpPage = () => {
           throw new Error("Erreur lors de l'envoi de l'e-mail");
         }
 
-        console.log("E-mail envoyé avec succès");
+        toast.info("E-mail envoyé avec succès");
         setEmailVerificationCode(generatedCodes.emailVerificationCode);
       } catch (error) {
-        console.error(error);
-        alert(error.message);
+        toast.error("Erreur lors de l'envoi de l'e-mail : " + error.message);
         return;
       }
     } else if (step === 5) {
@@ -131,7 +102,7 @@ const SignUpPage = () => {
         alert("Le code de vérification est incorrect.");
         return;
       }
-      console.log("Code de vérification correct.");
+      toast.info("Code de vérification correct.");
     } else if (step === 6) {
       const generatedCodes = generateVerificationCodes();
       const Phone = `+${phone}`;
@@ -152,27 +123,25 @@ const SignUpPage = () => {
           throw new Error("Erreur lors de l'envoi du SMS");
         }
 
-        console.log("SMS envoyé avec succès");
+        toast.info("SMS envoyé avec succès");
         console.log(
           "Code de vérification envoyé par SMS:",
           generatedCodes.phoneVerificationCode
         );
         setPhoneVerificationCode(generatedCodes.phoneVerificationCode);
       } catch (error) {
-        console.error(error);
-        alert(error.message);
+        toast.error("Erreur lors de l'envoi de l'e-mail : " + error.message);
         return;
       }
     } else if (step === 7) {
       if (verificationCodePhone !== phoneVerificationCode) {
-        alert("Le code de vérification est incorrect.");
+        toast.error("Le code de vérification est incorrect.");
         return;
       }
-      console.log("Code de vérification correct.");
+      toast.info("Code de vérification correct.");
     }
     if (step < 9) {
       setStep(step + 1);
-      console.log(`Vous allez passer à l'étape ${step + 1}`);
     } else {
       handleSubmit();
     }
@@ -244,9 +213,6 @@ const SignUpPage = () => {
       companyInfo.adresseEtablissement.libelleCommuneEtablissement
     );
 
-    console.log("Secteur d'activité sélectionné:", secteurActivite);
-    console.log("Type de société sélectionné:", typeSociete);
-
     if (imageFile) {
       formData.append("imageFile", imageFile);
     }
@@ -258,8 +224,6 @@ const SignUpPage = () => {
       });
 
       const data = await response.json();
-      console.log(data);
-
       if (!response.ok) {
         throw new Error(data.message || "Erreur lors de l'envoi des données.");
       } else {
@@ -314,7 +278,6 @@ const SignUpPage = () => {
       } else {
         const data = await response.json();
         if (data && data.etablissement) {
-          console.log("Le numéro de SIRET est valide :", data.etablissement);
           setErrorMessage("");
           setCompanyInfo(data.etablissement);
 
@@ -345,19 +308,17 @@ const SignUpPage = () => {
   };
 
   return (
-    <div className="w-full h-screen lg:grid lg:grid-cols-2">
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="mx-auto grid  gap-6 max-md:px-8">
-          <div className="flex items-start justify-between">
-            <div className="flex items-start justify-center text-center h-full">
-              <Image
-                src="/assets/logo.svg"
-                width="200"
-                height="100"
-                alt="Logo Lilee"
-                className="absolute top-4 left-40 max-md:left-8 h-[70px]"
-              />
-            </div>
+    <div className="flex min-h-screen ">
+      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8">
+          <div className="text-center ">
+            <Image
+              src="/assets/logo.svg"
+              width={150}
+              height={100}
+              alt="Logo Lilee"
+              className="mx-auto h-24 w-auto"
+            />
           </div>
 
           <motion.div
@@ -374,10 +335,6 @@ const SignUpPage = () => {
             {/* numéro de siret, nom de la société  */}
             {step === 1 && (
               <div className="grid gap-4 w-[400px] items-start">
-                <h1 className="text-2xl pb-5 font-bold max-md:text-start">
-                  Bienvenue parmi nous. <br /> Commençons par les informations
-                  de votre société.
-                </h1>
                 <div className="grid space-y-3">
                   <Label htmlFor="siret">Votre SIRET</Label>
                   <Input
@@ -402,6 +359,18 @@ const SignUpPage = () => {
                   >
                     Suivant
                   </Button>
+                </div>
+                {/* ============= */}
+                <div className="mt-6 text-center text-base">
+                  <span className="text-gray-600 dark:text-gray-400">
+                    Vous êtes déjà membre?{" "}
+                  </span>
+                  <Link
+                    href="/login"
+                    className="font-medium text-[#15213d] focus:ring-[#15213d] dark:text-[#15213d] dark:hover:text-[#15213d] hover:underline"
+                  >
+                    Se connecter
+                  </Link>
                 </div>
               </div>
             )}
@@ -801,26 +770,27 @@ const SignUpPage = () => {
               </div>
             )}
           </motion.div>
-
-          {/* ============= */}
-          <div className="mt-4 text-center text-[16px]">
-            Vous êtes déjà membre?
-            <br />
-            <Link href="/login" className="underline">
-              Se connecter
-            </Link>
-          </div>
         </div>
       </div>
-      <div className="block max-lg:hidden bg-muted overflow-hidden">
+
+      <div className="hidden lg:block relative w-0 flex-1">
         <Image
+          className="absolute inset-0 h-full w-full object-cover"
           src="/assets/marcus-aurelius.jpg"
-          alt="Image"
-          width="1920"
-          height="1080"
-          className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+          alt="Marcus Aurelius"
+          layout="fill"
         />
       </div>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        closeOnClick
+        pauseOnHover
+        draggable
+        pauseOnFocusLoss
+        theme="light"
+      />
     </div>
   );
 };

@@ -54,12 +54,9 @@ export default function Login() {
         return;
       }
 
-     // console.log("Login successful:", loginData);
-
       const updatedSession = await getSession();
 
       const statutUser = updatedSession?.user?.statutUser;
-      //console.log("Role associé à l'email:", statutUser);
 
       if (statutUser !== "ACTIF") {
         setAlertMessage(
@@ -69,7 +66,6 @@ export default function Login() {
         return;
       } else {
         const role = updatedSession?.user?.role;
-        //console.log("Role associé à l'email:", role);
 
         if (role === "PERSO") {
           router.push("/personnel/");
@@ -119,6 +115,7 @@ export default function Login() {
               Accédez à votre compte pour découvrir les dernières nouveautés.
             </p>
           </div>
+
           <form className="mt-8 space-y-6" onSubmit={(e) => e.preventDefault()}>
             <div className="rounded-md shadow-sm space-y-4">
               <div className="grid gap-2 ">
@@ -192,7 +189,11 @@ export default function Login() {
               >
                 Se connecter
               </Button>
-              <Button onClick={handlePrev} variant="outline" className="w-full">
+              <Button
+                onClick={handlePrev}
+                variant="outline"
+                className="w-full text-[#15213d] hover:border-[#15213d] focus:ring-[#15213d]"
+              >
                 Revenir à l&apos;accueil
               </Button>
             </div>

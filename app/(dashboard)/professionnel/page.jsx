@@ -116,6 +116,52 @@ const Annonces = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4 justify-between mb-8">
+        {/* <div className="flex flex-col md:flex-row justify-between items-start  md:items-center gap-4 w-full max-w-4xl mx-auto px-0 ">
+          <div className="relative w-full md:w-2/3 p-0">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Rechercher une annonce"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 pr-4 py-2 w-full border-2 border-primary/20 focus:border-primary transition-colors"
+            />
+          </div>
+          <div className="relative w-full md:w-1/3">
+            <button
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="w-full flex items-center justify-between px-4 py-2 text-left bg-white border-2 border-primary/20 rounded-md focus:outline-none focus:border-primary transition-colors"
+            >
+              <span className="truncate">
+                {selectedCategory
+                  ? categories.find((cat) => cat.value === selectedCategory)
+                      ?.label
+                  : "Toutes les catégories"}
+              </span>
+              <ChevronDown
+                className={`ml-2 h-4 w-4 transition-transform duration-200 ${
+                  isDropdownOpen ? "transform rotate-180" : ""
+                }`}
+              />
+            </button>
+            {isDropdownOpen && (
+              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                {categories.map((category) => (
+                  <button
+                    key={category.value}
+                    className="w-full text-left px-4 py-2 hover:bg-primary/10 focus:bg-primary/10 focus:outline-none transition-colors"
+                    onClick={() => {
+                      setSelectedCategory(category.value);
+                      setIsDropdownOpen(false);
+                    }}
+                  >
+                    {category.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div> */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 w-full max-w-full mx-auto p-0">
           <div className="relative w-full md:w-2/3">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
@@ -163,7 +209,7 @@ const Annonces = () => {
           </div>
         </div>
 
-        <Link href="/personnel/annonces/addAnnonce">
+        <Link href="/professionel/annonces/addAnnonce">
           <Button className="w-full md:w-auto">
             Créer une nouvelle annonce
           </Button>
@@ -237,6 +283,13 @@ const Annonces = () => {
                 </div>
 
                 <div className="flex justify-between items-center w-full pt-8 mt-auto">
+                  <Link
+                    href={`/personnel/annonces/boostAnnonce/id=${annonce.id}`}
+                    className="text-blue-500 hover:text-blue-700 transition-colors"
+                    title="Booster"
+                  >
+                    <Rocket className="h-6 w-6" />
+                  </Link>
                   <Link
                     href={`/personnel/annonces/id=${annonce.id}`}
                     className="text-green-500 hover:text-green-700 transition-colors"
