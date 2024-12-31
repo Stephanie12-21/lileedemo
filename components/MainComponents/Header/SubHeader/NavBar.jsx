@@ -9,6 +9,7 @@ import { Menu } from "lucide-react";
 
 const links = [
   { path: "/", name: "Accueil" },
+  { path: "/Annonces", name: "Annonces" },
   { path: "/Partenaire", name: "Partenaires engagés" },
   { path: "/Contact", name: "Contact" },
   { path: "/Blog", name: "Blog & Presse" },

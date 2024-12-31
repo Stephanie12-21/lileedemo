@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
@@ -19,6 +19,7 @@ import { useSession } from "next-auth/react";
 import { Alert } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import RichTextEditor from "@/components/MainComponents/TextEditor/RichEditor";
+import { Card, CardContent } from "@/components/ui/card";
 
 const ArticleDetailPageModif = ({ params }) => {
   const { id } = params;
@@ -159,7 +160,19 @@ const ArticleDetailPageModif = ({ params }) => {
   }
 
   if (!article) {
-    return <p>Chargement...</p>;
+    return (
+      <Card className="w-full max-w-md mx-auto mt-8">
+        <CardContent className="flex flex-col items-center justify-center p-6">
+          <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
+          <p className="text-lg font-medium text-center">
+            Chargement de l&apos;article en cours...
+          </p>
+          <p className="text-sm text-muted-foreground text-center mt-2">
+            Veuillez patienter quelques instants.
+          </p>
+        </CardContent>
+      </Card>
+    );
   }
 
   const categoriesWithSubcategories = {
