@@ -264,3 +264,24 @@ model logo {
   partenariatId    Int
   partenaire      engagement @relation(fields: [partenariatId], references: [id], onDelete: Cascade)
 }
+
+//pour les articles
+
+model article {
+  id              Int       @id @default(autoincrement())
+  titre           String
+  contenu         String
+  categorieArticle String
+  images          image[]  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model image {
+  id        Int      @id @default(autoincrement())
+  path      String   
+  articleId Int      
+  article   article  @relation(fields: [articleId], references: [id])
+}
+
+
