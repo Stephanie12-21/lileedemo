@@ -3,6 +3,7 @@
 import RichTextEditor from "@/components/MainComponents/TextEditor/RichEditor";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -14,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -145,7 +146,19 @@ const AddAnnonce = () => {
   };
 
   if (status === "loading") {
-    return <div>Chargement...</div>;
+    return (
+      <Card className="w-full max-w-md mx-auto mt-8">
+        <CardContent className="flex flex-col items-center justify-center p-6">
+          <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
+          <p className="text-lg font-medium text-center">
+            Chargement des données en cours...
+          </p>
+          <p className="text-sm text-muted-foreground text-center mt-2">
+            Veuillez patienter quelques instants.
+          </p>
+        </CardContent>
+      </Card>
+    );
   }
 
   const categoriesWithSubcategories = {
