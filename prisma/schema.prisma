@@ -228,7 +228,6 @@ model engagement {
   duree           duree   
   description     String?
   contenuPartenaire       contenuPartenaire[]
-  videoPartenaire     videoPartenaire[]
 }
 
 enum duree {
@@ -246,23 +245,17 @@ enum statutPartenaire {
 model contenuPartenaire {
   id              Int           @id @default(autoincrement())
   path            String
-  partenariatId    Int
-  partenariat      engagement    @relation(fields: [partenariatId], references: [id], onDelete: Cascade)
+  engagementId    Int
+  engagement      engagement    @relation(fields: [engagementId], references: [id], onDelete: Cascade)
 }
 
-model videoPartenaire {
-  id              Int           @id @default(autoincrement())
-  path            String
-  partenariatId    Int
-  partenariat      engagement    @relation(fields: [partenariatId], references: [id], onDelete: Cascade)
-}
 
 
 model logo {
   id              Int       @id @default(autoincrement())
   path            String
-  partenariatId    Int
-  partenaire      engagement @relation(fields: [partenariatId], references: [id], onDelete: Cascade)
+  engagementId    Int
+  engagement      engagement @relation(fields: [engagementId], references: [id], onDelete: Cascade)
 }
 
 //pour les articles

@@ -43,7 +43,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import AnimatedSymbol from "@/components/MainComponents/Sections/Loading/AnimatedSymbol";
 
-
 export default function LayoutAdmin({ children }) {
   const { data: session } = useSession();
   const router = useRouter();

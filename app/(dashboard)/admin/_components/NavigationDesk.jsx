@@ -62,21 +62,21 @@ const Navigation = () => {
       name: "Comptes utilisateurs",
       href: session ? `/admin/users` : "#",
     },
-    {
-      icon: Rocket,
-      name: "Abonnement",
-      href: session ? `/admin/Abonnement` : "#",
-    },
-    {
-      icon: DollarSign,
-      name: "Transactions",
-      href: session ? `/admin/transactions` : "#",
-    },
-    {
-      icon: Info,
-      name: "Informations de paiement",
-      href: session ? `/admin/InfoPaiement` : "#",
-    },
+    // {
+    //   icon: Rocket,
+    //   name: "Abonnement",
+    //   href: session ? `/admin/Abonnement` : "#",
+    // },
+    // {
+    //   icon: DollarSign,
+    //   name: "Transactions",
+    //   href: session ? `/admin/transactions` : "#",
+    // },
+    // {
+    //   icon: Info,
+    //   name: "Informations de paiement",
+    //   href: session ? `/admin/InfoPaiement` : "#",
+    // },
     {
       icon: UsersRound,
       name: "Partenaires engagés",
