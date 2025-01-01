@@ -16,9 +16,9 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import RichTextEditor from "@/components/MainComponent/TextEditor/RichEditor";
-import AnimatedSymbol from "@/components/MainComponent/Loading/Loading";
-import { is } from "date-fns/locale";
+
+import RichTextEditor from "@/components/MainComponents/TextEditor/RichEditor";
+import AnimatedSymbol from "@/components/MainComponents/Sections/Loading/AnimatedSymbol";
 
 const PubliciteForm = ({ params }) => {
   const { id } = params;
@@ -88,9 +88,9 @@ const PubliciteForm = ({ params }) => {
   };
 
   const handleImageChange = (event) => {
-    const file = event.target.files[0]; // Récupère le premier fichier sélectionné
+    const file = event.target.files[0];
     if (file) {
-      setLogo([file]); // Met à jour l'état pour ne contenir qu'un seul fichier
+      setLogo([file]);
     }
   };
 
@@ -223,37 +223,7 @@ const PubliciteForm = ({ params }) => {
                   <p className="text-red-500 text-sm">{errors.adresseMarque}</p>
                 )}
               </div>
-              {/* <div className="space-y-3">
-                <Label htmlFor="contenu">
-                  Logo de la marque<span className="text-red-500">*</span> :
-                </Label>
-                <Input
-                  type="file"
-                  id="images"
-                  onChange={handleImageChange}
-                  accept="image/*"
-                />
 
-                <div className="flex flex-wrap items-center justify-center gap-4 mt-4">
-                  {logo.map((file, index) => {
-                    if (file instanceof File) {
-                      return (
-                        <div key={index} className="relative">
-                          <Image
-                            src={URL.createObjectURL(file)}
-                            width={200}
-                            height={200}
-                            alt="Prévisualisation de l'image"
-                            className=" object-cover border border-gray-300 rounded-full"
-                          />
-                        </div>
-                      );
-                    } else {
-                      return null;
-                    }
-                  })}
-                </div>
-              </div> */}
               <div className="space-y-3">
                 <Label htmlFor="contenu">
                   Logo de la marque<span className="text-red-500">*</span> :
@@ -269,7 +239,7 @@ const PubliciteForm = ({ params }) => {
                   {logo.length > 0 && logo[0] instanceof File && (
                     <div className="relative">
                       <Image
-                        src={URL.createObjectURL(logo[0])} // On n'affiche que le premier fichier de l'array `logo`
+                        src={URL.createObjectURL(logo[0])}
                         width={200}
                         height={200}
                         alt="Prévisualisation de l'image"
@@ -377,7 +347,7 @@ const PubliciteForm = ({ params }) => {
                 <Select
                   className="w-full"
                   value={duree || ""}
-                  onValueChange={(value) => setDuree(value)} // Mise à jour correcte de l'état
+                  onValueChange={(value) => setDuree(value)}
                 >
                   <SelectTrigger className="w-full px-4">
                     <SelectValue
@@ -419,12 +389,11 @@ const PubliciteForm = ({ params }) => {
                 />
                 <div className="flex flex-wrap gap-4 mt-4">
                   {contenuPartenaire.map((file, index) => {
-                    // Vérification que l'élément est bien un fichier (File)
                     if (file instanceof File) {
                       return (
                         <div key={index} className="relative">
                           <Image
-                            src={URL.createObjectURL(file)} // Créer une URL valide si c'est un fichier
+                            src={URL.createObjectURL(file)}
                             alt={`preview-${index}`}
                             width={200}
                             height={200}
@@ -440,7 +409,7 @@ const PubliciteForm = ({ params }) => {
                         </div>
                       );
                     } else {
-                      return null; // Si ce n'est pas un fichier valide, ne rien afficher
+                      return null;
                     }
                   })}
                 </div>
