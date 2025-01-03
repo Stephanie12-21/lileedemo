@@ -44,7 +44,7 @@ import {
   SelectValue,
   SelectGroup,
 } from "@/components/ui/select";
-import { Search } from "lucide-react";
+import { AlertTriangle, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import AnimatedSymbol from "@/components/MainComponents/Sections/Loading/AnimatedSymbol";
 
@@ -474,72 +474,144 @@ const PubPage = () => {
         </Table>
       </div>
 
+      {/* avertir l'utilisateur */}
       <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
-        <AlertDialogContent>
-          <Label htmlFor="email" className="text-[16px] ">
-            Email de l&apos;utilisateur :{" "}
-            <span className="text-blue-950 font-bold">{email}</span>
-          </Label>
+        <AlertDialogContent className="w-full max-w-md sm:max-w-lg lg:max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
+          <AlertDialogTitle className="flex flex-col items-center space-y-3 text-center text-2xl">
+            <AlertTriangle className="h-16 w-16 text-yellow-500" />
+            <span>Avertir l&apos;utilisateur</span>
+          </AlertDialogTitle>
 
-          <Label htmlFor="message" className="text-[16px] font-medium">
-            Message
-          </Label>
-          <Textarea
-            id="message"
-            placeholder="Écrire un message ..."
-            value={messageAlert}
-            onChange={(e) => setMessageAlert(e.target.value)}
-          />
-          <div className="flex justify-end space-x-2 mt-4">
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmAlertUser}>
-              Envoyer
+          <div className="mt-4">
+            <Label
+              htmlFor="email"
+              className="block text-[16px] font-medium mb-2"
+            >
+              Email de l&apos;utilisateur concerné :
+            </Label>
+            <Input
+              id="email"
+              type="text"
+              placeholder="email de l'utilisateur"
+              value={email}
+              className="w-full text-black text-[16px] font-bold"
+              disabled
+            />
+          </div>
+
+          <div className="mt-4">
+            <Label
+              htmlFor="raison"
+              className="block text-[16px] font-medium mb-2"
+            >
+              Message adressé à l&apos;utilisateur :
+            </Label>
+            <Textarea
+              id="raison"
+              placeholder="Ecrire un message ..."
+              value={messageAlert}
+              onChange={(e) => setMessageAlert(e.target.value)}
+              className="w-full"
+            />
+          </div>
+
+          <div className="flex flex-col items-center w-full space-y-3 mt-6">
+            <AlertDialogAction
+              className="w-full bg-destructive text-destructive-foreground hover:bg-destructive/90 py-2 rounded-md"
+              onClick={handleConfirmAlertUser}
+            >
+              Suspendre l&apos;annonce
             </AlertDialogAction>
+            <AlertDialogCancel className="w-full text-center text-primary hover:underline">
+              Annuler
+            </AlertDialogCancel>
           </div>
         </AlertDialogContent>
       </AlertDialog>
 
+      {/* suspendre l'utilisateur */}
       <AlertDialog
         open={isSuspendAlertOpen}
         onOpenChange={setIsSuspendAlertOpen}
       >
-        <AlertDialogContent>
-          <Label htmlFor="email" className="text-[16px]">
-            Email de l&apos;utilisateur :{" "}
-            <span className="text-blue-950 font-bold">{email}</span>
-            <span>Avec l&apos; identifiant :{userId}</span>
-          </Label>
+        <AlertDialogContent className="w-full max-w-md sm:max-w-lg lg:max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
+          <AlertDialogTitle className="flex flex-col items-center space-y-3 text-center text-2xl">
+            <AlertTriangle className="h-16 w-16 text-yellow-500" />
+            <span>Confirmation de suspension</span>
+          </AlertDialogTitle>
 
-          <Label htmlFor="raison" className="text-[16px] font-medium">
-            Raison de la suspension
-          </Label>
-          <Textarea
-            id="raison"
-            placeholder="Expliquez pourquoi cet utilisateur est suspendu..."
-            value={raison}
-            onChange={(e) => setRaison(e.target.value)} // Met à jour la raison
-          />
+          <div className="mt-4">
+            <Label
+              htmlFor="email"
+              className="block text-[16px] font-medium mb-2"
+            >
+              Email de l&apos;utilisateur concerné :
+            </Label>
+            <Input
+              id="email"
+              type="text"
+              placeholder="Rechercher une annonce"
+              value={email}
+              className="w-full text-black text-[16px] font-bold"
+              disabled
+            />
+          </div>
 
-          <div className="flex justify-end space-x-2 mt-4">
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmSuspendUser}>
-              Suspendre
+          <div className="mt-4">
+            <Label
+              htmlFor="raison"
+              className="block text-[16px] font-medium mb-2"
+            >
+              Raison de la suspension :
+            </Label>
+            <Textarea
+              id="raison"
+              placeholder="Expliquez pourquoi cet utilisateur est suspendu..."
+              value={raison}
+              onChange={(e) => setRaison(e.target.value)}
+              className="w-full"
+            />
+          </div>
+
+          <div className="flex flex-col items-center w-full space-y-3 mt-6">
+            <AlertDialogAction
+              className="w-full bg-destructive text-destructive-foreground hover:bg-destructive/90 py-2 rounded-md"
+              onClick={handleConfirmSuspendUser}
+            >
+              Suspendre l&apos;annonce
             </AlertDialogAction>
+            <AlertDialogCancel className="w-full text-center text-primary hover:underline">
+              Annuler
+            </AlertDialogCancel>
           </div>
         </AlertDialogContent>
       </AlertDialog>
 
+      {/* activer l'utilisateur */}
       <AlertDialog
         open={isActivationAlertOpen}
         onOpenChange={setIsActivationAlertOpen}
       >
-        <AlertDialogContent>
-          <AlertDialogTitle>
-            Êtes-vous sûr d&apos;activer cet utilisateur, avec l&apos; {userId}
+        <AlertDialogContent className="w-full max-w-md sm:max-w-lg lg:max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
+          <AlertDialogTitle className="text-center text-lg sm:text-xl font-semibold">
+            Êtes-vous sûr d&apos;activer ce compte utilisateur ?
           </AlertDialogTitle>
-          <div className="flex justify-end space-x-2 mt-4">
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmActivationUser}>
+
+          <div className="mt-4 space-y-2 text-sm sm:text-base text-gray-700">
+            <p>
+              En activant ce compte, vous allez permettre à cet utilisateur de
+              se connecter à votre application.
+            </p>
+          </div>
+
+          <div className="flex w-full justify-end space-x-3 mt-6">
+            <AlertDialogCancel className="px-4 py-2 w-full text-gray-700 border border-gray-300 rounded-md hover:bg-gray-100">
+              Annuler
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmActivationUser}
+              className="px-4 py-2 bg-primary w-full text-white rounded-md hover:bg-primary/90"
+            >
               Activer
             </AlertDialogAction>
           </div>

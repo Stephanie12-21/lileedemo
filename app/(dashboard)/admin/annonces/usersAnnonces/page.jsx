@@ -329,7 +329,7 @@ const UserPage = () => {
       header: "Actions",
       cell: ({ row }) => {
         return (
-          <div className="flex justify-left">
+          <div className="flex justify-center">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="w-fit h-fit  ">

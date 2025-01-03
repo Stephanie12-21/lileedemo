@@ -243,12 +243,11 @@ enum statutPartenaire {
 }
 
 model contenuPartenaire {
-  id              Int           @id @default(autoincrement())
-  path            String
-  engagementId    Int
-  engagement      engagement    @relation(fields: [engagementId], references: [id], onDelete: Cascade)
+  id           Int           @id @default(autoincrement())
+  path         String
+  engagementId Int
+  engagement   engagement    @relation(fields: [engagementId], references: [id], onDelete: Cascade)
 }
-
 
 
 model logo {

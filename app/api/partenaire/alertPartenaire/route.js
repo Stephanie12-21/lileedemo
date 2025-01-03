@@ -1,12 +1,11 @@
 import nodemailer from "nodemailer";
-import { NextResponse } from "next/server"; // Importez NextResponse
+import { NextResponse } from "next/server";
 
-// Fonction pour envoyer l'email de suspension
 async function sendSuspensionEmail(email, raison) {
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,
-    secure: process.env.SMTP_PORT === "465", // TLS/SSL
+    secure: process.env.SMTP_PORT === "465",
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
@@ -40,7 +39,6 @@ export async function POST(req) {
       );
     }
 
-    // Envoi de l'email de suspension
     await sendSuspensionEmail(email, messageAlert);
 
     return NextResponse.json(
@@ -49,6 +47,6 @@ export async function POST(req) {
     );
   } catch (error) {
     console.error("Erreur dans l'API d'alert :", error);
-    return NextResponse.json({ error: error.message }, { status: 500 }); // Renvoie le message d'erreur
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

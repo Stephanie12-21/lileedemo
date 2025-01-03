@@ -44,7 +44,7 @@ import {
   SelectValue,
   SelectGroup,
 } from "@/components/ui/select";
-import { Search, UsersRound } from "lucide-react";
+import { AlertTriangle, Search, UsersRound } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 
@@ -87,19 +87,16 @@ const UserPage = () => {
   }, []);
 
   const filteredPubsData = useMemo(() => {
-    // Vérifier si "publicite" est un tableau
     if (!Array.isArray(publicite)) {
       console.error(
         "publicite n'est pas un tableau ou est indéfini:",
         publicite
       );
-      return []; // Retourner un tableau vide par défaut
+      return [];
     }
 
-    // Convertir le filtre de recherche en minuscules
     const searchLower = searchFilter.toLowerCase();
 
-    // Appliquer le filtrage
     return publicite.filter((pub) => {
       const matchesSearch =
         (pub.nom && pub.nom.toLowerCase().includes(searchLower)) ||
@@ -299,7 +296,9 @@ const UserPage = () => {
       const data = await response.json();
 
       if (data.error) {
-        alert(data.error || "Une erreur s'est produite lors de l'activation.");
+        toast.error(
+          data.error || "Une erreur s'est produite lors de l'activation."
+        );
         return;
       }
 
@@ -309,10 +308,9 @@ const UserPage = () => {
           onClose: () => {},
         }
       );
-      await fetchPubs();
+      await fetchPartenaires();
     } catch (error) {
       console.error("Erreur lors de l'activation :", error);
-      alert("Une erreur s'est produite, veuillez réessayer.");
     } finally {
       setIsActivationAlertOpen(false);
     }
@@ -325,13 +323,15 @@ const UserPage = () => {
       cell: ({ row }) => {
         const imageUrl = row.original.logo?.[0]?.path;
         return imageUrl ? (
-          <Image
-            src={imageUrl}
-            alt="Profil"
-            width={50}
-            height={50}
-            className="w-[50px] h-[50px] rounded-full object-cover"
-          />
+          <div className="flex justify-center">
+            <Image
+              src={imageUrl}
+              alt="Profil"
+              width={50}
+              height={50}
+              className="w-[50px] h-[50px]  rounded-full object-cover"
+            />
+          </div>
         ) : (
           "Pas d'image"
         );
@@ -370,11 +370,12 @@ const UserPage = () => {
         );
       },
     },
+
     {
       header: "Actions",
       cell: ({ row }) => {
         return (
-          <div className="flex justify-left">
+          <div className="flex justify-center">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="w-fit h-fit p-0">
@@ -536,73 +537,144 @@ const UserPage = () => {
         </Table>
       </div>
 
+      {/* avertir la marque */}
       <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
-        <AlertDialogContent>
-          <Label htmlFor="email" className="text-[16px] ">
-            Email de l&apos;utilisateur :{" "}
-            <span className="text-blue-950 font-bold">{email}</span>
-          </Label>
+        <AlertDialogContent className="w-full max-w-md sm:max-w-lg lg:max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
+          <AlertDialogTitle className="flex flex-col items-center space-y-3 text-center text-2xl">
+            <AlertTriangle className="h-16 w-16 text-yellow-500" />
+            <span>Avertir le partenaire</span>
+          </AlertDialogTitle>
 
-          <Label htmlFor="message" className="text-[16px] font-medium">
-            Message
-          </Label>
-          <Textarea
-            id="message"
-            placeholder="Écrire un message ..."
-            value={messageAlert}
-            onChange={(e) => setMessageAlert(e.target.value)}
-          />
-          <div className="flex justify-end space-x-2 mt-4">
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmAlertPub}>
-              Envoyer
+          <div className="mt-4">
+            <Label
+              htmlFor="email"
+              className="block text-[16px] font-medium mb-2"
+            >
+              Email du partenaire concerné :
+            </Label>
+            <Input
+              id="email"
+              type="text"
+              placeholder="Rechercher une annonce"
+              value={email}
+              className="w-full text-black text-[16px] font-bold"
+              disabled
+            />
+          </div>
+
+          <div className="mt-4">
+            <Label
+              htmlFor="raison"
+              className="block text-[16px] font-medium mb-2"
+            >
+              Raison de l&apos;avertissement :
+            </Label>
+            <Textarea
+              id="message"
+              placeholder="Écrire un message ..."
+              value={messageAlert}
+              onChange={(e) => setMessageAlert(e.target.value)}
+              className="w-full"
+            />
+          </div>
+
+          <div className="flex flex-col items-center w-full space-y-3 mt-6">
+            <AlertDialogAction
+              className="w-full bg-destructive text-destructive-foreground hover:bg-destructive/90 py-2 rounded-md"
+              onClick={handleConfirmAlertPub}
+            >
+              Avertir le partenaire
             </AlertDialogAction>
+            <AlertDialogCancel className="w-full text-center text-primary hover:underline">
+              Annuler
+            </AlertDialogCancel>
           </div>
         </AlertDialogContent>
       </AlertDialog>
 
+      {/* suspendre la marque */}
       <AlertDialog
         open={isSuspendAlertOpen}
         onOpenChange={setIsSuspendAlertOpen}
       >
-        <AlertDialogContent>
-          <Label htmlFor="email" className="text-[16px]">
-            Email de l&apos;utilisateur :{" "}
-            <span className="text-blue-950 font-bold">{email}</span>
-            <span>Avec l&apos; identifiant :{pubId}</span>
-          </Label>
+        <AlertDialogContent className="w-full max-w-md sm:max-w-lg lg:max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
+          <AlertDialogTitle className="flex flex-col items-center space-y-3 text-center text-2xl">
+            <AlertTriangle className="h-16 w-16 text-yellow-500" />
+            <span>Suspendre le partenaire</span>
+          </AlertDialogTitle>
 
-          <Label htmlFor="raison" className="text-[16px] font-medium">
-            Raison de la suspension
-          </Label>
-          <Textarea
-            id="raison"
-            placeholder="Expliquez pourquoi cet utilisateur est suspendu..."
-            value={raison}
-            onChange={(e) => setRaison(e.target.value)} // Met à jour la raison
-          />
+          <div className="mt-4">
+            <Label
+              htmlFor="email"
+              className="block text-[16px] font-medium mb-2"
+            >
+              Email du partenaire concerné :
+            </Label>
+            <Input
+              id="email"
+              type="text"
+              placeholder="Rechercher une annonce"
+              value={email}
+              className="w-full text-black text-[16px] font-bold"
+              disabled
+            />
+          </div>
 
-          <div className="flex justify-end space-x-2 mt-4">
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmSuspendUser}>
-              Suspendre
+          <div className="mt-4">
+            <Label
+              htmlFor="raison"
+              className="block text-[16px] font-medium mb-2"
+            >
+              Raison de l&apos;avertissement :
+            </Label>
+            <Textarea
+              id="message"
+              placeholder="Écrire un message ..."
+              value={raison}
+              onChange={(e) => setRaison(e.target.value)}
+              className="w-full"
+            />
+          </div>
+
+          <div className="flex flex-col items-center w-full space-y-3 mt-6">
+            <AlertDialogAction
+              className="w-full bg-destructive text-destructive-foreground hover:bg-destructive/90 py-2 rounded-md"
+              onClick={handleConfirmSuspendUser}
+            >
+              Suspendre l&apos;annonce
             </AlertDialogAction>
+            <AlertDialogCancel className="w-full text-center text-primary hover:underline">
+              Annuler
+            </AlertDialogCancel>
           </div>
         </AlertDialogContent>
       </AlertDialog>
 
+      {/* activer le partenaire */}
       <AlertDialog
         open={isActivationAlertOpen}
         onOpenChange={setIsActivationAlertOpen}
       >
-        <AlertDialogContent>
-          <AlertDialogTitle>
-            Êtes-vous sûr d&apos;activer cette publicité de la marque{" "}
-            {nomMarque}
+        <AlertDialogContent className="w-full max-w-md sm:max-w-lg lg:max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
+          <AlertDialogTitle className="text-center text-lg sm:text-xl font-semibold">
+            Êtes-vous sûr d&apos;activer cette publicité de ce partenaire?
           </AlertDialogTitle>
-          <div className="flex justify-end space-x-2 mt-4">
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmActivationUser}>
+
+          <div className="mt-4 space-y-2 text-sm sm:text-base text-gray-700">
+            <p>
+              En activant cette publicité, vous allez permettre à tous les
+              utilisateurs de la plate-forme de consulter cette publicité.
+            </p>
+          </div>
+
+          <div className="flex w-full justify-end space-x-3 mt-6">
+            <AlertDialogCancel className="px-4 py-2 w-full text-gray-700 border border-gray-300 rounded-md hover:bg-gray-100">
+              Annuler
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmActivationUser}
+              className="px-4 py-2 bg-primary w-full text-white rounded-md hover:bg-primary/90"
+            >
               Activer
             </AlertDialogAction>
           </div>

@@ -68,7 +68,7 @@ export async function PUT(request, { params }) {
       );
     }
 
-    const partenaire = await db.partenaire.update({
+    const partenaire = await db.engagement.update({
       where: { id: parseInt(id, 10) },
       data: { statutPartenaire },
     });

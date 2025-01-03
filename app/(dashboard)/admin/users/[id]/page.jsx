@@ -95,8 +95,8 @@ const UserProfilePreview = () => {
                 </Avatar>
               </div>
 
-              <Tabs defaultValue="adminCompte" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
+              <Tabs defaultValue="adminCompte" className="container mx-auto">
+                <TabsList className="grid w-full grid-cols-2 space-x-10 h-[70px] text-black">
                   <TabsTrigger value="adminCompte">
                     Administrateur du compte
                   </TabsTrigger>

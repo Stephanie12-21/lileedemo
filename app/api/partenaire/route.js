@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 export async function POST(request) {
   try {
     const body = await request.formData();
+
     const nom = body.get("nomMarque");
     const email = body.get("emailMarque");
     const phone = body.get("phoneMarque");
@@ -14,29 +15,26 @@ export async function POST(request) {
     const duree = body.get("duree");
     const description = body.get("description");
     const facebook = body.get("facebook");
-    const instagram = body.get("instagramm");
+    const instagram = body.get("instagram");
     const twitter = body.get("twitter");
     const tikTok = body.get("tikTok");
     const linkedin = body.get("linkedIn");
     const youtube = body.get("youtube");
-    const statutPartenaire = body.get("statutPartenaire");
+    const statutPartenaire = body.get("statutPartenaire") || "ACTIF";
 
     if (!nom || !email || !phone || !adresse || !logo || !duree) {
-      return new NextResponse(
-        JSON.stringify({
-          message: "Tous les champs requis doivent être remplis.",
-        }),
+      return NextResponse.json(
+        { message: "Tous les champs requis doivent être remplis." },
         { status: 400 }
       );
     }
 
-    const imageUrls = [];
-    for (const image of contenuPartenaire) {
+    const uploadImage = async (file) => {
       const formData = new FormData();
-      formData.append("file", image);
+      formData.append("file", file);
       formData.append("upload_preset", "ko4bjtic");
 
-      const uploadResponse = await fetch(
+      const response = await fetch(
         "https://api.cloudinary.com/v1_1/dtryutlkz/image/upload",
         {
           method: "POST",
@@ -44,32 +42,19 @@ export async function POST(request) {
         }
       );
 
-      const uploadResult = await uploadResponse.json();
-      if (uploadResponse.ok && uploadResult.secure_url) {
-        imageUrls.push(uploadResult.secure_url);
-      } else {
-        throw new Error("Échec de l'upload d'une image partenaire.");
+      if (!response.ok) {
+        throw new Error("Échec de l'upload de l'image.");
       }
-    }
 
-    const logoFormData = new FormData();
-    logoFormData.append("file", logo);
-    logoFormData.append("upload_preset", "ko4bjtic");
+      const result = await response.json();
+      return result.secure_url;
+    };
 
-    const logoUploadResponse = await fetch(
-      "https://api.cloudinary.com/v1_1/dtryutlkz/image/upload",
-      {
-        method: "POST",
-        body: logoFormData,
-      }
+    const imageUrls = await Promise.all(
+      contenuPartenaire.map((image) => uploadImage(image))
     );
 
-    const logoUploadResult = await logoUploadResponse.json();
-    const logoUrl = logoUploadResult.secure_url;
-
-    if (!logoUploadResponse.ok || !logoUrl) {
-      throw new Error("Échec de l'upload du logo.");
-    }
+    const logoUrl = await uploadImage(logo);
 
     const newPartenaire = await db.engagement.create({
       data: {
@@ -92,32 +77,29 @@ export async function POST(request) {
 
     const engagementId = newPartenaire.id;
 
+    // Insertion des contenus partenaires et du logo
     const imageInsertions = imageUrls.map((imageUrl) =>
       db.contenuPartenaire.create({
         data: { path: imageUrl, engagementId },
       })
     );
 
-    await db.logo.create({
-      data: { path: logoUrl, engagementId },
-    });
+    await Promise.all([
+      ...imageInsertions,
+      db.logo.create({ data: { path: logoUrl, engagementId } }),
+    ]);
 
-    await Promise.all(imageInsertions);
-
-    return new NextResponse(
-      JSON.stringify({
+    return NextResponse.json(
+      {
         message: "Partenaire et images créés avec succès.",
         partenaire: newPartenaire,
-      }),
+      },
       { status: 200 }
     );
   } catch (error) {
-    console.error(
-      "Erreur lors de l'ajout du partenaire, du logo et des contenus partenaires :",
-      error
-    );
-    return new NextResponse(
-      JSON.stringify({ message: "Erreur interne du serveur." }),
+    console.error("Erreur lors de l'ajout du partenaire :", error);
+    return NextResponse.json(
+      { message: "Erreur interne du serveur." },
       { status: 500 }
     );
   }

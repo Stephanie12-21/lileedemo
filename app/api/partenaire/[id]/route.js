@@ -5,7 +5,7 @@ export async function GET(request, { params }) {
   const { id } = params;
 
   try {
-    const partenaire = await db.partenaire.findUnique({
+    const partenaire = await db.engagement.findUnique({
       where: { id: parseInt(id) },
       include: {
         contenuPartenaire: true,
@@ -34,18 +34,16 @@ export async function DELETE(request, { params }) {
   try {
     const { id } = params;
 
-    // Vérification de l'existence de l'ID
     if (!id) {
       return new NextResponse(JSON.stringify({ message: "ID manquant" }), {
         status: 400,
       });
     }
 
-    const partenaireId = parseInt(id, 10);
+    const engagementId = parseInt(id, 10);
 
-    // Vérification si le partenaire existe
-    const existingPartenaire = await db.partenaire.findUnique({
-      where: { id: partenaireId },
+    const existingPartenaire = await db.engagement.findUnique({
+      where: { id: engagementId },
     });
 
     if (!existingPartenaire) {
@@ -55,13 +53,11 @@ export async function DELETE(request, { params }) {
       );
     }
 
-    // Suppression des images associées au contenuPartenaire
     const relatedImages = await db.contenuPartenaire.findMany({
-      where: { partenaireId },
+      where: { engagementId },
     });
 
     for (const image of relatedImages) {
-      // Optionnel : Supprimer l'image de Cloudinary
       const publicId = image.path.split("/").pop().split(".")[0];
       await fetch(`https://api.cloudinary.com/v1_1/dtryutlkz/image/destroy`, {
         method: "POST",
@@ -75,18 +71,15 @@ export async function DELETE(request, { params }) {
       });
     }
 
-    // Suppression des enregistrements de contenuPartenaire
     await db.contenuPartenaire.deleteMany({
-      where: { partenaireId },
+      where: { engagementId },
     });
 
-    // Suppression du logo associé
     const existingLogo = await db.logo.findFirst({
-      where: { partenaireId },
+      where: { engagementId },
     });
 
     if (existingLogo) {
-      // Optionnel : Supprimer le logo de Cloudinary
       const publicId = existingLogo.path.split("/").pop().split(".")[0];
       await fetch(`https://api.cloudinary.com/v1_1/dtryutlkz/image/destroy`, {
         method: "POST",
@@ -104,9 +97,8 @@ export async function DELETE(request, { params }) {
       });
     }
 
-    // Suppression du partenaire
-    await db.partenaire.delete({
-      where: { id: partenaireId },
+    await db.engagement.delete({
+      where: { id: engagementId },
     });
 
     return new NextResponse(
@@ -127,21 +119,19 @@ export async function PUT(request, { params }) {
     const { id } = params;
     const body = await request.formData();
 
-    // Vérification de l'existence de l'ID
     if (!id) {
       return new NextResponse(JSON.stringify({ message: "ID manquant" }), {
         status: 400,
       });
     }
 
-    // Extraction des données du formulaire
     const nom = body.get("nomMarque");
     const email = body.get("emailMarque");
     const phone = body.get("phoneMarque");
     const adresse = body.get("adresseMarque");
     const siteWeb = body.get("siteWeb");
-    const contenuPartenaire = body.getAll("contenuPartenaire"); // Plusieurs images
-    const logo = body.get("logo"); // Si un logo est fourni
+    const contenuPartenaire = body.getAll("contenuPartenaire");
+    const logo = body.get("logo");
     const duree = body.get("duree");
     const description = body.get("description");
     const facebook = body.get("facebook");
@@ -161,7 +151,7 @@ export async function PUT(request, { params }) {
       );
     }
 
-    const updatedPartenaire = await db.partenaire.update({
+    const updatedPartenaire = await db.engagement.update({
       where: { id: parseInt(id, 10) },
       data: {
         nom,
@@ -183,7 +173,7 @@ export async function PUT(request, { params }) {
 
     if (contenuPartenaire.length > 0) {
       await db.contenuPartenaire.deleteMany({
-        where: { partenaireId: updatedPartenaire.id },
+        where: { engagementId: updatedPartenaire.id },
       });
 
       for (const file of contenuPartenaire) {
@@ -210,7 +200,7 @@ export async function PUT(request, { params }) {
         await db.contenuPartenaire.create({
           data: {
             path: imageUrl,
-            partenaireId: updatedPartenaire.id,
+            engagementId: updatedPartenaire.id,
           },
         });
       }
@@ -218,7 +208,7 @@ export async function PUT(request, { params }) {
 
     if (logo) {
       const existingLogo = await db.logo.findFirst({
-        where: { partenaireId: updatedPartenaire.id },
+        where: { engagementId: updatedPartenaire.id },
       });
 
       if (existingLogo) {
@@ -249,7 +239,7 @@ export async function PUT(request, { params }) {
       await db.logo.create({
         data: {
           path: logoUrl,
-          partenaireId: updatedPartenaire.id,
+          engagementId: updatedPartenaire.id,
         },
       });
     }
