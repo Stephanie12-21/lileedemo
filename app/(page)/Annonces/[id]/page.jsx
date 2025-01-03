@@ -46,6 +46,8 @@ import StarRatingDialog from "@/app/(dialog)/note/page";
 import ConfirmDeleteModal from "@/app/(dialog)/delete/page";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/swiper-bundle.css";
+import { Input } from "@/components/ui/input";
+import { toast, ToastContainer } from "react-toastify";
 
 const InfoAnnonces = ({ params }) => {
   const { id } = params;
@@ -87,7 +89,7 @@ const InfoAnnonces = ({ params }) => {
       alert("Vous n'avez écrit aucun commentaire");
       return;
     } else if (!session) {
-      alert(
+      toast.info(
         "Vous devez vous connecter à votre compte pour pouvoir publier des commentaires"
       );
       return;
@@ -162,15 +164,15 @@ const InfoAnnonces = ({ params }) => {
         );
         setEditCommentId(null);
         setEditCommentText("");
-        alert("Commentaire mis à jour avec succès.");
+        toast.success("Commentaire mis à jour avec succès.");
       } else {
         const errorData = await response.json();
-        alert(
+        toast.error(
           `Erreur lors de la mise à jour du commentaire: ${errorData.message}`
         );
       }
     } catch (error) {
-      alert("Erreur:", error);
+      toast.error("Erreur:", error);
     }
   };
 
@@ -203,15 +205,15 @@ const InfoAnnonces = ({ params }) => {
         setComments((prevComments) =>
           prevComments.filter((comment) => comment.id !== selectedCommentId)
         );
-        alert("Commentaire supprimé avec succès.");
+        toast.success("Commentaire supprimé avec succès.");
       } else {
         const errorData = await response.json();
-        alert(
+        toast.error(
           `Erreur lors de la suppression du commentaire: ${errorData.message}`
         );
       }
     } catch (error) {
-      alert("Erreur:", error);
+      toast.error("Erreur:", error);
     } finally {
       handleCloseModal();
     }
@@ -617,24 +619,24 @@ const InfoAnnonces = ({ params }) => {
 
       <div className="flex items-start w-full pt-10">
         <Tabs defaultValue="description" className="w-full">
-          <TabsList className="flex space-x-4">
+          <TabsList className="flex space-x-4 justify-between px-5">
             <TabsTrigger
               value="description"
               className="relative py-2 px-4 text-base font-medium"
             >
-              Description
+              Description détaillée
             </TabsTrigger>
             <TabsTrigger
               value="avis"
               className="relative py-2 px-4 text-base font-medium"
             >
-              Avis
+              Avis et commentaires
             </TabsTrigger>
             <TabsTrigger
               value="localisation"
               className="relative py-2 px-4 text-base font-medium"
             >
-              Localisation
+              Localisation et adresse
             </TabsTrigger>
           </TabsList>
 
@@ -690,7 +692,7 @@ const InfoAnnonces = ({ params }) => {
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="mb-6 flex justify-between items-center space-x-3">
-                  <input
+                  <Input
                     type="text"
                     placeholder="Exprimez-vous..."
                     className="border border-gray-300 p-2 w-full rounded-lg"
@@ -937,6 +939,11 @@ const InfoAnnonces = ({ params }) => {
         onClose={handleCloseRatingModal}
         commentId={selectedCommentId}
         currentRating={note}
+      />
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
       />
     </div>
   );

@@ -334,7 +334,7 @@ export default function LayoutAdmin({ children }) {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+          {/* <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
             <AlertDialogContent className="max-w-md w-full p-6 gap-6">
               <AlertDialogHeader className="space-y-4">
                 <AlertDialogTitle className="text-2xl font-bold text-center">
@@ -404,6 +404,85 @@ export default function LayoutAdmin({ children }) {
                   variant="ghost"
                   onClick={handleCloseDialog}
                   className="w-full text-gray-600 hover:text-gray-800 hover:bg-gray-100"
+                >
+                  Annuler
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog> */}
+          <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+            <AlertDialogContent className="max-w-md w-full p-6 gap-6 bg-white dark:bg-gray-800 rounded-lg shadow-xl transition-all duration-300 ease-in-out">
+              <AlertDialogHeader className="space-y-4">
+                <AlertDialogTitle className="text-3xl font-bold text-center text-gray-900 dark:text-white">
+                  Noter la plateforme LILEE
+                </AlertDialogTitle>
+                <AlertDialogDescription className="text-center text-gray-600 dark:text-gray-300">
+                  Votre avis est précieux pour nous aider à améliorer votre
+                  expérience
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+
+              <div className="flex flex-col gap-8 py-6">
+                <div className="flex flex-col items-center gap-4">
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Sélectionnez une note
+                  </span>
+                  <div className="flex gap-2">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setRating(star)}
+                        onMouseEnter={() => setHover(star)}
+                        onMouseLeave={() => setHover(0)}
+                        className="relative p-1 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full"
+                        aria-label={`Noter ${star} étoile${
+                          star > 1 ? "s" : ""
+                        }`}
+                      >
+                        <Star
+                          size={40}
+                          className={`transition-colors duration-200 ${
+                            star <= (hover || rating)
+                              ? "fill-yellow-400 text-yellow-400"
+                              : "text-gray-300 dark:text-gray-600"
+                          }`}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label
+                    htmlFor="testimony"
+                    className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
+                    Partagez votre expérience
+                  </label>
+                  <Textarea
+                    id="testimony"
+                    value={testimony}
+                    onChange={(e) => setTestimony(e.target.value)}
+                    required
+                    className="min-h-[120px] resize-none border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:ring-blue-500 rounded-md transition-all duration-200 ease-in-out"
+                    placeholder="Qu'avez-vous apprécié ? Que pourrions-nous améliorer ?"
+                  />
+                </div>
+              </div>
+
+              <AlertDialogFooter className="flex-col gap-3 sm:flex-col">
+                <Button
+                  onClick={handleSubmit}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md transition-all duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                  disabled={!rating || !testimony.trim()}
+                >
+                  Soumettre mon avis
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={handleCloseDialog}
+                  className="w-full text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-all duration-200 ease-in-out"
                 >
                   Annuler
                 </Button>

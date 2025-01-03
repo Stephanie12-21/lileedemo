@@ -394,7 +394,7 @@ export default function Annonces() {
             ))}
           </select>
         ) : (
-          <TabsList className="flex space-x-4 ">
+          <TabsList className="flex space-x-4 justify-between px-5 ">
             {tabItems.map((item) => (
               <TabsTrigger
                 key={item.value}
@@ -530,6 +530,12 @@ export default function Annonces() {
           </Button>
         </Link>
       </div>
+
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+      />
     </div>
   );
 }
