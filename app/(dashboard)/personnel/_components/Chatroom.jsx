@@ -9,12 +9,6 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Send, ImageIcon, X, MoreVertical } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 import ConfirmDeleteModal from "@/app/(dialog)/delete/page";
 
@@ -31,15 +25,6 @@ const MessageCard = ({ message, me, other }) => {
     year: "numeric",
   });
 
-  const handleDeleteClick = (id) => {
-    setSelectedAnnonceId(id);
-    setShowDeleteModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowDeleteModal(false);
-    setSelectedAnnonceId(null);
-  };
   return (
     <>
       <div
