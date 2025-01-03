@@ -8,20 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Send, ImageIcon, X, MoreVertical } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Send, ImageIcon, X } from "lucide-react";
 
 import ConfirmDeleteModal from "@/app/(dialog)/delete/page";
 
 const MessageCard = ({ message, me, other }) => {
   const isMessageFromMe = message.senderId === me.id;
   const [selectedImage, setSelectedImage] = useState(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const formattedTime = new Date(message.time).toLocaleString("fr-FR", {
     hour: "2-digit",
@@ -31,15 +24,6 @@ const MessageCard = ({ message, me, other }) => {
     year: "numeric",
   });
 
-  const handleDeleteClick = (id) => {
-    setSelectedAnnonceId(id);
-    setShowDeleteModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowDeleteModal(false);
-    setSelectedAnnonceId(null);
-  };
   return (
     <>
       <div
@@ -231,7 +215,8 @@ const MessageInput = ({
 export default function ChatInterface({ selectedChatroom }) {
   const [message, setMessage] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [selectedChatroomId, setSelectedChatRoomId] = useState(false);
+  const [selectedChatRoomId, setSelectedChatRoomId] = useState(null);
+
   const [messages, setMessages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const messagesEndRef = useRef(null);
@@ -240,28 +225,62 @@ export default function ChatInterface({ selectedChatroom }) {
   const other = selectedChatroom?.otherData;
   const chatRoomId = selectedChatroom?.id;
 
+  // useEffect(() => {
+  //   if (selectedChatroom) {
+  //     const messagesRef = ref(db, `messages/${selectedChatroom.id}`);
+  //     const unsubscribe = onValue(messagesRef, (snapshot) => {
+  //       if (snapshot.exists()) {
+  //         const data = snapshot.val();
+  //         const formattedMessages = Object.entries(data).map(
+  //           ([id, message]) => ({
+  //             id,
+  //             ...message,
+  //           })
+  //         );
+  //         setMessages(formattedMessages);
+  //         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  //       } else {
+  //         setMessages([]);
+  //       }
+  //     });
+
+  //     return () => unsubscribe();
+  //   }
+  // }, [selectedChatroom]);
   useEffect(() => {
     if (selectedChatroom) {
       const messagesRef = ref(db, `messages/${selectedChatroom.id}`);
-      const unsubscribe = onValue(messagesRef, (snapshot) => {
-        if (snapshot.exists()) {
-          const data = snapshot.val();
-          const formattedMessages = Object.entries(data).map(
-            ([id, message]) => ({
-              id,
-              ...message,
-            })
-          );
-          setMessages(formattedMessages);
-          messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-        } else {
+      const chatroomRef = ref(db, `chatrooms/${selectedChatroom.id}`);
+
+      // Vérifier si la discussion est supprimée pour l'utilisateur
+      onValue(chatroomRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data?.deletedBy?.[me.id]) {
+          // La discussion est supprimée pour cet utilisateur, ne pas charger les messages
           setMessages([]);
+        } else {
+          // Charger les messages comme d'habitude
+          const unsubscribe = onValue(messagesRef, (snapshot) => {
+            if (snapshot.exists()) {
+              const data = snapshot.val();
+              const formattedMessages = Object.entries(data).map(
+                ([id, message]) => ({
+                  id,
+                  ...message,
+                })
+              );
+              setMessages(formattedMessages);
+              messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+            } else {
+              setMessages([]);
+            }
+          });
+
+          return () => unsubscribe();
         }
       });
-
-      return () => unsubscribe();
     }
-  }, [selectedChatroom]);
+  }, [selectedChatroom, me.id]);
 
   const uploadImagesToCloudinary = async () => {
     const uploadedImageUrls = [];
@@ -333,6 +352,7 @@ export default function ChatInterface({ selectedChatroom }) {
 
   const handleDeleteClick = (chatRoomId) => {
     setSelectedChatRoomId(chatRoomId);
+
     setShowDeleteModal(true);
   };
 
@@ -341,14 +361,39 @@ export default function ChatInterface({ selectedChatroom }) {
     setSelectedChatRoomId(null);
   };
 
-  const handleConfirmDelete = () => {
-    console.log("les données sont effacées");
+  // const handleConfirmDelete = () => {
+  //   console.log("les données sont effacées");
+  // };
+  const handleConfirmDelete = async () => {
+    try {
+      // Référence à la salle de discussion
+      const chatroomRef = ref(db, `chatrooms/${selectedChatRoomId}`);
+
+      // Ajouter un champ pour marquer la discussion comme supprimée pour l'utilisateur actuel
+      const userId = me.id;
+      await update(chatroomRef, {
+        [`deletedBy/${userId}`]: true, // Marque cette discussion comme supprimée pour l'utilisateur
+      });
+
+      console.log(
+        "La discussion a été marquée comme supprimée pour l'utilisateur actuel"
+      );
+
+      // Fermer le modal
+      setShowDeleteModal(false);
+
+      // Mettre à jour l'interface utilisateur pour cacher la discussion pour l'utilisateur
+      // (par exemple, en naviguant vers une autre page de chat ou en réinitialisant l'état des messages)
+      setMessages([]); // Effacer les messages de l'interface pour l'utilisateur qui supprime
+    } catch (error) {
+      console.error("Erreur lors de la suppression de la discussion :", error);
+    }
   };
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      <div className="bg-primary text-primary-foreground p-4 flex items-center justify-between shadow-md sticky top-0 z-10">
-        <div className="flex items-center space-x-4">
+      <div className="bg-primary text-primary-foreground border-t-2 border-b-2 border-b-primary-foreground p-4 flex items-center justify-between shadow-md sticky top-0 z-10">
+        <div className="flex items-center space-x-4  ">
           <Avatar className="h-10 w-10">
             <AvatarImage
               src={other?.profileImages?.[0]?.path || "/default-avatar.jpg"}
@@ -366,7 +411,7 @@ export default function ChatInterface({ selectedChatroom }) {
           </div>
         </div>
 
-        <DropdownMenu>
+        {/* <DropdownMenu>
           <div className="flex items-center space-x-3 bg-dark rounded-full p-2">
             <DropdownMenuTrigger asChild>
               <Button size="icon">
@@ -380,7 +425,7 @@ export default function ChatInterface({ selectedChatroom }) {
               Supprimer cette discussion
             </DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu> */}
       </div>
 
       <ScrollArea className="flex-1 py-4">

@@ -4,9 +4,10 @@ import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { ref, get, set } from "firebase/database";
-import UserCard from "./UserCard";
+
 import { db } from "@/firebaseconfig";
 import { MessageCircleMore, UserCircle } from "lucide-react";
+import UserCard from "./UserCard";
 
 const User = ({ userData, setSelectedChatroom }) => {
   const { status } = useSession();

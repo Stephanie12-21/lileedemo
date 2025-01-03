@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { MessageCircle, Loader2, Mails } from "lucide-react";
-
 import { ref, get, set } from "firebase/database";
 import { db } from "@/firebaseconfig";
 import { MessageCircleMore, UserCircle } from "lucide-react";
@@ -11,7 +10,7 @@ import Image from "next/image";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AnimatedSymbol from "@/components/MainComponents/Sections/Loading/AnimatedSymbol";
-import ChatInterface from "@/app/(dashboard)/admin/_components/Chatroom";
+import ChatInterface from "@/components/MainComponents/Messages/Chatroom";
 
 function UserCard({ name, avatarUrl, latestMessageText, time, type }) {
   return (
