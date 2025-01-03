@@ -73,7 +73,12 @@ export default function Annonces() {
       console.log("données reçues:", data);
 
       const filteredData = data
-        .filter((annonce) => annonce.statut !== "DESACTIVEE")
+        .filter(
+          (annonce) =>
+            annonce.statut !== "DESACTIVEE" &&
+            annonce.statut !== "EN_ATTENTE_DE_VALIDATION"
+        )
+
         .map((annonce) => {
           const notes = annonce.commentaire
             .map((c) => c.note)
@@ -298,6 +303,7 @@ export default function Annonces() {
               className="pl-10 pr-4 py-2 w-full border-2 border-primary/20 transition-colors bg-white"
             />
           </div>
+
           <div className="relative flex flex-wrap items-center gap-4 w-full md:w-2/4">
             <div className="flex-1 w-full">
               <Select value={tarifFilter} onValueChange={setTarifFilter}>
@@ -374,11 +380,7 @@ export default function Annonces() {
         </div>
       </div>
 
-      <Tabs
-        value={activeTab}
-        onValueChange={setActiveTab}
-        className="container mx-auto"
-      >
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         {isMobile ? (
           <select
             value={activeTab}
@@ -392,12 +394,12 @@ export default function Annonces() {
             ))}
           </select>
         ) : (
-          <TabsList className="grid w-full grid-cols-8 space-x-10 h-[70px] text-black">
+          <TabsList className="flex space-x-4 ">
             {tabItems.map((item) => (
               <TabsTrigger
                 key={item.value}
                 value={item.value}
-                className="text-[16px] font-semibold"
+                className="relative py-2 px-4 text-base font-medium"
               >
                 {item.label}
               </TabsTrigger>
