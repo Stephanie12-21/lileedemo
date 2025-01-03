@@ -20,7 +20,6 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 const AddAnnonce = () => {
   const router = useRouter();
@@ -134,7 +133,7 @@ const AddAnnonce = () => {
 
       toast.success("Annonce ajoutée avec succès !", {
         onClose: () => {
-          router.push(`/personnel/annonces/`);
+          router.push(`/professionnel/annonces/`);
           resetForm();
         },
       });

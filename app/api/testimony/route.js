@@ -3,18 +3,15 @@ import { NextResponse } from "next/server";
 
 export async function POST(request) {
   try {
-    // Récupérer les données JSON depuis le corps de la requête
     const body = await request.json();
 
     const testimony = body.testimony;
-    const rating = parseInt(body.rating, 10); // Conversion en entier
-    const userId = parseInt(body.userId, 10); // Conversion en entier
+    const rating = parseInt(body.rating, 10);
+    const userId = parseInt(body.userId, 10);
+    const ville = body.city;
+    const pays = body.country;
 
-    // Affiche les données reçues pour déboguer
-   // console.log("Données reçues :", { testimony, rating, userId });
-
-    // Validation des données
-    if (!testimony || isNaN(rating) || isNaN(userId)) {
+    if (!testimony || isNaN(rating) || isNaN(userId) || !ville || !pays) {
       return NextResponse.json(
         {
           message: "Tous les champs sont requis et doivent être valides.",
@@ -23,12 +20,13 @@ export async function POST(request) {
       );
     }
 
-    // Création du témoignage avec les données reçues
     const newTestimony = await db.temoignages.create({
       data: {
         temoignage: testimony,
         noteLilee: rating,
-        userId: userId, // Assurez-vous que `userId` est bien un entier ici
+        userId: userId,
+        ville: ville,
+        pays: pays,
       },
     });
 

@@ -228,7 +228,7 @@ const User = ({ userData, setSelectedChatroom }) => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#15213d]">
+      <div>
         <AnimatedSymbol />
       </div>
     );

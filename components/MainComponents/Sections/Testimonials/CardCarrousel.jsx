@@ -119,15 +119,11 @@ export function CardCarrousel() {
                             </AvatarFallback>
                           </Avatar>
                           <div className="flex pl-5 flex-col  min-w-[200px]">
-                            {/* <p className="text-[#304659] truncate font-semibold text-base">
-                              {testimony.user.nom} {testimony.user.prenom}
-                            </p> */}
                             <p className="text-[#304659] truncate font-semibold text-[17px]">
                               {testimony.user.prenom}
                             </p>
                             <p className="text-[#304659] truncate">
-                              {/* {testimony.user.email} */}
-                              De Ville, Pays
+                              De {testimony.ville}, {testimony.pays}
                             </p>
                           </div>
                         </div>

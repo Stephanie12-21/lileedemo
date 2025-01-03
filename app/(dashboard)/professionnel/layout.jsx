@@ -36,6 +36,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import AnimatedSymbol from "@/components/MainComponents/Sections/Loading/AnimatedSymbol";
 import { Input } from "@/components/ui/input";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function LayoutAdmin({ children }) {
   const { data: session } = useSession();
@@ -59,6 +60,8 @@ export default function LayoutAdmin({ children }) {
       userId: session.user.id,
       testimony,
       rating,
+      city,
+      country,
     };
 
     try {
@@ -71,7 +74,7 @@ export default function LayoutAdmin({ children }) {
       });
 
       if (response.ok) {
-        alert("Témoignage soumis avec succès !");
+        toast.success("Témoignage soumis avec succès !");
         setTestimony("");
         setRating(0);
         handleCloseDialog();
@@ -246,7 +249,7 @@ export default function LayoutAdmin({ children }) {
                 <p className="text-orange-500 font-bold text-xl">
                   {session.user.nom} {session.user.prenom}
                 </p>
-                <p className="text-gray-600 text-sm">{session.user.email}</p>
+                <p className="text-gray-600 text-base">{session.user.email}</p>
               </DropdownMenuLabel>
 
               <DropdownMenuSeparator />
@@ -283,89 +286,13 @@ export default function LayoutAdmin({ children }) {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-            <AlertDialogContent className="max-w-md w-full p-6 gap-6">
-              <AlertDialogHeader className="space-y-4">
-                <AlertDialogTitle className="text-2xl font-bold text-center">
-                  Noter la plateforme LILEE
-                </AlertDialogTitle>
-                <AlertDialogDescription className="text-center text-gray-600">
-                  Votre avis est précieux pour nous aider à améliorer votre
-                  expérience
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-
-              <div className="flex flex-col gap-6 py-4">
-                <div className="flex flex-col items-center gap-4">
-                  <span className="text-sm font-medium text-gray-700">
-                    Sélectionnez une note
-                  </span>
-                  <div className="flex gap-2">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <button
-                        key={star}
-                        type="button"
-                        onClick={() => setRating(star)}
-                        onMouseEnter={() => setHover(star)}
-                        onMouseLeave={() => setHover(0)}
-                        className="relative p-1 transition-transform hover:scale-110 focus:outline-none"
-                      >
-                        <Star
-                          size={32}
-                          className={`transition-colors duration-200 ${
-                            star <= (hover || rating)
-                              ? "fill-yellow-400 text-yellow-400"
-                              : "text-gray-300"
-                          }`}
-                        />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="testimony"
-                    className="text-sm font-medium text-gray-700"
-                  >
-                    Partagez votre expérience
-                  </label>
-                  <Textarea
-                    id="testimony"
-                    value={testimony}
-                    onChange={(e) => setTestimony(e.target.value)}
-                    required
-                    className="min-h-[120px] resize-none border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-                    placeholder="Qu'avez-vous apprécié ? Que pourrions-nous améliorer ?"
-                  />
-                </div>
-              </div>
-
-              <AlertDialogFooter className="flex-col gap-3 sm:flex-col">
-                <Button
-                  onClick={handleSubmit}
-                  className="w-full  text-white py-2"
-                  disabled={!rating || !testimony.trim()}
-                >
-                  Soumettre mon avis
-                </Button>
-                <Button
-                  variant="ghost"
-                  onClick={handleCloseDialog}
-                  className="w-full text-gray-600 hover:text-gray-800 hover:bg-gray-100"
-                >
-                  Annuler
-                </Button>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog> */}
           <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-            <AlertDialogContent className="max-w-md w-full p-6 gap-6">
+            <AlertDialogContent className="max-w-lg w-full p-6 gap-6">
               <AlertDialogHeader className="space-y-4">
-                <AlertDialogTitle className="text-2xl font-bold text-center">
+                <AlertDialogTitle className="text-3xl font-bold text-center">
                   Noter la plateforme LILEE
                 </AlertDialogTitle>
-                <AlertDialogDescription className="text-center text-gray-600">
+                <AlertDialogDescription className="text-center  text-gray-600">
                   Votre avis est précieux pour nous aider à améliorer votre
                   expérience
                 </AlertDialogDescription>
@@ -373,7 +300,7 @@ export default function LayoutAdmin({ children }) {
 
               <div className="flex flex-col gap-6 py-4">
                 <div className="flex flex-col items-center gap-4">
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-base font-medium text-gray-700">
                     Sélectionnez une note
                   </span>
                   <div className="flex gap-2">
@@ -402,7 +329,7 @@ export default function LayoutAdmin({ children }) {
                 <div className="space-y-2">
                   <label
                     htmlFor="testimony"
-                    className="text-sm font-medium text-gray-700"
+                    className="text-base font-medium text-gray-700"
                   >
                     Partagez votre expérience
                   </label>
@@ -411,12 +338,12 @@ export default function LayoutAdmin({ children }) {
                     value={testimony}
                     onChange={(e) => setTestimony(e.target.value)}
                     required
-                    className="min-h-[120px] resize-none border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                    className="min-h-[100px] resize-none border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                     placeholder="Qu'avez-vous apprécié ? Que pourrions-nous améliorer ?"
                   />
                 </div>
 
-                <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-y-0">
                   <div className="space-y-2">
                     <label
                       htmlFor="city"
@@ -468,7 +395,7 @@ export default function LayoutAdmin({ children }) {
                 <Button
                   variant="ghost"
                   onClick={handleCloseDialog}
-                  className="w-full text-gray-600 hover:text-gray-800 hover:bg-gray-100"
+                  className="w-full text-gray-600 hover:text-gray-800 hover:bg-gray-100 hover:underline"
                 >
                   Annuler
                 </Button>
@@ -478,6 +405,11 @@ export default function LayoutAdmin({ children }) {
         </header>
         <div className="container mx-auto">{children}</div>
       </div>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+      />
     </div>
   );
 }

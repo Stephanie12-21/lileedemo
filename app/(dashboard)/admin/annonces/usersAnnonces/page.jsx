@@ -58,7 +58,7 @@ import { useSession } from "next-auth/react";
 import AnimatedSymbol from "@/components/MainComponents/Sections/Loading/AnimatedSymbol";
 
 const UserPage = () => {
-  const { data: session, status } = useSession();
+  const { data: status } = useSession();
   const [raison, setRaison] = useState("");
   const [date, setDate] = useState("");
   const [email, setEmail] = useState("");
@@ -387,7 +387,7 @@ const UserPage = () => {
 
   if (loading)
     return (
-      <div className="flex items-center justify-center min-h-screen ">
+      <div>
         <AnimatedSymbol />
       </div>
     );

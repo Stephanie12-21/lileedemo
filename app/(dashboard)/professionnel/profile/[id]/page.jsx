@@ -4,7 +4,6 @@ import React, { useEffect, useState, useCallback } from "react";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -27,10 +26,11 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AnimatedSymbol from "@/components/MainComponents/Sections/Loading/AnimatedSymbol";
-
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const UserProfilePreview = () => {
-  const [errorMessage, setErrorMessage] = useState(""); 
+  const [errorMessage, setErrorMessage] = useState("");
   const [siretValid, setSiretValid] = useState(null);
   const router = useRouter();
   const { id: userId } = useParams();
@@ -124,7 +124,7 @@ const UserProfilePreview = () => {
       setVerificationCodes(generatedCodes);
 
       try {
-        const response = await fetch("/api/user/verifEmail/", {
+        const response = await fetch("/api/user/emailVerif/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -232,7 +232,7 @@ const UserProfilePreview = () => {
 
       await fetchUserData();
       setIsEditing(false);
-      alert("Profil mis à jour avec succès !");
+      toast.success("Profil mis à jour avec succès !");
     } catch (error) {
       console.error("Erreur lors de la mise à jour du profil :", error);
       alert("Erreur lors de la mise à jour du profil. Veuillez réessayer.");
@@ -266,7 +266,7 @@ const UserProfilePreview = () => {
         });
 
         if (response.ok) {
-          alert(`L'user avec l'ID : ${userId} a été supprimé.`);
+          toast.success("L'utilisateur a été supprimé avec succès.");
         } else {
           throw new Error("Erreur lors de la suppression de l'user.");
         }
@@ -439,7 +439,7 @@ const UserProfilePreview = () => {
 
         await fetchUserData();
         setIsEditingCompany(false);
-        alert("Profil mis à jour avec succès !");
+        toast.success("Profil mis à jour avec succès !");
       } catch (error) {
         console.error("Erreur lors de la mise à jour du profil :", error);
         alert("Erreur lors de la mise à jour du profil. Veuillez réessayer.");
@@ -472,7 +472,9 @@ const UserProfilePreview = () => {
         );
 
         if (response.ok) {
-          alert(`L'user avec l'ID : ${userId} a été supprimé.`);
+          toast.success(
+            "Les données de la société ont été supprimées avec succès."
+          );
           router.push("/userPro");
         } else {
           throw new Error("Erreur lors de la suppression de l'user.");
@@ -486,7 +488,6 @@ const UserProfilePreview = () => {
 
   ////////////////////////////FONCTION POUR LES MODIFICATIONS DE LA SOCIETE////////////////////
 
-  ////////////////////////////FONCTION POUR LA MODIFICATION DE L'IMAGE////////////////////
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -520,28 +521,28 @@ const UserProfilePreview = () => {
   }
 
   return (
-    <div className="bg-gray-100 min-h-screen py-8">
+    <div className=" min-h-screen py-8">
       <div className="container mx-auto px-4">
         <Card className="max-w-6xl mx-auto bg-white shadow-lg">
           <CardContent className="p-0">
             <div className="flex flex-col md:flex-row">
               {/* image */}
-              <div className="md:w-1/2 border flex items-center justify-center p-8">
-                <Avatar className="w-52 h-52">
-                  <AvatarImage
-                    src={profileImage}
-                    alt={`${user.nom} ${user.prenom}`}
-                    className="object-cover rounded-full"
-                  />
-                  <AvatarFallback className="bg-blue-200 text-blue-700 text-6xl w-full h-full">
-                    {user.nom[0]}
-                    {user.prenom[0]}
-                  </AvatarFallback>
-                </Avatar>
-                {isEditing && (
-                  <div className="mt-4">
-                    <label className="cursor-pointer">
-                      <ImagePlus className="text-8xl text-blue-500" />
+              <div className="w-full md:w-2/3 bg-primary flex flex-col items-center justify-center p-8 relative">
+                <div className="relative group">
+                  <Avatar className="w-52 h-52 border-4 border-white shadow-lg transition-all duration-300 ease-in-out group-hover:scale-105">
+                    <AvatarImage
+                      src={profileImage}
+                      alt={`${user.nom} ${user.prenom}`}
+                      className="object-cover"
+                    />
+                    <AvatarFallback className="bg-blue-200 text-blue-700 text-4xl">
+                      {user.nom[0]}
+                      {user.prenom[0]}
+                    </AvatarFallback>
+                  </Avatar>
+                  {isEditing && (
+                    <label className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-lg cursor-pointer transition-all duration-300 ease-in-out hover:bg-blue-100">
+                      <ImagePlus className="w-6 h-6 text-blue-500" />
                       <input
                         type="file"
                         accept="image/*"
@@ -549,20 +550,30 @@ const UserProfilePreview = () => {
                         className="hidden"
                       />
                     </label>
-                  </div>
-                )}
+                  )}
+                </div>
+                <h2 className="mt-6 text-2xl font-bold text-white text-center">
+                  {user.prenom} {user.nom}
+                </h2>
+                <p className="mt-2 text-blue-100 text-center">{user.email}</p>
               </div>
 
-              <Tabs defaultValue="adminCompte" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="adminCompte">
+              <Tabs defaultValue="adminCompte" className="w-full bg-inherit">
+                <TabsList className="flex space-x-4 justify-between px-5 rounded-none">
+                  <TabsTrigger
+                    value="adminCompte"
+                    className="relative py-2 px-4 text-base font-medium "
+                  >
                     Administrateur du compte
                   </TabsTrigger>
-                  <TabsTrigger value="companyInfo">
+                  <TabsTrigger
+                    value="companyInfo"
+                    className="relative py-2 px-4 text-base font-medium"
+                  >
                     Informations de la société
                   </TabsTrigger>
                 </TabsList>
-                <TabsContent value="adminCompte">
+                <TabsContent value="adminCompte" className="mx-auto">
                   <Card>
                     <CardHeader>
                       <CardTitle className="text-3xl font-bold text-gray-800 mb-6">
@@ -570,96 +581,105 @@ const UserProfilePreview = () => {
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-2">
-                      <div className="grid grid-cols-2 gap-4">
-                        {/* prénom */}
-                        <div className="space-y-2">
-                          <Label
-                            htmlFor="prenom"
-                            className="text-sm font-medium text-gray-600"
-                          >
-                            Prénom
-                          </Label>
-                          <Input
-                            id="prenom"
-                            value={isEditing ? editedUser.prenom : user.prenom}
-                            readOnly={!isEditing}
-                            onChange={handleInputChange}
-                            className={`bg-gray-50 ${
-                              isEditing ? "" : "cursor-not-allowed"
-                            }`}
-                          />
-                        </div>
-
-                        {/* nom */}
-                        <div className="space-y-2">
-                          <Label
-                            htmlFor="nom"
-                            className="text-sm font-medium text-gray-600"
-                          >
-                            Nom
-                          </Label>
-                          <Input
-                            id="nom"
-                            value={isEditing ? editedUser.nom : user.nom}
-                            readOnly={!isEditing}
-                            onChange={handleInputChange}
-                            className={`bg-gray-50 ${
-                              isEditing ? "" : "cursor-not-allowed"
-                            }`}
-                          />
+                      <div className="space-y-4 mb-10">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-y-0">
+                          <div className="space-y-2">
+                            <Label
+                              htmlFor="prenom"
+                              className="text-base font-semibold text-gray-600"
+                            >
+                              Prénoms
+                            </Label>
+                            <Input
+                              id="prenom"
+                              value={
+                                isEditing ? editedUser.prenom : user.prenom
+                              }
+                              readOnly={!isEditing}
+                              onChange={handleInputChange}
+                              className={`bg-gray-50 text-base ${
+                                isEditing ? "" : "cursor-not-allowed"
+                              }`}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label
+                              htmlFor="nom"
+                              className="text-base font-semibold text-gray-600"
+                            >
+                              Nom
+                            </Label>
+                            <Input
+                              id="nom"
+                              value={isEditing ? editedUser.nom : user.nom}
+                              readOnly={!isEditing}
+                              onChange={handleInputChange}
+                              className={`bg-gray-50 ${
+                                isEditing ? "" : "cursor-not-allowed"
+                              }`}
+                            />
+                          </div>
                         </div>
                       </div>
 
-                      {/* email */}
-                      <div className="space-y-2">
-                        <Label
-                          htmlFor="email"
-                          className="text-sm font-medium text-gray-600"
-                        >
-                          Email
-                        </Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={isEditing ? editedUser.email : user.email}
-                          readOnly={!isEditing}
-                          onChange={handleInputChange}
-                          className={`bg-gray-50 ${
-                            isEditing ? "" : "cursor-not-allowed"
-                          }`}
-                        />
-                      </div>
-
-                      {/* phone */}
-                      <div className="space-y-2">
-                        <Label
-                          htmlFor="phone"
-                          className="text-sm font-medium text-gray-600"
-                        >
-                          Numéro de téléphone
-                        </Label>
-                        <PhoneInput
-                          country={"fr"}
-                          value={isEditing ? editedUser.phone : user.phone}
-                          onChange={(phone) => {
-                            setEditedUser((prevState) => ({
-                              ...prevState,
-                              phone: `+${phone}`,
-                            }));
-                          }}
-                          readOnly={!isEditing}
-                          inputClass={`bg-gray-50 ${
-                            isEditing ? "" : "cursor-not-allowed"
-                          }`}
-                          disabled={!isEditing}
-                        />
+                      <div className="space-y-4 mb-10">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-y-0">
+                          <div className="space-y-2">
+                            <Label
+                              htmlFor="email"
+                              className="text-base font-semibold text-gray-600"
+                            >
+                              Email
+                            </Label>
+                            <Input
+                              id="email"
+                              type="email"
+                              value={isEditing ? editedUser.email : user.email}
+                              readOnly={!isEditing}
+                              onChange={handleInputChange}
+                              className={`bg-gray-50 ${
+                                isEditing ? "" : "cursor-not-allowed"
+                              }`}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label
+                              htmlFor="phone"
+                              className="text-base font-semibold text-gray-600"
+                            >
+                              Numéro de téléphone
+                            </Label>
+                            <div className="relative w-full">
+                              <PhoneInput
+                                country={"fr"}
+                                value={
+                                  isEditing ? editedUser.phone : user.phone
+                                }
+                                onChange={(phone) => {
+                                  setEditedUser((prevState) => ({
+                                    ...prevState,
+                                    phone: `+${phone}`,
+                                  }));
+                                }}
+                                inputProps={{
+                                  id: "phone",
+                                  readOnly: !isEditing,
+                                }}
+                                inputClass={`!w-full bg-gray-50 ${
+                                  isEditing ? "" : "cursor-not-allowed"
+                                }`}
+                                disabled={!isEditing}
+                              />
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </CardContent>
-                    <CardFooter>
-                      <div className="mt-4">
+                    <CardFooter className="w-full">
+                      <div className="mt-10 space-y-2 w-full">
                         <button
                           onClick={handleEditClick}
-                          className="mr-4 bg-blue-500 text-white px-4 py-2 rounded"
+                          className="mr-4 bg-primary w-full text-white px-4 py-2 rounded"
                         >
                           {isEditing
                             ? "Enregistrer les modifications"
@@ -668,7 +688,7 @@ const UserProfilePreview = () => {
                         {!isEditing && (
                           <button
                             onClick={handleDeleteClick}
-                            className="bg-red-500 text-white px-4 py-2 rounded"
+                            className="bg-red-500 text-white text-base font-semibold w-full px-4 py-2 rounded"
                           >
                             Supprimer le profil
                           </button>
@@ -676,7 +696,7 @@ const UserProfilePreview = () => {
                         {isEditing && (
                           <button
                             onClick={() => setIsEditing(false)}
-                            className="ml-4 bg-gray-400 text-white px-4 py-2 rounded"
+                            className=" bg-gray-400 text-white text-base font-semibold w-full px-4 py-2 rounded"
                           >
                             Annuler
                           </button>
@@ -685,12 +705,11 @@ const UserProfilePreview = () => {
                     </CardFooter>
                   </Card>
                 </TabsContent>
-                <TabsContent value="companyInfo">
+                <TabsContent value="companyInfo" className="mx-auto">
                   <Card>
                     <CardHeader>
                       <CardTitle className="text-3xl font-bold text-gray-800 mb-6">
                         Profil de la société{" "}
-                        {/* <input type="text" value={user.company.id} readOnly /> */}
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-2">
@@ -700,7 +719,7 @@ const UserProfilePreview = () => {
                           <div className="space-y-2">
                             <Label
                               htmlFor="siret"
-                              className="text-sm font-medium text-gray-600"
+                              className="text-base font-semibold text-gray-600"
                             >
                               SIRET
                             </Label>
@@ -723,7 +742,7 @@ const UserProfilePreview = () => {
                           <div className="space-y-2">
                             <Label
                               htmlFor="nomSociete"
-                              className="text-sm font-medium text-gray-600"
+                              className="text-base font-semibold text-gray-600"
                             >
                               Nom de la société
                             </Label>
@@ -747,7 +766,7 @@ const UserProfilePreview = () => {
                         <div className="space-y-2">
                           <Label
                             htmlFor="adresse"
-                            className="text-sm font-medium text-gray-600"
+                            className="text-base font-semibold text-gray-600"
                           >
                             Adresse
                           </Label>
@@ -771,7 +790,7 @@ const UserProfilePreview = () => {
                           <div className="space-y-2">
                             <Label
                               htmlFor="codePostal"
-                              className="text-sm font-medium text-gray-600"
+                              className="text-base font-semibold text-gray-600"
                             >
                               Code postal
                             </Label>
@@ -794,7 +813,7 @@ const UserProfilePreview = () => {
                           <div className="space-y-2">
                             <Label
                               htmlFor="ville"
-                              className="text-sm font-medium text-gray-600"
+                              className="text-base font-semibold text-gray-600"
                             >
                               Ville
                             </Label>
@@ -819,7 +838,7 @@ const UserProfilePreview = () => {
                           <div className="space-y-2">
                             <Label
                               htmlFor="secteur"
-                              className="text-sm font-medium text-gray-600"
+                              className="text-base font-semibold text-gray-600"
                             >
                               Secteur d&apos;activité
                             </Label>
@@ -879,7 +898,7 @@ const UserProfilePreview = () => {
                           <div className="space-y-2">
                             <Label
                               htmlFor="type"
-                              className="text-sm font-medium text-gray-600"
+                              className="text-base font-semibold text-gray-600"
                             >
                               Type de société
                             </Label>
@@ -927,11 +946,11 @@ const UserProfilePreview = () => {
                         </div>
                       </div>
                     </CardContent>
-                    <CardFooter>
-                      <div className="mt-4">
+                    <CardFooter className="w-full">
+                      <div className="mt-10 space-y-2 w-full">
                         <button
                           onClick={handleEditCompanyClick}
-                          className="mr-4 bg-blue-500 text-white px-4 py-2 rounded"
+                          className="mr-4 bg-primary w-full text-white px-4 py-2 rounded"
                         >
                           {isEditingCompany
                             ? "Enregistrer les modifications"
@@ -940,7 +959,7 @@ const UserProfilePreview = () => {
                         {!isEditingCompany && (
                           <button
                             onClick={handleDeleteCompanyClick}
-                            className="bg-red-500 text-white px-4 py-2 rounded"
+                            className="bg-red-500 text-white text-base font-semibold w-full px-4 py-2 rounded"
                           >
                             Supprimer le profil
                           </button>
@@ -948,7 +967,7 @@ const UserProfilePreview = () => {
                         {isEditingCompany && (
                           <button
                             onClick={() => setIsEditingCompany(false)}
-                            className="ml-4 bg-gray-400 text-white px-4 py-2 rounded"
+                            className=" bg-gray-400 text-white text-base font-semibold w-full px-4 py-2 rounded"
                           >
                             Annuler
                           </button>
@@ -1021,6 +1040,11 @@ const CodeVerificationDialog = ({ onVerify, onCancel }) => {
           </button>
         </div>
       </div>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+      />
     </div>
   );
 };
