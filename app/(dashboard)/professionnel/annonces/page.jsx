@@ -14,7 +14,6 @@ import {
   Edit,
   Trash2,
   Rocket,
-  Plus,
   Loader,
   BadgeCheck,
   Search,
@@ -32,6 +31,7 @@ const Annonces = () => {
   const [error, setError] = useState(null);
   const router = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isDropdownRocketOpen, setIsDropdownRocketOpen] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -111,6 +111,21 @@ const Annonces = () => {
     { value: "MATERIEL", label: "Matériels et équipements" },
     { value: "MOBILIER", label: "Mobilier" },
     { value: "DONS", label: "Dons" },
+  ];
+
+  const handleRocketClick = (id) => {
+    setSelectedAnnonceId(id);
+    setIsDropdownRocketOpen(!isDropdownRocketOpen);
+  };
+
+  const dropdownItems = [
+    { label: "Urgent", action: () => console.log("Urgent clicked") },
+    { label: "Populaire", action: () => console.log("Populaire clicked") },
+    {
+      label: "Recommandation",
+      action: () => console.log("Recommandation clicked"),
+    },
+    { label: "Normal", action: () => console.log("Plan gratuit") },
   ];
 
   return (

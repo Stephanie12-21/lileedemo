@@ -148,7 +148,7 @@ const ArticleDetailPageModif = ({ params }) => {
         throw new Error("Erreur lors de la mise à jour de l'annonce");
       }
       alert("Annonce mise à jour !");
-      router.push(`/admin/annonces/`);
+      router.push(`/professionnel/annonces/`);
     } catch (error) {
       console.error("Erreur de mise à jour:", error);
       alert("Erreur lors de la mise à jour.");

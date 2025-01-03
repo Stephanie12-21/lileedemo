@@ -70,7 +70,7 @@ export default function Login() {
         if (role === "PERSO") {
           router.push("/personnel/");
         } else if (role === "PRO") {
-          router.push("/professionnel/");
+          router.push("/professionnel/annonces");
         } else if (role === "ADMIN") {
           router.push(`/admin/`);
         } else {
