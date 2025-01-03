@@ -10,7 +10,7 @@ import { db } from "@/firebaseconfig";
 import { MessageCircleMore, UserCircle } from "lucide-react";
 import Image from "next/image";
 import AnimatedSymbol from "@/components/MainComponents/Sections/Loading/AnimatedSymbol";
-import ChatInterface from "../../_components/Chatroom";
+import ChatInterface from "@/app/(dashboard)/professionnel/_components/Chatroom";
 
 function UserCard({ name, avatarUrl, latestMessageText, time, type }) {
   return (

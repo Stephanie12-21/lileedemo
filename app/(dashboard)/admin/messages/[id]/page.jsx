@@ -11,7 +11,7 @@ import Image from "next/image";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AnimatedSymbol from "@/components/MainComponents/Sections/Loading/AnimatedSymbol";
-import ChatInterface from "../../_components/Chatroom";
+import ChatInterface from "@/app/(dashboard)/admin/_components/Chatroom";
 
 function UserCard({ name, avatarUrl, latestMessageText, time, type }) {
   return (
