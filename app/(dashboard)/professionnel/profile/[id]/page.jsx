@@ -26,11 +26,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import AnimatedSymbol from "@/components/MainComponent/Loading/Loading";
+import AnimatedSymbol from "@/components/MainComponents/Sections/Loading/AnimatedSymbol";
+
 
 const UserProfilePreview = () => {
-  const [errorMessage, setErrorMessage] = useState(""); // Pour stocker les messages d'erreur
-  const [siretValid, setSiretValid] = useState(null); // Pour stocker l'état de la validation
+  const [errorMessage, setErrorMessage] = useState(""); 
+  const [siretValid, setSiretValid] = useState(null);
   const router = useRouter();
   const { id: userId } = useParams();
   const [user, setUser] = useState(null);
@@ -91,13 +92,13 @@ const UserProfilePreview = () => {
         prenom: data.user.prenom || "",
         email: data.user.email || "",
         phone: data.user.phone || "",
-        nomSociete: data.user.company?.nomSociete || "", // Accès aux données de la société
-        ville: data.user.company?.ville || "", // Accès aux données de la société
-        siret: data.user.company?.siret || "", // Accès aux données de la société
-        typeSociete: data.user.company?.typeSociete || "", // Accès aux données de la société
-        codePostal: data.user.company?.codePostal || "", // Accès aux données de la société
+        nomSociete: data.user.company?.nomSociete || "",
+        ville: data.user.company?.ville || "",
+        siret: data.user.company?.siret || "",
+        typeSociete: data.user.company?.typeSociete || "",
+        codePostal: data.user.company?.codePostal || "",
         companyId: data.user.company?.id || "",
-        secteurActivite: data.user.company?.secteurActivite || "", // Accès aux données de la société
+        secteurActivite: data.user.company?.secteurActivite || "",
       });
     } catch (error) {
       setError(
@@ -116,13 +117,12 @@ const UserProfilePreview = () => {
   }, [userId, fetchUserData]);
 
   ////////////////////////////FONCTION POUR LES MODIFICATIONS DE L'ADMIN DU COMPTE////////////////////
-  //fonction pour modifier les données de l'admin du compte
+
   const handleEditClick = async () => {
     if (isEditing) {
       const generatedCodes = generateVerificationCodes();
       setVerificationCodes(generatedCodes);
 
-      // Send email verification
       try {
         const response = await fetch("/api/user/verifEmail/", {
           method: "POST",
@@ -147,7 +147,6 @@ const UserProfilePreview = () => {
         return;
       }
 
-      // Send SMS verification
       const phone = `+${editedUser.phone}`;
       try {
         const response = await fetch("/api/user/verifPhone/", {
@@ -186,7 +185,6 @@ const UserProfilePreview = () => {
     phone: "",
   });
 
-  //générer les codes de vérification
   const generateVerificationCodes = () => {
     const emailVerificationCode = Math.floor(
       100000 + Math.random() * 900000
@@ -197,22 +195,20 @@ const UserProfilePreview = () => {
     return { email: emailVerificationCode, phone: phoneVerificationCode };
   };
 
-  //vérifier les codes saisis et envoyés
   const handleVerifyCodes = (enteredEmailCode, enteredPhoneCode) => {
     if (
       enteredEmailCode === verificationCodes.email &&
       enteredPhoneCode === verificationCodes.phone
     ) {
-      handleConfirmEdit(); // Appel à la fonction de mise à jour des données
+      handleConfirmEdit();
     } else {
       alert(
         "Les codes de vérification ne correspondent pas. Veuillez réessayer."
       );
     }
-    setShowVerifInfo(false); // Fermer le dialogue
+    setShowVerifInfo(false);
   };
 
-  //confirmer les modifications
   const handleConfirmEdit = async () => {
     const formData = new FormData();
     formData.append("nom", editedUser.nom);
@@ -243,7 +239,6 @@ const UserProfilePreview = () => {
     }
   };
 
-  //pour gérer les valeurs des champs
   const handleInputChange = (e) => {
     const { id, value } = e.target;
     setEditedUser((prevState) => ({
@@ -256,12 +251,10 @@ const UserProfilePreview = () => {
     }));
   };
 
-  //abandonner les modifications
   const handleCancelEdit = () => {
-    setShowVerifInfo(false); // Fermer le dialogue sans enregistrer
+    setShowVerifInfo(false);
   };
 
-  //pour la suppression des données
   const handleDeleteClick = async () => {
     const confirmed = window.confirm(
       `Voulez-vous vraiment supprimer l'article avec l'ID : ${userId}?`
@@ -286,7 +279,7 @@ const UserProfilePreview = () => {
   ////////////////////////////FONCTION POUR LES MODIFICATIONS DE L'ADMIN DU COMPTE////////////////////
 
   ////////////////////////////FONCTION POUR LES MODIFICATIONS DE LA SOCIETE////////////////////
-  //fonction pour la vérification du siret
+
   const verifySiret = async () => {
     const sanitizedSiret = editedCompany.siret.replace(/\s/g, "");
 
@@ -355,7 +348,6 @@ const UserProfilePreview = () => {
     }
   };
 
-  //comparer les données reçues et les données saisies
   const compareFormValues = (companyInfo) => {
     const Adresse =
       `${companyInfo.adresseEtablissement.numeroVoieEtablissement} ${companyInfo.adresseEtablissement.typeVoieEtablissement} ${companyInfo.adresseEtablissement.libelleVoieEtablissement}`.trim();
@@ -416,7 +408,6 @@ const UserProfilePreview = () => {
     }
   };
 
-  //modifier les données
   const handleEditCompanyClick = async () => {
     if (isEditingCompany) {
       verifySiret();
@@ -467,7 +458,6 @@ const UserProfilePreview = () => {
     }
   };
 
-  //pour la suppression des données de la société
   const handleDeleteCompanyClick = async () => {
     const confirmed = window.confirm(
       `Voulez-vous vraiment supprimer la société avec l'ID : ${user.company.id}`
@@ -497,7 +487,6 @@ const UserProfilePreview = () => {
   ////////////////////////////FONCTION POUR LES MODIFICATIONS DE LA SOCIETE////////////////////
 
   ////////////////////////////FONCTION POUR LA MODIFICATION DE L'IMAGE////////////////////
-  //pour les images
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -1003,7 +992,7 @@ const CodeVerificationDialog = ({ onVerify, onCancel }) => {
             onChange={(e) => setEmailCodeInput(e.target.value)}
           />
         </div>
-        {/* <div className="mt-4">
+        <div className="mt-4">
           <Label htmlFor="phoneCode" className="text-sm font-medium">
             Code téléphone
           </Label>
@@ -1012,7 +1001,7 @@ const CodeVerificationDialog = ({ onVerify, onCancel }) => {
             value={phoneCodeInput}
             onChange={(e) => setPhoneCodeInput(e.target.value)}
           />
-        </div> */}
+        </div>
         <div className="mt-4 flex justify-between">
           <button
             onClick={() => {
