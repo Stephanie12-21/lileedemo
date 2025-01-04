@@ -13,7 +13,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSession } from "next-auth/react";
 import { Input } from "@/components/ui/input";
-import { CalendarIcon, Search } from "lucide-react";
+import { CalendarIcon, Loader2, Search } from "lucide-react";
 import { fr } from "date-fns/locale";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -66,6 +66,9 @@ export default function Annonces() {
   const [tarifFilter, setTarifFilter] = useState("");
   const [ratingFilter, setRatingFilter] = useState("");
   const router = useRouter();
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 8;
+
   const fetchAnnonces = async () => {
     try {
       const response = await fetch("/api/annonce/getAll");
@@ -290,6 +293,22 @@ export default function Annonces() {
     router.push(`/Annonces/id=${annonceId}`);
   };
 
+  if (loading) {
+    return (
+      <Card className="w-full max-w-md mx-auto mt-8 mb-8">
+        <CardContent className="flex flex-col items-center justify-center p-6">
+          <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
+          <p className="text-lg font-medium text-center">
+            Chargement de l&apos;annonce en cours...
+          </p>
+          <p className="text-sm text-muted-foreground text-center mt-2">
+            Veuillez patienter quelques instants.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <div className="w-full py-9 px-6">
       <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4 justify-between pt-8 mb-6">
@@ -407,15 +426,33 @@ export default function Annonces() {
           </TabsList>
         )}
 
-        {tabItems.map((item) => (
-          <TabsContent key={item.value} value={item.value} className="mx-auto">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pt-10 mx-4 md:mx-10">
-              {filteredAnnonces.length === 0 && annonces.length === 0 ? (
-                <Label>Aucune annonce disponible.</Label>
-              ) : (
-                filteredAnnonces
-                  .filter((annonce) => annonce.categorieAnnonce === item.value)
-                  .map((annonce, index) => (
+        {tabItems.map((item) => {
+          const filteredByCategory = filteredAnnonces.filter(
+            (annonce) => annonce.categorieAnnonce === item.value
+          );
+
+          const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+          const endIndex = startIndex + ITEMS_PER_PAGE;
+          const paginatedAnnonces = filteredByCategory.slice(
+            startIndex,
+            endIndex
+          );
+
+          const totalPages = Math.ceil(
+            filteredByCategory.length / ITEMS_PER_PAGE
+          );
+
+          return (
+            <TabsContent
+              key={item.value}
+              value={item.value}
+              className="mx-auto"
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pt-10 mx-4 md:mx-10">
+                {paginatedAnnonces.length === 0 && annonces.length === 0 ? (
+                  <Label>Aucune annonce disponible.</Label>
+                ) : (
+                  paginatedAnnonces.map((annonce, index) => (
                     <motion.div
                       key={annonce.id}
                       custom={index}
@@ -439,7 +476,6 @@ export default function Annonces() {
                           )}
                           <div className="absolute top-0 left-0 z-10 bg-[#FFA500] text-white px-4 py-1 rounded-br-lg transform -skew-x-12">
                             <span className="block transform skew-x-12">
-                              {/* {annonce.priority} */}
                               Populaire
                             </span>
                           </div>
@@ -516,20 +552,36 @@ export default function Annonces() {
                       </Card>
                     </motion.div>
                   ))
-              )}
-            </div>
-          </TabsContent>
-        ))}
-      </Tabs>
+                )}
+              </div>
 
-      <div className="container mx-auto flex items-center w-full pt-10 place-content-center">
-        <Link href="/Annonces">
-          <Button className="py-4 px-5 text-[20px]">
-            <FaArrowRight className="mr-2" />
-            Voir plus d&apos;annonces
-          </Button>
-        </Link>
-      </div>
+              {filteredByCategory.length > ITEMS_PER_PAGE && (
+                <div className="flex justify-center items-center mt-10">
+                  <Button
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(prev - 1, 1))
+                    }
+                    disabled={currentPage === 1}
+                    className="px-4 py-2  disabled"
+                  >
+                    Précédent
+                  </Button>
+                  <span className="px-4">{`Page ${currentPage} sur ${totalPages}`}</span>
+                  <Button
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                    }
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2  disabled"
+                  >
+                    Suivant
+                  </Button>
+                </div>
+              )}
+            </TabsContent>
+          );
+        })}
+      </Tabs>
 
       <ToastContainer
         position="top-center"

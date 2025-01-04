@@ -73,6 +73,8 @@ const UserPage = () => {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const router = useRouter();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -379,11 +381,27 @@ const UserPage = () => {
     },
   ];
 
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredUsersData.slice(startIndex, endIndex);
+  }, [filteredUsersData, currentPage, itemsPerPage]);
+
   const table = useReactTable({
-    data: filteredUsersData,
+    data: paginatedData,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
+
+  const totalPages = Math.ceil(filteredUsersData.length / itemsPerPage);
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
 
   if (loading)
     return (
@@ -393,227 +411,254 @@ const UserPage = () => {
     );
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-4xl font-bold mb-8 text-center">
-        Liste de toutes les annonces de LILEE
-      </h1>
+    <div className="min-h-screen bg-gray-50 text-base">
+      <div className="container mx-auto px-7 pt-8 pb-0">
+        <div className="flex justify-between items-center mb-2">
+          <h1 className="text-4xl font-bold mb-8 text-center">
+            Liste de toutes les annonces de LILEE
+          </h1>
+        </div>
 
-      <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4 justify-between pt-8 mb-6">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 w-full max-w-full mx-auto">
-          <div className="relative w-full md:w-2/3">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Rechercher ici ..."
-              value={searchFilter}
-              onChange={(e) => setSearchFilter(e.target.value)}
-              className="pl-10 pr-4 py-2 w-full border-2 border-primary/20 transition-colors bg-white"
-            />
-          </div>
+        <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4 justify-between pt-8 mb-6">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 w-full max-w-full mx-auto">
+            <div className="relative w-full md:w-2/3">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Rechercher ici ..."
+                value={searchFilter}
+                onChange={(e) => setSearchFilter(e.target.value)}
+                className="pl-10 pr-4 py-2 w-full border-2 border-primary/20 transition-colors bg-white"
+              />
+            </div>
 
-          <div className="flex flex-wrap items-center gap-4 w-full md:w-2/3">
-            <Select
-              value={categoryFilter}
-              onValueChange={(value) => setCategoryFilter(value)}
-              className="pl-10 pr-4 py-2 w-full border-2 border-primary/20  transition-colors bg-white"
-            >
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Sélectionner la catégorie" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="all">Tous</SelectItem>
-                  <SelectItem value="immobilier">Immobilier</SelectItem>
-                  <SelectItem value="vetement">Vêtement</SelectItem>
-                  <SelectItem value="mobilier">Mobilier</SelectItem>
-                  <SelectItem value="loisir">Loisir</SelectItem>
-                  <SelectItem value="don">Dons</SelectItem>
-                  <SelectItem value="emploi_service">
-                    Emploi & Service
-                  </SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+            <div className="flex flex-wrap items-center gap-4 w-full md:w-2/3">
+              <Select
+                value={categoryFilter}
+                onValueChange={(value) => setCategoryFilter(value)}
+                className="pl-10 pr-4 py-2 w-full border-2 border-primary/20  transition-colors bg-white"
+              >
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Sélectionner la catégorie" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="all">Tous</SelectItem>
+                    <SelectItem value="immobilier">Immobilier</SelectItem>
+                    <SelectItem value="vetement">Vêtement</SelectItem>
+                    <SelectItem value="mobilier">Mobilier</SelectItem>
+                    <SelectItem value="loisir">Loisir</SelectItem>
+                    <SelectItem value="don">Dons</SelectItem>
+                    <SelectItem value="emploi_service">
+                      Emploi & Service
+                    </SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
 
-            <Select
-              value={statusFilter}
-              onValueChange={(value) => setStatusFilter(value)}
-            >
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Sélectionner le statut" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="all">Tous</SelectItem>
-                  <SelectItem value="publiee">Publiée</SelectItem>
-                  <SelectItem value="suspendue">Suspendue</SelectItem>
-                  <SelectItem value="attente">En attente</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="relative">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  id="date"
-                  variant="default"
-                  className={cn(
-                    "w-[300px] justify-start text-left font-normal",
-                    !date && "text-white"
-                  )}
-                >
-                  <CalendarIcon />
-                  {date?.from ? (
-                    date.to ? (
-                      <>
-                        {format(date.from, "dd MMM yyyy", { locale: fr })} -{" "}
-                        {format(date.to, "dd MMM yyyy", { locale: fr })}
-                      </>
+              <Select
+                value={statusFilter}
+                onValueChange={(value) => setStatusFilter(value)}
+              >
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Sélectionner le statut" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="all">Tous</SelectItem>
+                    <SelectItem value="publiee">Publiée</SelectItem>
+                    <SelectItem value="suspendue">Suspendue</SelectItem>
+                    <SelectItem value="attente">En attente</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="relative">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    id="date"
+                    variant="default"
+                    className={cn(
+                      "w-[300px] justify-start text-left font-normal",
+                      !date && "text-white"
+                    )}
+                  >
+                    <CalendarIcon />
+                    {date?.from ? (
+                      date.to ? (
+                        <>
+                          {format(date.from, "dd MMM yyyy", { locale: fr })} -{" "}
+                          {format(date.to, "dd MMM yyyy", { locale: fr })}
+                        </>
+                      ) : (
+                        format(date.from, "dd MMM yyyy", { locale: fr })
+                      )
                     ) : (
-                      format(date.from, "dd MMM yyyy", { locale: fr })
-                    )
-                  ) : (
-                    <span>Sélectionner la date</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  initialFocus
-                  mode="range"
-                  defaultMonth={date?.from}
-                  selected={date}
-                  onSelect={setDate}
-                  numberOfMonths={2}
-                />
-              </PopoverContent>
-            </Popover>
+                      <span>Sélectionner la date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    initialFocus
+                    mode="range"
+                    defaultMonth={date?.from}
+                    selected={date}
+                    onSelect={setDate}
+                    numberOfMonths={2}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
         </div>
+
+        <div className="pt-7">
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id}>
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        <div className="flex justify-between items-center mt-20">
+          <Button
+            onClick={handlePreviousPage}
+            disabled={currentPage === 1}
+            className="px-4 py-2 rounded disabled"
+          >
+            Précédent
+          </Button>
+          <span>
+            Page {currentPage} sur {totalPages}
+          </span>
+          <Button
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2  rounded disabled"
+          >
+            Suivant
+          </Button>
+        </div>
+
+        <AlertDialog
+          open={isSuspendAlertOpen}
+          onOpenChange={setIsSuspendAlertOpen}
+        >
+          <AlertDialogContent className="w-full max-w-md sm:max-w-lg lg:max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
+            <AlertDialogTitle className="flex flex-col items-center space-y-3 text-center text-2xl">
+              <AlertTriangle className="h-16 w-16 text-yellow-500" />
+              <span>Confirmation de suspension</span>
+            </AlertDialogTitle>
+
+            <div className="mt-4">
+              <Label
+                htmlFor="email"
+                className="block text-[16px] font-medium mb-2"
+              >
+                Email de l&apos;annonceur concerné :
+              </Label>
+              <Input
+                id="email"
+                type="text"
+                placeholder="Rechercher une annonce"
+                value={email}
+                className="w-full text-black text-[16px] font-bold"
+                disabled
+              />
+            </div>
+
+            <div className="mt-4">
+              <Label
+                htmlFor="raison"
+                className="block text-[16px] font-medium mb-2"
+              >
+                Raison de la suspension :
+              </Label>
+              <Textarea
+                id="raison"
+                placeholder="Expliquez pourquoi cet utilisateur est suspendu..."
+                value={raison}
+                onChange={(e) => setRaison(e.target.value)}
+                className="w-full"
+              />
+            </div>
+
+            <div className="flex flex-col items-center w-full space-y-3 mt-6">
+              <AlertDialogAction
+                className="w-full bg-destructive text-destructive-foreground hover:bg-destructive/90 py-2 rounded-md"
+                onClick={handleConfirmSuspendAnnonce}
+              >
+                Suspendre l&apos;annonce
+              </AlertDialogAction>
+              <AlertDialogCancel className="w-full text-center text-primary hover:underline">
+                Annuler
+              </AlertDialogCancel>
+            </div>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        <AlertDialog
+          open={isActivationAlertOpen}
+          onOpenChange={setIsActivationAlertOpen}
+        >
+          <AlertDialogContent className="w-full max-w-md sm:max-w-lg lg:max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
+            <AlertDialogTitle className="text-center text-lg sm:text-xl font-semibold">
+              Êtes-vous sûr d&apos;activer cette annonce ?
+            </AlertDialogTitle>
+
+            <div className="mt-4 space-y-2 text-sm sm:text-base text-gray-700">
+              <p>
+                En activant cette annonce, vous allez permettre à tous les
+                utilisateurs de la plate-forme de consulter cette annonce.
+              </p>
+            </div>
+
+            <div className="flex w-full justify-end space-x-3 mt-6">
+              <AlertDialogCancel className="px-4 py-2 w-full text-gray-700 border border-gray-300 rounded-md hover:bg-gray-100">
+                Annuler
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleConfirmActivationUser}
+                className="px-4 py-2 bg-primary w-full text-white rounded-md hover:bg-primary/90"
+              >
+                Activer
+              </AlertDialogAction>
+            </div>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+        />
       </div>
-
-      <div className="pt-7">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-
-      <AlertDialog
-        open={isSuspendAlertOpen}
-        onOpenChange={setIsSuspendAlertOpen}
-      >
-        <AlertDialogContent className="w-full max-w-md sm:max-w-lg lg:max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
-          <AlertDialogTitle className="flex flex-col items-center space-y-3 text-center text-2xl">
-            <AlertTriangle className="h-16 w-16 text-yellow-500" />
-            <span>Confirmation de suspension</span>
-          </AlertDialogTitle>
-
-          <div className="mt-4">
-            <Label
-              htmlFor="email"
-              className="block text-[16px] font-medium mb-2"
-            >
-              Email de l&apos;annonceur concerné :
-            </Label>
-            <Input
-              id="email"
-              type="text"
-              placeholder="Rechercher une annonce"
-              value={email}
-              className="w-full text-black text-[16px] font-bold"
-              disabled
-            />
-          </div>
-
-          <div className="mt-4">
-            <Label
-              htmlFor="raison"
-              className="block text-[16px] font-medium mb-2"
-            >
-              Raison de la suspension :
-            </Label>
-            <Textarea
-              id="raison"
-              placeholder="Expliquez pourquoi cet utilisateur est suspendu..."
-              value={raison}
-              onChange={(e) => setRaison(e.target.value)}
-              className="w-full"
-            />
-          </div>
-
-          <div className="flex flex-col items-center w-full space-y-3 mt-6">
-            <AlertDialogAction
-              className="w-full bg-destructive text-destructive-foreground hover:bg-destructive/90 py-2 rounded-md"
-              onClick={handleConfirmSuspendAnnonce}
-            >
-              Suspendre l&apos;annonce
-            </AlertDialogAction>
-            <AlertDialogCancel className="w-full text-center text-primary hover:underline">
-              Annuler
-            </AlertDialogCancel>
-          </div>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      <AlertDialog
-        open={isActivationAlertOpen}
-        onOpenChange={setIsActivationAlertOpen}
-      >
-        <AlertDialogContent className="w-full max-w-md sm:max-w-lg lg:max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
-          <AlertDialogTitle className="text-center text-lg sm:text-xl font-semibold">
-            Êtes-vous sûr d&apos;activer cette annonce ?
-          </AlertDialogTitle>
-
-          <div className="mt-4 space-y-2 text-sm sm:text-base text-gray-700">
-            <p>
-              En activant cette annonce, vous allez permettre à tous les
-              utilisateurs de la plate-forme de consulter cette annonce.
-            </p>
-          </div>
-
-          <div className="flex w-full justify-end space-x-3 mt-6">
-            <AlertDialogCancel className="px-4 py-2 w-full text-gray-700 border border-gray-300 rounded-md hover:bg-gray-100">
-              Annuler
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleConfirmActivationUser}
-              className="px-4 py-2 bg-primary w-full text-white rounded-md hover:bg-primary/90"
-            >
-              Activer
-            </AlertDialogAction>
-          </div>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
-      />
     </div>
   );
 };

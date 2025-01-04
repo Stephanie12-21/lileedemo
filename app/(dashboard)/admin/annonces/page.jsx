@@ -21,7 +21,6 @@ import {
 } from "lucide-react";
 import ConfirmDeleteModal from "@/app/(dialog)/delete/page";
 
-
 const Annonces = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedAnnonceId, setSelectedAnnonceId] = useState(null);
@@ -131,7 +130,7 @@ const Annonces = () => {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gray-50 text-base px-7 pt-8 ">
       <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4 justify-between mb-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 w-full max-w-full mx-auto p-0">
           <div className="relative w-full md:w-2/3">
@@ -254,7 +253,7 @@ const Annonces = () => {
                 </div>
 
                 <div className="flex justify-between items-center w-full pt-8 mt-auto">
-                  <button
+                  {/* <button
                     onClick={() => handleRocketClick(annonce.id)}
                     className="text-blue-500 hover:text-blue-700 transition-colors"
                     title="Booster"
@@ -276,7 +275,7 @@ const Annonces = () => {
                         </button>
                       ))}
                     </div>
-                  )}
+                  )} */}
                   <Link
                     href={`/admin/annonces/id=${annonce.id}`}
                     className="text-green-500 hover:text-green-700 transition-colors"
@@ -303,13 +302,12 @@ const Annonces = () => {
             </Card>
           ))
         )}
+        <ConfirmDeleteModal
+          isOpen={showDeleteModal}
+          onClose={handleCloseModal}
+          onConfirm={handleConfirmDelete}
+        />
       </div>
-
-      <ConfirmDeleteModal
-        isOpen={showDeleteModal}
-        onClose={handleCloseModal}
-        onConfirm={handleConfirmDelete}
-      />
     </div>
   );
 };
