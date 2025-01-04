@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import ConfirmDeleteModal from "@/app/(dialog)/delete/page";
 
+
 const Annonces = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedAnnonceId, setSelectedAnnonceId] = useState(null);
@@ -86,6 +87,7 @@ const Annonces = () => {
       );
 
       console.log("Données supprimées");
+      toast.success("Annonce supprimée avec succès");
     } catch (error) {
       console.error("Erreur lors de la suppression des données :", error);
     } finally {
