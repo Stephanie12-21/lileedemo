@@ -103,43 +103,45 @@ const SignUpPage = () => {
         return;
       }
       toast.info("Code de vérification correct.");
-    } else if (step === 6) {
-      const generatedCodes = generateVerificationCodes();
-      const Phone = `+${phone}`;
-      try {
-        const response = await fetch("/api/user/verifPhone/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            Phone,
-            prenom,
-            verificationCode: generatedCodes.phoneVerificationCode,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Erreur lors de l'envoi du SMS");
-        }
-
-        toast.info("SMS envoyé avec succès");
-        console.log(
-          "Code de vérification envoyé par SMS:",
-          generatedCodes.phoneVerificationCode
-        );
-        setPhoneVerificationCode(generatedCodes.phoneVerificationCode);
-      } catch (error) {
-        toast.error("Erreur lors de l'envoi de l'e-mail : " + error.message);
-        return;
-      }
-    } else if (step === 7) {
-      if (verificationCodePhone !== phoneVerificationCode) {
-        toast.error("Le code de vérification est incorrect.");
-        return;
-      }
-      toast.info("Code de vérification correct.");
     }
+    // else if (step === 6) {
+    //   const generatedCodes = generateVerificationCodes();
+    //   const Phone = `+${phone}`;
+    //   try {
+    //     const response = await fetch("/api/user/verifPhone/", {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //       },
+    //       body: JSON.stringify({
+    //         Phone,
+    //         prenom,
+    //         verificationCode: generatedCodes.phoneVerificationCode,
+    //       }),
+    //     });
+
+    //     if (!response.ok) {
+    //       throw new Error("Erreur lors de l'envoi du SMS");
+    //     }
+
+    //     toast.info("SMS envoyé avec succès");
+    //     console.log(
+    //       "Code de vérification envoyé par SMS:",
+    //       generatedCodes.phoneVerificationCode
+    //     );
+    //     setPhoneVerificationCode(generatedCodes.phoneVerificationCode);
+    //   } catch (error) {
+    //     toast.error("Erreur lors de l'envoi de l'e-mail : " + error.message);
+    //     return;
+    //   }
+    // }
+    // else if (step === 7) {
+    //   if (verificationCodePhone !== phoneVerificationCode) {
+    //     toast.error("Le code de vérification est incorrect.");
+    //     return;
+    //   }
+    //   toast.info("Code de vérification correct.");
+    // }
     if (step < 9) {
       setStep(step + 1);
     } else {
@@ -695,7 +697,7 @@ const SignUpPage = () => {
             )}
 
             {/* vérification phone */}
-            {step === 7 && (
+            {/* {step === 7 && (
               <div className="grid gap-4 h-full w-[400px]">
                 <div className="space-y-3">
                   <Label className="text-balance text-[16px] text-muted-foreground max-md:text-center pb-6">
@@ -725,10 +727,10 @@ const SignUpPage = () => {
                   </div>
                 </div>
               </div>
-            )}
+            )} */}
 
             {/* image du profil */}
-            {step === 8 && (
+            {step === 7 && (
               <div className="grid gap-4 h-full w-[400px]">
                 <div className="space-y-4">
                   <Label className="text-balance text-[16px] text-muted-foreground max-md:text-center pb-6">

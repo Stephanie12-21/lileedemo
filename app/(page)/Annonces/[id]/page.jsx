@@ -384,7 +384,7 @@ const InfoAnnonces = ({ params }) => {
 
   const handlePayment = (annonceId) => {
     console.log("Payment initiated for annonce:", annonceId);
-    router.push(`/Annonces/confirmResvt/${annonceId}`);
+    router.push(`/Annonces/confirmreservation/${annonceId}`);
   };
 
   const openLightbox = (index) => {

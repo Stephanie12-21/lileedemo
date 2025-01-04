@@ -85,45 +85,47 @@ const Personnel = () => {
         return;
       }
       console.log("Code de vérification correct.");
-    } else if (step === 3) {
-      const generatedCodes = generateVerificationCodes();
-      const Phone = `+${phone}`;
-      try {
-        const response = await fetch("/api/user/verifPhone/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            Phone,
-            prenom,
-            verificationCode: generatedCodes.phoneVerificationCode,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Erreur lors de l'envoi du SMS");
-        }
-
-        console.log("SMS envoyé avec succès");
-        console.log(
-          "Code de vérification envoyé par SMS:",
-          generatedCodes.phoneVerificationCode
-        );
-        setPhoneVerificationCode(generatedCodes.phoneVerificationCode);
-      } catch (error) {
-        console.error(error);
-        alert(error.message);
-        return;
-      }
-    } else if (step === 4) {
-      if (verificationCodePhone !== phoneVerificationCode) {
-        alert("Le code de vérification est incorrect.");
-        return;
-      }
-      console.log("Code de vérification correct.");
     }
-    if (step < 6) {
+    // else if (step === 3) {
+    //   const generatedCodes = generateVerificationCodes();
+    //   const Phone = `+${phone}`;
+    //   try {
+    //     const response = await fetch("/api/user/verifPhone/", {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //       },
+    //       body: JSON.stringify({
+    //         Phone,
+    //         prenom,
+    //         verificationCode: generatedCodes.phoneVerificationCode,
+    //       }),
+    //     });
+
+    //     if (!response.ok) {
+    //       throw new Error("Erreur lors de l'envoi du SMS");
+    //     }
+
+    //     console.log("SMS envoyé avec succès");
+    //     console.log(
+    //       "Code de vérification envoyé par SMS:",
+    //       generatedCodes.phoneVerificationCode
+    //     );
+    //     setPhoneVerificationCode(generatedCodes.phoneVerificationCode);
+    //   } catch (error) {
+    //     console.error(error);
+    //     alert(error.message);
+    //     return;
+    //   }
+    // }
+    // else if (step === 4) {
+    //   if (verificationCodePhone !== phoneVerificationCode) {
+    //     alert("Le code de vérification est incorrect.");
+    //     return;
+    //   }
+    //   console.log("Code de vérification correct.");
+    // }
+    if (step < 5) {
       setStep(step + 1);
       console.log(`Vous allez passer à l'étape ${step + 1}`);
     } else {
@@ -392,7 +394,7 @@ const Personnel = () => {
               </div>
             )}
 
-            {step === 4 && (
+            {/* {step === 4 && (
               <div className="grid gap-4 h-full w-[400px]">
                 <div className="space-y-3">
                   <Label className="text-balance text-[16px] text-muted-foreground max-md:text-center pb-6">
@@ -422,9 +424,9 @@ const Personnel = () => {
                   </div>
                 </div>
               </div>
-            )}
+            )} */}
 
-            {step === 5 && (
+            {step === 4 && (
               <div className="grid gap-4 h-full w-[400px]">
                 <div className="space-y-4">
                   <Label className="text-balance text-[16px] text-muted-foreground max-md:text-center pb-6">
