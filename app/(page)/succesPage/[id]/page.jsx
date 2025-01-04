@@ -1,9 +1,9 @@
 "use client";
 
-import AnimatedSymbol from "@/components/MainComponent/Loading/Loading";
 import { useEffect, useState } from "react";
 import { CheckCircle } from "lucide-react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import AnimatedSymbol from "@/components/MainComponents/Sections/Loading/AnimatedSymbol";
 
 const SuccessPage = ({ params }) => {
   const { id } = params;
