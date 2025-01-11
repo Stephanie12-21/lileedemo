@@ -3,7 +3,6 @@ import Rubriques from "./Rubriques";
 import Divers from "./Divers";
 import { ListIcons } from "../../Header/TopHeader/TopHeader";
 
-
 const MenuFooter = () => {
   return (
     <div className="flex flex-col items-center mt-8 w-full">

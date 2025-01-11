@@ -166,15 +166,6 @@ const Annonce = () => {
     else controls.start("hidden");
   }, [controls, inView]);
 
-  const cardVariants = {
-    visible: (i) => ({
-      opacity: 1,
-      y: 0,
-      transition: { delay: i * 0.3, duration: 0.5 },
-    }),
-    hidden: { opacity: 0, y: 50, transition: { duration: 0.5 } },
-  };
-
   const handleCardClick = (annonceId) => {
     router.push(`/Annonces/id=${annonceId}`);
   };

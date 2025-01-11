@@ -590,7 +590,7 @@ const InfoAnnonces = ({ params }) => {
                 </Button>
               ) : (
                 <Button
-                  className="bg-gray-300 text-[#353945] hover:bg-gray-400 py-2 px-4 rounded-lg shadow-md transition-all"
+                  className="bg-gray-300 text-[#353945] w-full hover:bg-gray-400 py-2 px-4 rounded-lg shadow-md transition-all"
                   onClick={() => router.push("/login")}
                 >
                   Connectez-vous pour discuter
@@ -606,7 +606,7 @@ const InfoAnnonces = ({ params }) => {
                 </Button>
               ) : (
                 <Button
-                  className="bg-gray-300 text-[#353945] hover:bg-gray-400 py-2 px-4 rounded-lg shadow-md transition-all"
+                  className="bg-gray-300 text-[#353945] w-full hover:bg-gray-400 py-2 px-4 rounded-lg shadow-md transition-all"
                   onClick={() => router.push("/login")}
                 >
                   Connectez-vous pour pouvoir réserver
