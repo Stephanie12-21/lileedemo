@@ -20,24 +20,30 @@ model newsletter {
 //pour les utilisateurs
 
 model user {
-  id                 Int            @id @default(autoincrement())
-  nom                String
-  prenom             String
-  email              String         @unique
-  phone              String         @unique
-  hashPassword       String
-  statutUser         statutUser
-  role               role
-  profileImages      profileImage[]
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
-  companyId          Int?
-  company            company?       @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  annonces           annonces[]
-  commentaire        commentaire[]
-  favoris            favoris[]
-  temoignages        temoignages[]
-  moyenpaiement      moyenpaiement[]
+  id                            Int            @id @default(autoincrement())
+  nom                           String
+  prenom                        String
+  email                         String         @unique
+  phone                         String         @unique
+  hashPassword                  String
+  statutUser                    statutUser
+  role                          role
+  profileImages                 profileImage[]
+  createdAt                     DateTime       @default(now())
+  updatedAt                     DateTime       @updatedAt
+  companyId                     Int?
+  company                       company?       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  annonces                      annonces[]
+  commentaire                   commentaire[]
+  favoris                       favoris[]
+  temoignages                   temoignages[]
+  moyenpaiement                 moyenpaiement[]
+
+  // <--
+  stripeAccountId               String?
+  stripeAccountCompleted        Boolean         @default(false)          
+  // -->
+
 }
 
 enum statutUser {
@@ -125,8 +131,10 @@ model annonces {
   user              user          @relation(fields: [userId], references: [id], onDelete: Cascade)
   commentaire       commentaire[] 
   favoris           favoris[]  
-  priceId          String?
   
+  // <--
+  priceId          String?
+  // -->
 }
 
 enum statut {

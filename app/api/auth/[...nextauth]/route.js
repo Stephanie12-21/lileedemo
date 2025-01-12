@@ -75,6 +75,7 @@ export const authOptions = {
           statutUser: existingComptePerso.statutUser,
           image: imageUrl,
         });
+
         return {
           id: `${existingComptePerso.id}`,
           nom: existingComptePerso.nom,
@@ -83,6 +84,8 @@ export const authOptions = {
           role: existingComptePerso.role,
           statutUser: existingComptePerso.statutUser,
           image: imageUrl,
+          stripeAccountId: existingComptePerso.stripeAccountId,
+          stripeAccountCompleted: existingComptePerso.stripeAccountCompleted
         };
       },
     }),
@@ -113,7 +116,12 @@ export const authOptions = {
   },
 
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, trigger, user, session }) {
+
+      if(trigger==='update'){
+        console.log(session)
+      }
+      
       if (user) {
         // Mise à jour des informations dans le token
         token.id = user.id || null;
@@ -124,6 +132,12 @@ export const authOptions = {
         token.role = user.role || null;
         token.statutUser = user.statutUser || null;
         token.name = user.nom || null;
+
+        // <--
+        token.stripeAccountId = user.stripeAccountId || null;
+        token.stripeAccountCompleted = user.stripeAccountCompleted || false;
+        // ->
+      
       } else {
         // Lorsqu'il n'y a pas d'utilisateur, mais que le token contient des informations
         token.user = {
@@ -135,6 +149,11 @@ export const authOptions = {
           name: token.nom || null,
           statutUser: token.statutUser || null,
           prenom: token.prenom || null,
+          
+          // <--
+          stripeAccountId: token.stripeAccountId || null,
+          stripeAccountCompleted: token.stripeAccountCompleted || false
+          // -->
         };
       }
 
@@ -154,6 +173,11 @@ export const authOptions = {
         image: token.picture || null,
         statutUser: token.statutUser || null,
         role: token.role || null,
+
+        // <--
+        stripeAccountId: token.stripeAccountId || null,
+        stripeAccountComplete: token.stripeAccountCompleted || false
+        // -->
       };
 
       // console.log(" session data:", { session });

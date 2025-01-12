@@ -38,12 +38,14 @@ const AddAnnonce = () => {
   const [iframeSrc, setIframeSrc] = useState("");
   const [tarifType, setTarifType] = useState("");
 
+
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/login");
     }
-  }, [status, router]);
 
+  }, [status, router]);
+  
   const resetForm = () => {
     setTitle("");
     setDescription("");

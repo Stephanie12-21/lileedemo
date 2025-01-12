@@ -25,7 +25,7 @@ import AnimatedSymbol from "@/components/MainComponents/Sections/Loading/Animate
 
 const UserProfilePreview = () => {
   const { id: userId } = useParams();
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -44,7 +44,70 @@ const UserProfilePreview = () => {
     email: "",
     phone: "",
   });
-  console.log("usesession hook session object", session);
+
+  // <--
+  const router = useRouter()
+  const [accountCreated, setAccountCreated] = useState(false)
+  const [accountLink, setAccountLink] = useState('')
+  const [accountCompleted, setAccountCompleted] = useState(false)
+  // -->
+  // console.log("usesession hook session object", session);
+
+  
+  // <--
+
+  useEffect(() => {
+    if(! accountCreated){
+
+      if(session.user.stripeAccountId){ setAccountCreated(true) }
+
+      (async() => {
+        const stripeAccountFormData = new FormData()
+        stripeAccountFormData.append('userId', session.user.id)
+        const account = await fetch('/api/stripe/account', {
+          method: 'POST',
+          body: stripeAccountFormData
+        })
+
+        if(account) {
+            await update({ stripeAccountId: account.id })
+            setAccountCreated(true)
+          }
+      })()
+
+    }
+    else{
+      if(session?.user.stripeAccountCompleted){
+        setAccountCompleted(true)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    if(accountCreated && (!accountCompleted) && (accountLink === '')){
+        (async () => {
+
+          const accountLinkFormData = new FormData()
+          accountLinkFormData.append('accountId', session.user.stripeAccountId)
+          accountLinkFormData.append('userId', session.user.id)
+          accountLinkFormData.append('role', {
+            'PERSO': 'peronnel',
+            'ADMIN': 'admin',
+            'PRO': 'professionnel'
+          }[session.user.role.toUpperCase()])
+
+          const accountLink_ = await fetch('/api/stripe/account_link', {
+            method: 'POST',
+            body: accountLinkFormData
+          }).then(res => res.json()).then(res => res)
+
+          
+          setAccountLink(accountLink_.url)
+        })()
+    }
+  }, [accountCreated, accountCompleted, accountLink])
+
+  // ->
 
   const fetchUserData = useCallback(async () => {
     try {
@@ -488,6 +551,8 @@ const UserProfilePreview = () => {
           onCancel={handleCancelEdit}
         />
       )}
+
+    {accountLink ? <Link href={accountLink}>Complete stripe profile</Link>: null }
     </div>
   );
 };
