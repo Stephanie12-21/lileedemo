@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -125,7 +125,7 @@ model annonces {
   user              user          @relation(fields: [userId], references: [id], onDelete: Cascade)
   commentaire       commentaire[] 
   favoris           favoris[]  
-
+  priceId          String?
   
 }
 

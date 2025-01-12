@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+
 const AddAnnonce = () => {
   const router = useRouter();
   const { data: session, status } = useSession();
@@ -130,8 +131,23 @@ const AddAnnonce = () => {
         throw new Error("Erreur lors de l'ajout de l'annonce");
       }
 
+
       const result = await response.json();
 
+      // <-- create a new stripe product and price
+    
+      const productFormData = new FormData()
+      productFormData.append('id', result.Annonce.id)
+      
+      await fetch('/api/stripe/product/', {
+        method: 'POST',
+        body: productFormData
+      })
+
+
+      // -->
+
+      
       toast.success("Annonce ajoutée avec succès !", {
         onClose: () => {
           router.push(`/personnel/annonces/`);

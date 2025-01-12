@@ -29,6 +29,7 @@ import { Loader2, StarIcon, TagIcon } from "lucide-react";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import { loadStripe } from "@stripe/stripe-js";
+import stripe from "@/lib/stripe";
 
 const PAYS = [
   { label: "Afghanistan", value: "afghanistan" },
@@ -255,6 +256,7 @@ export default function FormulaireContact({ params }) {
   const tva = (prix * 0.1).toFixed(2);
   const total = (parseFloat(prix) + parseFloat(tva)).toFixed(2);
 
+
   useEffect(() => {
     async function fetchAnnonce() {
       try {
@@ -467,6 +469,12 @@ export default function FormulaireContact({ params }) {
     }
   };
 
+  // <--
+
+    // handleStripeCheckout
+
+  // -->
+
   return (
     <div className="container mx-auto py-10 px-20">
       <Button
@@ -664,7 +672,8 @@ export default function FormulaireContact({ params }) {
             </div>
             <Button
               className="bg-[#0f172a] text-white py-2 rounded-lg w-full"
-              onClick={() => handlePayAnnonce(annonceId)}
+              // onClick={() => handlePayAnnonce(annonceId)}
+              onClick={handleCheckout}
               disabled={loading}
             >
               {loading

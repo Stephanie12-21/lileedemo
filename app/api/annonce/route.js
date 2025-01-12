@@ -77,7 +77,7 @@ export async function POST(request) {
     const statut = body.get("statut");
     const imageFiles = body.getAll("images");
     const userId = parseInt(body.get("userId"), 10);
-
+    
     if (
       !titre ||
       !description ||
