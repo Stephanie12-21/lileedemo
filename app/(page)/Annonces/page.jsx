@@ -2,9 +2,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FaArrowRight, FaSearch } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";

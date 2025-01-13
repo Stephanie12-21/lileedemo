@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 const Blog = () => {
   const [articles, setArticles] = useState([]);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const cardVariants = {
     visible: (i) => ({
@@ -30,6 +31,8 @@ const Blog = () => {
   };
 
   const fetchArticles = async () => {
+    setLoading(true);
+    setError(null);
     try {
       const response = await fetch("/api/blog");
       if (!response.ok) {
@@ -40,6 +43,8 @@ const Blog = () => {
     } catch (error) {
       console.error(error);
       setError("Erreur lors de la récupération des articles.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -50,6 +55,22 @@ const Blog = () => {
   const removeQuotes = (content) => {
     return content.replace(/^"|"$/g, "");
   };
+
+  if (loading) {
+    return (
+      <Card className="w-full max-w-md mx-auto mt-8 mb-8">
+        <CardContent className="flex flex-col items-center justify-center p-6">
+          <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
+          <p className="text-lg font-medium text-center">
+            Chargement des articles en cours...
+          </p>
+          <p className="text-sm text-muted-foreground text-center mt-2">
+            Veuillez patienter quelques instants.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <div className="container mx-auto py-16 px-4 sm:px-6 lg:px-8">
