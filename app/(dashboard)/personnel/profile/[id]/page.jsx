@@ -45,69 +45,19 @@ const UserProfilePreview = () => {
     phone: "",
   });
 
-  // <--
-  const router = useRouter()
-  const [accountCreated, setAccountCreated] = useState(false)
-  const [accountLink, setAccountLink] = useState('')
-  const [accountCompleted, setAccountCompleted] = useState(false)
-  // -->
-  // console.log("usesession hook session object", session);
+  console.log("usesession hook session object", session);
+  const [profileLink, setProfileLink] = useState('')
+  const generateProfileLink = async () => {
+    const formData = new FormData()
+    formData.append('userId', session?.user.id)
+    const response = await fetch('/api/stripe/account_link', {
+      method: 'POST',
+      body: formData
+    })
 
-  
-  // <--
-
-  useEffect(() => {
-    if(! accountCreated){
-
-      if(session.user.stripeAccountId){ setAccountCreated(true) }
-
-      (async() => {
-        const stripeAccountFormData = new FormData()
-        stripeAccountFormData.append('userId', session.user.id)
-        const account = await fetch('/api/stripe/account', {
-          method: 'POST',
-          body: stripeAccountFormData
-        })
-
-        if(account) {
-            await update({ stripeAccountId: account.id })
-            setAccountCreated(true)
-          }
-      })()
-
-    }
-    else{
-      if(session?.user.stripeAccountCompleted){
-        setAccountCompleted(true)
-      }
-    }
-  }, [])
-
-  useEffect(() => {
-    if(accountCreated && (!accountCompleted) && (accountLink === '')){
-        (async () => {
-
-          const accountLinkFormData = new FormData()
-          accountLinkFormData.append('accountId', session.user.stripeAccountId)
-          accountLinkFormData.append('userId', session.user.id)
-          accountLinkFormData.append('role', {
-            'PERSO': 'peronnel',
-            'ADMIN': 'admin',
-            'PRO': 'professionnel'
-          }[session.user.role.toUpperCase()])
-
-          const accountLink_ = await fetch('/api/stripe/account_link', {
-            method: 'POST',
-            body: accountLinkFormData
-          }).then(res => res.json()).then(res => res)
-
-          
-          setAccountLink(accountLink_.url)
-        })()
-    }
-  }, [accountCreated, accountCompleted, accountLink])
-
-  // ->
+    const accountLink = await response.json()
+    setProfileLink(accountLink.url)
+  }
 
   const fetchUserData = useCallback(async () => {
     try {
@@ -552,7 +502,11 @@ const UserProfilePreview = () => {
         />
       )}
 
-    {accountLink ? <Link href={accountLink}>Complete stripe profile</Link>: null }
+    {
+      profileLink === "" ? 
+      <Button onClick={generateProfileLink}>Generate profile link</Button> : 
+      <Link href={profileLink}>Complete stripe profile</Link>
+      }
     </div>
   );
 };

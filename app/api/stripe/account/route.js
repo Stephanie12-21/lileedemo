@@ -9,7 +9,7 @@ export function GET(request){
 
 export async function POST(request) {
 
-    // try  {
+    try  {
         const body = await request.formData();
         const userId = body.get('userId');
     
@@ -64,14 +64,14 @@ export async function POST(request) {
             account,
             { status: 200 }
         )
-    // }
-    // catch(e){
-    //     return NextResponse.json({
-    //         message: "Unexcepted error while creating stripe account...",
-    //         error: e
-    //     }, 
-    //     {
-    //         status: 500
-    //     })
-    // }
+    }
+    catch(e){
+        return NextResponse.json({
+            message: "Unexcepted error while creating stripe account...",
+            error: e
+        }, 
+        {
+            status: 500
+        })
+    }
 }

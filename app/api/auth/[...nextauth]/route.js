@@ -118,10 +118,10 @@ export const authOptions = {
   callbacks: {
     async jwt({ token, trigger, user, session }) {
 
-      if(trigger==='update'){
-        console.log(session)
+      if(trigger === "update" && session?.stripeAccountId){
+          token.stripeAccountId = session.stripeAccountId
+          return token
       }
-      
       if (user) {
         // Mise à jour des informations dans le token
         token.id = user.id || null;

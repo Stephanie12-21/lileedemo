@@ -1,18 +1,27 @@
+import { db } from "@/lib/db"
 import stripe from "@/lib/stripe"
 import { NextResponse } from "next/server"
 
 export async function POST(request){
     try {
         const body = await request.formData()
-        const accountId = body.get('accountId')
-        const userId = body.get('userId')
-        const role = body.get('role')
+        const  userId = body.get('userId')
+
+        if(! userId){
+            return NextResponse.json({
+                message: 'Invalid request',
+            }, {status: 500})
+        }
+
+        const user = await db.user.findUnique({
+            where: {id: parseInt(userId, 10)}
+        })
 
         const accountLink = await stripe.accountLinks.create({
-            account: accountId,
+            account: user.stripeAccountId,
             type: 'account_onboarding',
-            return_url: `${process.env.FRONTEND_URL}/${role}/${userId}`,
-            refresh_url: `${process.env.FRONTEND_URL}/${role}/${userId}`
+            return_url: `${process.env.FRONTEND_URL}/api/stripe/account_completed`,
+            refresh_url: `${process.env.FRONTEND_URL}/${user.role}/${userId}`
         })
 
         return NextResponse.json(accountLink, { status: 200})
