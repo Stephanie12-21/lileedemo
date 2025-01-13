@@ -29,7 +29,7 @@ import { Loader2, StarIcon, TagIcon } from "lucide-react";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import { loadStripe } from "@stripe/stripe-js";
-import stripe from "@/lib/stripe";
+import { NextResponse } from "next/server";
 
 const PAYS = [
   { label: "Afghanistan", value: "afghanistan" },
@@ -471,7 +471,19 @@ export default function FormulaireContact({ params }) {
 
   // <--
 
-    // handleStripeCheckout
+    const handleCheckout = async () => {
+        const formData = new FormData()
+        formData.append('priceId', annonce.priceId)
+        formData.append('sellerId', annonce.user.id)
+
+        const response = await fetch('/api/stripe/checkout', {
+          method: 'POST',
+          body: formData
+        })
+
+        const session = await response.json()
+        router.push(session.checkoutSession.url)
+    } 
 
   // -->
 

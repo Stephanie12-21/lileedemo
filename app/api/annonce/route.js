@@ -64,7 +64,7 @@ async function sendSuspensionEmail() {
 }
 
 export async function POST(request) {
-  try {
+  // try {
     const body = await request.formData();
     const titre = body.get("title");
     const prix = body.get("prix");
@@ -77,7 +77,6 @@ export async function POST(request) {
     const statut = body.get("statut");
     const imageFiles = body.getAll("images");
     const userId = parseInt(body.get("userId"), 10);
-    
     if (
       !titre ||
       !description ||
@@ -164,16 +163,16 @@ export async function POST(request) {
       },
       { status: 200 }
     );
-  } catch (error) {
-    console.error(
-      "Erreur lors de la création de l'annonce et des images :",
-      error
-    );
-    return NextResponse.json(
-      { message: "Erreur interne du serveur." },
-      { status: 500 }
-    );
-  }
+  // } catch (error) {
+  //   console.error(
+  //     "Erreur lors de la création de l'annonce et des images :",
+  //     error
+  //   );
+  //   return NextResponse.json(
+  //     { message: "Erreur interne du serveur." },
+  //     { status: 500 }
+  //   );
+  // }
 }
 
 export async function GET(request) {

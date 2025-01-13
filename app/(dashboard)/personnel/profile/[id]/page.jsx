@@ -46,6 +46,9 @@ const UserProfilePreview = () => {
   });
 
   console.log("usesession hook session object", session);
+
+
+  //  <--
   const [profileLink, setProfileLink] = useState('')
   const generateProfileLink = async () => {
     const formData = new FormData()
@@ -58,6 +61,7 @@ const UserProfilePreview = () => {
     const accountLink = await response.json()
     setProfileLink(accountLink.url)
   }
+  // ->
 
   const fetchUserData = useCallback(async () => {
     try {

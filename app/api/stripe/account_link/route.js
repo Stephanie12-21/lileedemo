@@ -21,7 +21,12 @@ export async function POST(request){
             account: user.stripeAccountId,
             type: 'account_onboarding',
             return_url: `${process.env.FRONTEND_URL}/api/stripe/account_completed`,
-            refresh_url: `${process.env.FRONTEND_URL}/${user.role}/${userId}`
+            refresh_url: `${process.env.FRONTEND_URL}/${user.role}/${userId}`,
+            collection_options: {
+                fields: "eventually_due",
+                future_requirements: "include"
+            }
+
         })
 
         return NextResponse.json(accountLink, { status: 200})
