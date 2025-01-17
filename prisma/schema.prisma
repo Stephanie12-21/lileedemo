@@ -42,6 +42,7 @@ model user {
   // <--
   stripeAccountId               String?
   stripeAccountCompleted        Boolean         @default(false)          
+  stripeCustomerId              String?
   // -->
 
 }
@@ -283,4 +284,10 @@ model image {
   article   article  @relation(fields: [articleId], references: [id])
 }
 
-
+model plan {
+  id            Int    @id @default(autoincrement()) 
+  name          String
+  price         Float
+  description   String?
+  priceId       String
+}
