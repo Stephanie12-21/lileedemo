@@ -27,8 +27,8 @@ export async function POST(request){
             }
         ],
         customer: authUser.stripeCustomerId,
-        success_url: `https://www.google.com`,
-        cancel_url: `https://www.facebook.com`
+        success_url: `${process.env.FRONTEND_URL}`,
+        cancel_url: `${process.env.FRONTEND_URL}/Subscription`
     }, {
         idempotencyKey: v4()
     })
