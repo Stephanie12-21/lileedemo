@@ -2,7 +2,7 @@ import { db } from "@/lib/db"
 import stripe from "@/lib/stripe"
 import { NextResponse } from "next/server"
 
-const endpoint_secret = "whsec_bf7a43129ef72deb26a46a897b3b9242c3f69e3c941e43f2413d3faee4649729"
+const endpoint_secret = process.env.WEBHOOK_STRIPE_SECRET
 export async function POST(request){
     const signature = request.headers.get('stripe-signature')
 
