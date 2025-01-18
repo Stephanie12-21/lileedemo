@@ -3,7 +3,7 @@ import stripe from "@/lib/stripe"
 import { getServerSession } from "next-auth"
 import { authOptions } from "../../auth/[...nextauth]/route"
 import { NextResponse } from "next/server"
-import { where } from "firebase/firestore"
+import { v4 } from "uuid"
 
 export async function POST(request){
     const formData = await request.formData()
@@ -17,15 +17,6 @@ export async function POST(request){
     const authUser = await db.user.findUnique({
         where: {id: parseInt(session.user.id, 10)}
     })
-    
-    await stripe.subscriptions.create({
-        customer: authUser.stripeCustomerId,
-        items: [
-            {
-                price: plan.priceId
-            }
-        ]
-    })
 
     const checkout = await stripe.checkout.sessions.create({
         mode: 'subscription',
@@ -35,8 +26,11 @@ export async function POST(request){
                 quantity: 1
             }
         ],
+        customer: authUser.stripeCustomerId,
         success_url: `https://www.google.com`,
         cancel_url: `https://www.facebook.com`
+    }, {
+        idempotencyKey: v4()
     })
     
 
