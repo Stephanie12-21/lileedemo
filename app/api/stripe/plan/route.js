@@ -10,7 +10,7 @@ export async function POST(request) {
 
     const product = await stripe.products.create({
         name: name,
-        description: description
+        description: description,
     })
 
     const stripePrice = await stripe.prices.create({

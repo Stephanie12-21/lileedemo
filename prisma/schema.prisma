@@ -43,6 +43,7 @@ model user {
   stripeAccountId               String?
   stripeAccountCompleted        Boolean         @default(false)          
   stripeCustomerId              String?
+  planId                        Int?             
   // -->
 
 }
