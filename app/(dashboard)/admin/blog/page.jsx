@@ -12,6 +12,10 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Eye, Edit, Trash2, Search } from "lucide-react";
 import ConfirmDeleteModal from "@/app/(dialog)/delete/page";
 
+import { SuccessModal } from "@/app/(dialog)/success/SuccessModal";
+import { ErrorModal } from "@/app/(dialog)/error/ErrorModal";
+import { set } from "date-fns";
+
 const Annonces = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedArticleId, setSelectedArticleId] = useState(null);
@@ -20,6 +24,9 @@ const Annonces = () => {
   const [articles, setArticles] = useState([]);
   const [error, setError] = useState(null);
   const [searchFilter, setSearchFilter] = useState("");
+
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -61,21 +68,30 @@ const Annonces = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Erreur lors de la suppression de l'annonce");
+        throw new Error("Erreur lors de la suppression de l'article");
       }
 
-      setArticles((prevAnnonces) =>
-        prevAnnonces.filter((article) => article.id !== selectedArticleId)
+      setArticles((prevArticles) =>
+        prevArticles.filter((article) => article.id !== selectedArticleId)
       );
 
-      console.log("Données supprimées");
+      console.log("Article supprimé avec succès");
+
+      setIsSuccessModalOpen(true);
+
+      setTimeout(() => {
+        router.push("/admin/blog");
+      }, 2000);
     } catch (error) {
       console.error("Erreur lors de la suppression des données :", error);
+
+      setIsErrorModalOpen(true);
     } finally {
       setShowDeleteModal(false);
       setSelectedArticleId(null);
     }
   };
+
   const filteredArticles = articles.filter((article) => {
     const searchLower = searchFilter.toLowerCase();
     return (
@@ -201,6 +217,14 @@ const Annonces = () => {
         isOpen={showDeleteModal}
         onClose={handleCloseModal}
         onConfirm={handleConfirmDelete}
+      />
+      <SuccessModal
+        isOpen={isSuccessModalOpen}
+        onClose={() => setIsSuccessModalOpen(false)}
+      />
+      <ErrorModal
+        isOpen={isErrorModalOpen}
+        onClose={() => setIsErrorModalOpen(false)}
       />
     </div>
   );

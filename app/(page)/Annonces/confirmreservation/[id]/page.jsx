@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -21,15 +20,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import { FaArrowRight } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Loader2, StarIcon, TagIcon } from "lucide-react";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
-import { loadStripe } from "@stripe/stripe-js";
-import { NextResponse } from "next/server";
 
 const PAYS = [
   { label: "Afghanistan", value: "afghanistan" },
@@ -226,13 +223,9 @@ const PAYS = [
 ];
 
 export default function FormulaireContact({ params }) {
+  const { data: session } = useSession();
   const { id } = params;
   const router = useRouter();
-  // const [nomComplet, setNomComplet] = useState(() => {
-  //   const nom = session?.user?.nom || "";
-  //   const prenom = session?.user?.prenom || "";
-  //   return `${prenom} ${nom}`.trim();
-  // });
   const [annonce, setAnnonce] = useState("");
   const [annonceId, setAnnonceId] = useState(id);
   const [userName, setUserName] = useState("");
@@ -243,19 +236,23 @@ export default function FormulaireContact({ params }) {
   const [category, setCategory] = useState("");
   const [subcategory, setSubCategory] = useState("");
   const [description, setDescription] = useState("");
-  const [prix, setPrix] = useState("");
+  // const [prix, setPrix] = useState("");
+  const [prixUnitaire, setPrixUnitaire] = useState("");
   const [typeTarif, setTypeTarif] = useState("");
   const [comments, setComments] = useState([]);
   const [userEmail, setUserEmail] = useState("");
   const [userPhone, setUserPhone] = useState("");
   const [adresse, setAdresse] = useState("");
+  const [adresseuser, setAdresseUser] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("");
   const [ville, setVille] = useState("");
   const [codePostal, setCodePostal] = useState("");
   const [loading, setLoading] = useState(false);
-  const tva = (prix * 0.1).toFixed(2);
-  const total = (parseFloat(prix) + parseFloat(tva)).toFixed(2);
 
+  const [quantity, setQuantity] = useState(1); // Quantité initiale
+  const [prix, setPrix] = useState(prixUnitaire); // Sous-total initial
+  const [tva, setTva] = useState(prixUnitaire * 0.1); // TVA initiale
+  const [total, setTotal] = useState(prixUnitaire + prixUnitaire * 0.1); // Total initial
 
   useEffect(() => {
     async function fetchAnnonce() {
@@ -288,9 +285,12 @@ export default function FormulaireContact({ params }) {
           setUserEmail(userEmail);
           setAnnonceId(data.id);
           setTitle(data.titre);
+          setPrixUnitaire(data.prix);
           setCategory(data.categorieAnnonce);
           setSubCategory(data.sousCategorie);
-          setPrix(data.prix);
+          setPrix(data.prix); // Initialisez le sous-total
+          setTva(data.prix * 0.1); // Initialisez la TVA
+          setTotal(data.prix + data.prix * 0.1); // Initialisez le total
           setTypeTarif(data.typeTarif);
           setDescription(data.description);
           setAdresse(data.adresse);
@@ -389,11 +389,6 @@ export default function FormulaireContact({ params }) {
     setSelectedCountry(value);
   };
 
-  const handleCardClick = (annonceId) => {
-    console.log("Annonce ID:", annonceId);
-    router.push(`/Annonces/id=${annonceId}`);
-  };
-
   const formatTypeTarif = (typeTarif) => {
     switch (typeTarif) {
       case "NUITEE":
@@ -425,80 +420,66 @@ export default function FormulaireContact({ params }) {
     );
   }
 
-  const handlePayAnnonce = async (annonceId) => {
-    try {
-      const response = await fetch("/api/paiement/webhook", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          annonceId,
-          userId,
-          userName,
-          userEmail,
-          userPhone,
-          ville,
-          adresse,
-          codePostal,
-          selectedCountry,
-          total,
-          success_url: `${process.env.FRONTEND_URL}/succesPage/{CHECKOUT_SESSION_ID}`,
-          cancelUrl: `${process.env.FRONTEND_URL}/cancel`,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Erreur inconnue");
-      }
-
-      const stripe = await loadStripe(
-        process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-      );
-      const result = await stripe.redirectToCheckout({
-        sessionId: data.sessionId,
-      });
-
-      if (result.error) {
-        console.error(result.error);
-      }
-    } catch (error) {
-      console.error("Erreur lors de la création de la session Stripe:", error);
-    }
-  };
-
+  if (!session?.user) {
+    return (
+      <div className="flex items-center justify-center  min-h-screen bg-gray-100">
+        <Card className="w-full max-w-md p-4">
+          <CardHeader>
+            <CardTitle className="text-2xl text-primary font-bold text-center">
+              Connexion requise
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-center mb-6 text-gray-600">
+              Veuillez vous connecter à votre compte pour continuer
+            </p>
+            <div className="flex justify-center">
+              <Button asChild className="w-full">
+                <Link href="/login">Se connecter</Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
   // <--
 
-    const handleCheckout = async () => {
-        const formData = new FormData()
-        formData.append('priceId', annonce.priceId)
-        formData.append('sellerId', annonce.user.id)
+  const handleCheckout = async () => {
+    const formData = new FormData();
+    formData.append("priceId", annonce.priceId);
+    formData.append("sellerId", annonce.user.id);
+    formData.append("buyerId", session?.user?.id);
+    formData.append("annonceId", annonce.id);
+    formData.append("title", annonce.titre);
+    formData.append("quantity", quantity);
+    const response = await fetch("/api/stripe/checkout", {
+      method: "POST",
+      body: formData,
+    });
 
-        const response = await fetch('/api/stripe/checkout', {
-          method: 'POST',
-          body: formData
-        })
-
-        const session = await response.json()
-        router.push(session.checkoutSession.url)
-    } 
+    const session = await response.json();
+    router.push(session.checkoutSession.url);
+  };
 
   // -->
+  const handleQuantityChange = (e) => {
+    const newQuantity = parseInt(e.target.value, 10) || 1; // Assurer que newQuantity est un nombre entier
+    setQuantity(newQuantity);
+
+    const newPrix = parseFloat(prixUnitaire) * newQuantity; // Utilisation de parseFloat pour être sûr que prixUnitaire est bien un nombre à virgule flottante
+    const newTva = parseFloat(newPrix * 0.1); // Calcul de la TVA avec parseFloat
+    const newTotal = parseFloat(newPrix + newTva); // Calcul du total avec parseFloat
+
+    setPrix(newPrix);
+    setTva(newTva);
+    setTotal(newTotal);
+  };
 
   return (
-    <div className="container mx-auto py-10 px-20">
-      <Button
-        onClick={(e) => handleCardClick(annonceId)}
-        className="py-5 text-[18px] rounded-[10px] space-x-3"
-      >
-        <FaArrowLeft className="ml-2 mr-4" />
-        Retour
-      </Button>
-
-      <div className="flex flex-col lg:flex-row justify-center items-center   pt-10 pb-10 space-y-5 lg:space-y-0 lg:space-x-10 px-5">
-        <Card className="w-full max-w-md lg:max-w-lg xl:max-w-2xl h-auto p-5 shadow-md rounded-lg flex-shrink-0">
+    <div className="container mx-auto py-10 px-10">
+      <div className="flex flex-col lg:flex-row justify-center items-center  space-y-5 lg:space-y-0 lg:space-x-10 px-10">
+        <Card className="w-full max-w-md lg:max-w-lg xl:max-w-2xl h-auto p-2 shadow-md rounded-lg flex-shrink-0">
           <CardHeader className="flex items-center justify-center">
             <CardTitle className="text-center text-3xl mb-2">
               Formulaire de réservation
@@ -558,8 +539,8 @@ export default function FormulaireContact({ params }) {
                   <Input
                     id="adresse"
                     name="adresse"
-                    value={adresse}
-                    onChange={(e) => setAdresse(e.target.value)}
+                    value={adresseuser}
+                    onChange={(e) => setAdresseUser(e.target.value)}
                     required
                   />
                 </div>
@@ -608,7 +589,7 @@ export default function FormulaireContact({ params }) {
           </CardContent>
         </Card>
 
-        <Card className="w-full max-w-md lg:max-w-lg xl:max-w-2xl h-auto p-5 shadow-md rounded-lg flex-shrink-0">
+        <Card className="w-full max-w-md lg:max-w-lg xl:max-w-2xl h-auto p-2 shadow-md rounded-lg flex-shrink-0">
           <CardHeader className="flex items-center justify-center">
             <CardTitle className="text-center text-3xl mb-2">
               Détails de l&apos;annonce à réserver
@@ -657,29 +638,50 @@ export default function FormulaireContact({ params }) {
                 </span>
               </div>
               <div className="flex items-center space-x-3">
+                <TagIcon className="text-blue-500 h-6 w-6" />
+                <span className="font-semibold text-gray-700">
+                  <strong>Adresse:</strong> {adresse}
+                </span>
+              </div>
+              <div className="flex items-center space-x-3">
                 <TagIcon className="h-6 w-6 text-blue-500" />
                 <span className="font-semibold text-gray-700">
-                  <strong>Prix :</strong> {prix} €
+                  <strong>Prix :</strong> {prixUnitaire} €
                   <span className="ml-1">{formatTypeTarif(typeTarif)}</span>
                 </span>
+              </div>
+              <div className="space-y-2 p-2 font-semibold">
+                <Label htmlFor="quantity" className="text-gray-700">
+                  Quantité
+                </Label>
+                <Input
+                  id="quantity"
+                  type="number"
+                  name="quantity"
+                  value={quantity}
+                  onChange={handleQuantityChange}
+                  min="1"
+                  required
+                  className="w-full"
+                />
               </div>
             </div>
           </CardContent>
 
-          <CardFooter className="flex flex-col space-y-3 pb-4 pt-8 items-center w-full">
+          <CardFooter className="flex flex-col space-y-3 pb-4 pt-4 items-center w-full">
             <Separator />
             <div className="w-full  p-6 space-y-4 bg-white rounded-lg shadow-sm">
               <div className="flex justify-between items-center text-base">
                 <span>Sous total</span>
-                <span>{prix} €</span>
+                <span>{parseFloat(prix).toFixed(2)} €</span>
               </div>
               <div className="flex justify-between items-center text-base text-muted-foreground">
                 <span>TVA(10%)</span>
-                <span>{tva} €</span>
+                <span>{parseFloat(tva).toFixed(2)} €</span>
               </div>
               <div className="flex justify-between items-center pt-4 border-t text-lg font-medium">
                 <span>Totale:</span>
-                <span>{total} €</span>
+                <span>{parseFloat(total).toFixed(2)} €</span>
               </div>
             </div>
             <Button
@@ -705,7 +707,7 @@ export default function FormulaireContact({ params }) {
 
       <div className="container mx-auto flex items-center w-full pt-10 place-content-center">
         <Link href="/Annonces">
-          <Button className="py-4 px-5 text-[20px]">
+          <Button className="py-4 px-5 text-base">
             <FaArrowRight className="mr-2" />
             Voir plus d&apos;annonces
           </Button>

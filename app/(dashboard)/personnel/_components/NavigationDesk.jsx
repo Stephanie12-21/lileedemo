@@ -1,4 +1,12 @@
-import { Box, Heart, Info, Mail, Megaphone, TrendingUp } from "lucide-react";
+import {
+  Box,
+  Heart,
+  Home,
+  Info,
+  Mail,
+  Megaphone,
+  TrendingUp,
+} from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -17,11 +25,6 @@ const Navigation = () => {
       name: "Messages",
       href: session ? `/personnel/messages/${session.user.id}` : "#",
     },
-    // {
-    //   icon: Info,
-    //   name: "Informations de paiement",
-    //   href: session ? `/personnel/InfoPaiement` : "#",
-    // },
     {
       icon: TrendingUp,
       name: "Transactions",

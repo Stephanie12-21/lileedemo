@@ -22,6 +22,9 @@ import RichTextEditor from "@/components/MainComponents/TextEditor/RichEditor";
 import AnimatedSymbol from "@/components/MainComponents/Sections/Loading/AnimatedSymbol";
 import { Button } from "@/components/ui/button";
 
+import { SuccessModal } from "@/app/(dialog)/success/SuccessModal";
+import { ErrorModal } from "@/app/(dialog)/error/ErrorModal";
+
 const ArticleDetailPageModif = ({ params }) => {
   const { id } = params;
   const { data: session, status } = useSession();
@@ -42,6 +45,9 @@ const ArticleDetailPageModif = ({ params }) => {
   const [iframeSrc, setIframeSrc] = useState("");
   const [errors, setErrors] = useState({});
   const router = useRouter();
+
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 
   const fetchArticle = async (id) => {
     try {
@@ -148,11 +154,28 @@ const ArticleDetailPageModif = ({ params }) => {
       if (!response.ok) {
         throw new Error("Erreur lors de la mise à jour de l'annonce");
       }
-      alert("Annonce mise à jour !");
-      router.push(`/personnel/annonces/`);
+
+      setIsSuccessModalOpen(true);
+      setFormData({
+        titre: "",
+        description: "",
+        category: "",
+        subcategory: "",
+        localisation: "",
+        adresse: "",
+        prix: "",
+        typeTarif: "",
+        files: [],
+      });
+      setContenu({});
+      setIframeSrc("");
+      setErrors({});
+      setTimeout(() => {
+        router.push(`/personnel/annonces/`);
+      }, 2000);
     } catch (error) {
       console.error("Erreur de mise à jour:", error);
-      alert("Erreur lors de la mise à jour.");
+      setIsErrorModalOpen(true);
     }
   };
 
@@ -453,6 +476,14 @@ const ArticleDetailPageModif = ({ params }) => {
           </Button>
         </div>
       </form>
+      <SuccessModal
+        isOpen={isSuccessModalOpen}
+        onClose={() => setIsSuccessModalOpen(false)}
+      />
+      <ErrorModal
+        isOpen={isErrorModalOpen}
+        onClose={() => setIsErrorModalOpen(false)}
+      />
     </div>
   );
 };

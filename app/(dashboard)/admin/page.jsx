@@ -20,7 +20,7 @@ const chartConfig = {
   annonces: { label: "Annonces", color: "#15213d" },
   utilisateurs: { label: "Utilisateurs", color: "#34d399" },
   entreprises: { label: "Entreprises", color: "#f19d13" },
-  partenaires: { label: "Partenaires", color: "#d9534f" },
+  articles: { label: "Articles", color: "#d9534f" },
 };
 
 const StatsCard = ({ title, value = 0, icon: Icon, gradient }) => (
@@ -63,8 +63,8 @@ const StatsDashboard = ({ stats }) => (
       gradient="bg-gradient-to-br from-[#f19d13] to-[#f19d13]"
     />
     <StatsCard
-      title="Partenaires engagés"
-      value={stats.partenaires}
+      title="Articles de blog"
+      value={stats.articles}
       icon={Handshake}
       gradient="bg-gradient-to-br from-[#d9534f] to-[#d9534f]"
     />
@@ -84,26 +84,26 @@ const AdminPreview = () => {
         annonces: data.totalAnnonces,
         utilisateurs: data.totalUsers,
         entreprises: data.totalEntreprises,
-        partenaires: data.totalPartenaires,
+        articles: data.totalPartenaires,
       });
 
       const groupedData = data.dailyStats.reduce((acc, entry) => {
         const date = new Date(entry.date);
-        const formattedDate = format(date, "dd MMM yyyy", { locale: fr }); // Format court ici
+        const formattedDate = format(date, "dd MMM yyyy", { locale: fr });
         if (!acc[formattedDate]) {
           acc[formattedDate] = {
             name: formattedDate,
             annonces: 0,
             utilisateurs: 0,
             entreprises: 0,
-            partenaires: 0,
+            articles: 0,
             rawDate: date,
           };
         }
         acc[formattedDate].annonces += parseInt(entry.annonces, 10);
         acc[formattedDate].utilisateurs += parseInt(entry.utilisateurs, 10);
         acc[formattedDate].entreprises += parseInt(entry.entreprises, 10);
-        acc[formattedDate].partenaires += parseInt(entry.partenaires, 10);
+        acc[formattedDate].articles += parseInt(entry.articles, 10);
         return acc;
       }, {});
 
@@ -177,10 +177,10 @@ const AdminPreview = () => {
                   />
                   <Area
                     type="monotone"
-                    dataKey="partenaires"
+                    dataKey="articles"
                     stackId="1"
-                    stroke={chartConfig.partenaires.color}
-                    fill={chartConfig.partenaires.color}
+                    stroke={chartConfig.articles.color}
+                    fill={chartConfig.articles.color}
                   />
                 </AreaChart>
               </ChartContainer>

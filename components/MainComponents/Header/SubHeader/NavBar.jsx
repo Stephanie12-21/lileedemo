@@ -10,7 +10,7 @@ import { Menu } from "lucide-react";
 const links = [
   { path: "/", name: "Accueil" },
   { path: "/Annonces", name: "Annonces" },
-  { path: "/Partenaire", name: "Partenaires engagés" },
+  // { path: "/Partenaire", name: "Partenaires engagés" },
   { path: "/Contact", name: "Contact" },
   { path: "/Blog", name: "Blog & Presse" },
 ];
@@ -56,7 +56,7 @@ export default function NavBar() {
   };
 
   return (
-    <div className="container p-4 md:px-8">
+    <div className="relative p-8">
       <div className="flex justify-between items-center ">
         <Link href="/">
           <Image

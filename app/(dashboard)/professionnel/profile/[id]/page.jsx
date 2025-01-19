@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
+import { motion } from "framer-motion";
 import {
   Card,
   CardContent,
@@ -14,7 +15,7 @@ import { useParams } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { ImagePlus } from "lucide-react";
+import { ImagePlus, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   Select,
@@ -28,6 +29,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AnimatedSymbol from "@/components/MainComponents/Sections/Loading/AnimatedSymbol";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const UserProfilePreview = () => {
   const [errorMessage, setErrorMessage] = useState("");
@@ -61,6 +64,21 @@ const UserProfilePreview = () => {
     typeSociete: "", // Valeur par défaut
   });
 
+  //  <--
+  const [profileLink, setProfileLink] = useState("");
+  const generateProfileLink = async () => {
+    const formData = new FormData();
+    formData.append("userId", session?.user.id);
+    const response = await fetch("/api/stripe/account_link", {
+      method: "POST",
+      body: formData,
+    });
+
+    const accountLink = await response.json();
+    setProfileLink(accountLink.url);
+  };
+
+  // ->
   //récupérer les données depuis le server
   const fetchUserData = useCallback(async () => {
     setLoading(true); // Démarrer le chargement au début de la fonction
@@ -147,34 +165,34 @@ const UserProfilePreview = () => {
         return;
       }
 
-      const phone = `+${editedUser.phone}`;
-      try {
-        const response = await fetch("/api/user/verifPhone/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            Phone: phone,
-            prenom: editedUser.prenom,
-            verificationCode: generatedCodes.phone,
-          }),
-        });
+      // const phone = `+${editedUser.phone}`;
+      // try {
+      //   const response = await fetch("/api/user/verifPhone/", {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //     body: JSON.stringify({
+      //       Phone: phone,
+      //       prenom: editedUser.prenom,
+      //       verificationCode: generatedCodes.phone,
+      //     }),
+      //   });
 
-        if (!response.ok) {
-          throw new Error("Erreur lors de l'envoi du SMS");
-        }
-        console.log("SMS envoyé avec succès");
-        console.log(
-          "Code de vérification envoyé par SMS:",
-          generatedCodes.phone
-        );
-        setShowVerifInfo(true);
-      } catch (error) {
-        console.error(error);
-        alert(error.message);
-        return;
-      }
+      //   if (!response.ok) {
+      //     throw new Error("Erreur lors de l'envoi du SMS");
+      //   }
+      //   console.log("SMS envoyé avec succès");
+      //   console.log(
+      //     "Code de vérification envoyé par SMS:",
+      //     generatedCodes.phone
+      //   );
+      //   setShowVerifInfo(true);
+      // } catch (error) {
+      //   console.error(error);
+      //   alert(error.message);
+      //   return;
+      // }
     } else {
       setIsEditing(true);
     }
@@ -189,16 +207,17 @@ const UserProfilePreview = () => {
     const emailVerificationCode = Math.floor(
       100000 + Math.random() * 900000
     ).toString();
-    const phoneVerificationCode = Math.floor(
-      100000 + Math.random() * 900000
-    ).toString();
-    return { email: emailVerificationCode, phone: phoneVerificationCode };
+    // const phoneVerificationCode = Math.floor(
+    //   100000 + Math.random() * 900000
+    // ).toString();
+    return { email: emailVerificationCode };
   };
 
-  const handleVerifyCodes = (enteredEmailCode, enteredPhoneCode) => {
+  const handleVerifyCodes = (enteredEmailCode) => {
     if (
-      enteredEmailCode === verificationCodes.email &&
-      enteredPhoneCode === verificationCodes.phone
+      enteredEmailCode === verificationCodes.email
+      // &&
+      // enteredPhoneCode === verificationCodes.phone
     ) {
       handleConfirmEdit();
     } else {
@@ -972,6 +991,25 @@ const UserProfilePreview = () => {
                             Annuler
                           </button>
                         )}
+                        {profileLink ? (
+                          <Link href={profileLink} passHref>
+                            <Button
+                              variant="outline"
+                              className="w-full group mt-2 bg-primary hover:bg-primary text-white hover:text-white transition-colors duration-300"
+                            >
+                              <span className="mr-2">
+                                Connecter le compte à stripe
+                              </span>
+                            </Button>
+                          </Link>
+                        ) : (
+                          <Button
+                            onClick={generateProfileLink}
+                            className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-300"
+                          >
+                            Générer le lien de connexion à stripe
+                          </Button>
+                        )}
                       </div>
                     </CardFooter>
                   </Card>
@@ -995,56 +1033,63 @@ export default UserProfilePreview;
 
 const CodeVerificationDialog = ({ onVerify, onCancel }) => {
   const [emailCodeInput, setEmailCodeInput] = useState("");
-  const [phoneCodeInput, setPhoneCodeInput] = useState("");
+  //const [phoneCodeInput, setPhoneCodeInput] = useState("");
+
+  const handleVerify = () => {
+    onVerify(emailCodeInput, phoneCodeInput);
+    setEmailCodeInput("");
+    //setPhoneCodeInput("");
+  };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded shadow-lg">
-        <h2 className="text-lg font-bold">Vérification des codes</h2>
-        <div className="mt-4">
-          <Label htmlFor="emailCode" className="text-sm font-medium">
-            Code email
-          </Label>
-          <Input
-            id="emailCode"
-            value={emailCodeInput}
-            onChange={(e) => setEmailCodeInput(e.target.value)}
-          />
-        </div>
-        <div className="mt-4">
-          <Label htmlFor="phoneCode" className="text-sm font-medium">
-            Code téléphone
-          </Label>
-          <Input
-            id="phoneCode"
-            value={phoneCodeInput}
-            onChange={(e) => setPhoneCodeInput(e.target.value)}
-          />
-        </div>
-        <div className="mt-4 flex justify-between">
-          <button
-            onClick={() => {
-              onVerify(emailCodeInput, phoneCodeInput);
-              setEmailCodeInput("");
-              setPhoneCodeInput("");
-            }}
-            className="bg-green-500 text-white px-4 py-2 rounded"
-          >
-            Vérifier
-          </button>
-          <button
-            onClick={onCancel}
-            className="bg-gray-300 text-black px-4 py-2 rounded"
-          >
-            Annuler
-          </button>
-        </div>
-      </div>
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
-      />
-    </div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+    >
+      <motion.div
+        initial={{ scale: 0.9, y: 20 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={{ scale: 0.9, y: 20 }}
+        className="w-full max-w-md px-4"
+      >
+        <Card className="relative p-4">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold text-center">
+              Vérification des codes
+            </CardTitle>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute right-4 top-4"
+              onClick={onCancel}
+            >
+              <X className="h-4 w-4" />
+              <span className="sr-only">Fermer</span>
+            </Button>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="emailCode">Code email</Label>
+              <Input
+                id="emailCode"
+                value={emailCodeInput}
+                onChange={(e) => setEmailCodeInput(e.target.value)}
+                placeholder="Entrez le code reçu par email"
+              />
+            </div>
+          </CardContent>
+          <CardFooter className=" w-full flex flex-col justify-between space-y-4">
+            <Button className="w-full" onClick={handleVerify}>
+              Vérifier
+            </Button>
+            <Button variant="secondary" className="w-full" onClick={onCancel}>
+              Annuler
+            </Button>
+          </CardFooter>
+        </Card>
+      </motion.div>
+    </motion.div>
   );
 };

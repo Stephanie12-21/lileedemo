@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
@@ -9,8 +8,8 @@ import Image from "next/image";
 
 import { useRouter } from "next/navigation";
 import RichTextEditor from "@/components/MainComponents/TextEditor/RichEditor";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { SuccessModal } from "@/app/(dialog)/success/SuccessModal";
+import { ErrorModal } from "@/app/(dialog)/error/ErrorModal";
 
 const ArticleForm = () => {
   const [titre, setTitre] = useState("");
@@ -18,6 +17,8 @@ const ArticleForm = () => {
   const [categorieArticle, setCategorieArticle] = useState("");
   const [imageFiles, setImageFiles] = useState([]);
   const router = useRouter();
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 
   const resetForm = () => {
     setTitre("");
@@ -60,21 +61,19 @@ const ArticleForm = () => {
       const result = await response.json();
 
       if (response.ok) {
-        toast.success("Article publié avec succès !", {
-          onClose: () => {
-            router.push("/admin/blog");
-            resetForm();
-          },
-        });
+        setIsSuccessModalOpen(true);
+
+        resetForm();
+
+        setTimeout(() => {
+          router.push("/admin/blog");
+        }, 5000);
       } else {
-        toast.error(
-          "Erreur lors de la publication de l'article:",
-          result.message
-        );
+        setIsErrorModalOpen(true);
       }
     } catch (error) {
       console.error("Erreur lors de la soumission :", error);
-      toast.error("Erreur interne du serveur.");
+      setIsErrorModalOpen(true);
     }
   };
 
@@ -196,10 +195,13 @@ const ArticleForm = () => {
           </div>
         </div>
       </div>
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
+      <SuccessModal
+        isOpen={isSuccessModalOpen}
+        onClose={() => setIsSuccessModalOpen(false)}
+      />
+      <ErrorModal
+        isOpen={isErrorModalOpen}
+        onClose={() => setIsErrorModalOpen(false)}
       />
     </div>
   );

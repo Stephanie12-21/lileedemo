@@ -8,8 +8,8 @@ import RichTextEditor from "@/components/MainComponents/TextEditor/RichEditor";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { SuccessModal } from "@/app/(dialog)/success/SuccessModal";
+import { ErrorModal } from "@/app/(dialog)/error/ErrorModal";
 
 const ArticleDetailPageModif = ({ params }) => {
   const { id } = params;
@@ -23,6 +23,9 @@ const ArticleDetailPageModif = ({ params }) => {
   });
   const [contenu, setContenu] = useState({});
   const router = useRouter();
+
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 
   const fetchArticle = async (id) => {
     try {
@@ -106,14 +109,15 @@ const ArticleDetailPageModif = ({ params }) => {
       if (!response.ok) {
         throw new Error("Erreur lors de la mise à jour de l'article");
       }
-      toast.success("Article mis à jour !", {
-        onClose: () => {
-          router.push(`/admin/blog/${id}`);
-          resetForm();
-        },
-      });
+      setIsSuccessModalOpen(true);
+
+      resetForm();
+
+      setTimeout(() => {
+        router.push("/admin/blog");
+      }, 5000);
     } catch (error) {
-      toast.error("Erreur lors de la mise à jour de l'article:", error.message);
+      setIsErrorModalOpen(true);
     }
   };
 
@@ -256,10 +260,13 @@ const ArticleDetailPageModif = ({ params }) => {
         </div>
       </div>
 
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
+      <SuccessModal
+        isOpen={isSuccessModalOpen}
+        onClose={() => setIsSuccessModalOpen(false)}
+      />
+      <ErrorModal
+        isOpen={isErrorModalOpen}
+        onClose={() => setIsErrorModalOpen(false)}
       />
     </div>
   );

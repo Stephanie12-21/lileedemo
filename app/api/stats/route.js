@@ -6,7 +6,7 @@ export async function GET() {
     const totalUsers = await db.user.count();
     const totalAnnonces = await db.annonces.count();
     const totalEntreprises = await db.company.count();
-    const totalPartenaires = await db.engagement.count();
+    const totalPartenaires = await db.article.count();
 
     const userStats = await db.$queryRaw`
       SELECT DATE("createdAt") as date, COUNT(id) as count
@@ -31,7 +31,7 @@ export async function GET() {
 
     const partenaireStats = await db.$queryRaw`
       SELECT DATE("createdAt") as date, COUNT(id) as count
-      FROM "engagement"
+      FROM "article"
       GROUP BY DATE("createdAt")
       ORDER BY DATE("createdAt") ASC;
     `;
@@ -60,7 +60,7 @@ export async function GET() {
         utilisateurs: userCount.toString(),
         annonces: annonceCount.toString(),
         entreprises: companyCount.toString(),
-        partenaires: partenaireCount.toString(),
+        articles: partenaireCount.toString(),
       };
     });
 
@@ -69,10 +69,10 @@ export async function GET() {
         acc.utilisateurs += parseInt(current.utilisateurs);
         acc.annonces += parseInt(current.annonces);
         acc.entreprises += parseInt(current.entreprises);
-        acc.partenaires += parseInt(current.partenaires);
+        acc.articles += parseInt(current.articles);
         return acc;
       },
-      { utilisateurs: 0, entreprises: 0, annonces: 0, partenaires: 0 }
+      { utilisateurs: 0, entreprises: 0, annonces: 0, articles: 0 }
     );
 
     return NextResponse.json(

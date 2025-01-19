@@ -211,10 +211,10 @@ const User = ({ userData, setSelectedChatroom }) => {
     const otherUserId = isSender ? chatroom.receiver : chatroom.sender;
     const otherUser = userDetails[otherUserId];
 
-    if (!otherUser) {
-      toast.error("Données manquantes pour l'autre participant !");
-      return;
-    }
+    // if (!otherUser) {
+    //   toast.error("Données manquantes pour l'autre participant !");
+    //   return;
+    // }
 
     const data = {
       id: chatroom.id,

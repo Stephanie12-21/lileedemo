@@ -469,14 +469,14 @@ export default function Annonces() {
                               alt={annonce.titre}
                               width={400}
                               height={300}
-                              className="w-full h-48 object-cover"
+                              className="w-full h-48 object-cover transform scale-100 hover:scale-105 transition-transform duration-300 ease-in-out"
                             />
                           )}
-                          <div className="absolute top-0 left-0 z-10 bg-[#FFA500] text-white px-4 py-1 rounded-br-lg transform -skew-x-12">
+                          {/* <div className="absolute top-0 left-0 z-10 bg-[#FFA500] text-white px-4 py-1 rounded-br-lg transform -skew-x-12">
                             <span className="block transform skew-x-12">
                               Populaire
                             </span>
-                          </div>
+                          </div> */}
                           <button
                             onClick={(e) => {
                               e.stopPropagation();

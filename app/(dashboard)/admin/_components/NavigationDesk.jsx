@@ -77,11 +77,11 @@ const Navigation = () => {
     //   name: "Informations de paiement",
     //   href: session ? `/admin/InfoPaiement` : "#",
     // },
-    {
-      icon: UsersRound,
-      name: "Partenaires engagés",
-      href: session ? `/admin/partenaire` : "#",
-    },
+    // {
+    //   icon: UsersRound,
+    //   name: "Partenaires engagés",
+    //   href: session ? `/admin/partenaire` : "#",
+    // },
   ];
 
   return (

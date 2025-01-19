@@ -19,8 +19,12 @@ import {
   BadgeCheck,
   Search,
   ChevronDown,
+  BadgeAlert,
 } from "lucide-react";
 import ConfirmDeleteModal from "@/app/(dialog)/delete/page";
+
+import { SuccessModal } from "@/app/(dialog)/success/SuccessModal";
+import { ErrorModal } from "@/app/(dialog)/error/ErrorModal";
 
 const Annonces = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -32,6 +36,9 @@ const Annonces = () => {
   const [error, setError] = useState(null);
   const router = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -84,9 +91,13 @@ const Annonces = () => {
       setAnnonces((prevAnnonces) =>
         prevAnnonces.filter((annonce) => annonce.id !== selectedAnnonceId)
       );
-
-      console.log("Données supprimées");
+      console.log("Annonce supprimée avec succès");
+      setIsSuccessModalOpen(true);
+      setTimeout(() => {
+        router.push("/personnel/annonces");
+      }, 2000);
     } catch (error) {
+      setIsErrorModalOpen(true);
       console.error("Erreur lors de la suppression des données :", error);
     } finally {
       setShowDeleteModal(false);
@@ -216,13 +227,20 @@ const Annonces = () => {
                         className="h-7 w-7 text-green-500"
                         title="Publiée"
                       />
-                    ) : (
+                    ) : annonce.statut.toUpperCase() ===
+                      "EN_ATTENTE_DE_VALIDATION" ? (
                       <Loader
                         className="h-7 w-7 text-yellow-500 animate-spin"
-                        title="En attente"
+                        title="En attente de validation"
+                      />
+                    ) : (
+                      <BadgeAlert
+                        className="h-7 w-7 text-red-500"
+                        title="Désactivée"
                       />
                     )}
                   </div>
+
                   <h3 className="text-xl font-semibold line-clamp-2">
                     {annonce.titre}
                   </h3>
@@ -269,6 +287,14 @@ const Annonces = () => {
         isOpen={showDeleteModal}
         onClose={handleCloseModal}
         onConfirm={handleConfirmDelete}
+      />
+      <SuccessModal
+        isOpen={isSuccessModalOpen}
+        onClose={() => setIsSuccessModalOpen(false)}
+      />
+      <ErrorModal
+        isOpen={isErrorModalOpen}
+        onClose={() => setIsErrorModalOpen(false)}
       />
     </div>
   );

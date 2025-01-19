@@ -36,7 +36,9 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import AnimatedSymbol from "@/components/MainComponents/Sections/Loading/AnimatedSymbol";
 import { Input } from "@/components/ui/input";
-import { toast, ToastContainer } from "react-toastify";
+
+import { SuccessModal } from "@/app/(dialog)/success/SuccessModal";
+import { ErrorModal } from "@/app/(dialog)/error/ErrorModal";
 
 export default function LayoutAdmin({ children }) {
   const { data: session } = useSession();
@@ -48,6 +50,8 @@ export default function LayoutAdmin({ children }) {
   const [isLoading, setIsLoading] = useState(true);
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -74,16 +78,17 @@ export default function LayoutAdmin({ children }) {
       });
 
       if (response.ok) {
-        alert("Témoignage soumis avec succès !");
+        setIsSuccessModalOpen(true);
         setTestimony("");
         setRating(0);
         handleCloseDialog();
       } else {
-        alert("Erreur lors de la soumission du témoignage.");
+        setIsErrorModalOpen(true);
       }
     } catch (error) {
+      handleCloseDialog();
+      setIsErrorModalOpen(true);
       console.error("Erreur:", error);
-      alert("Une erreur s'est produite.");
     }
   };
 
@@ -404,12 +409,15 @@ export default function LayoutAdmin({ children }) {
           </AlertDialog>
         </header>
         <div className="container mx-auto">{children}</div>
+        <SuccessModal
+          isOpen={isSuccessModalOpen}
+          onClose={() => setIsSuccessModalOpen(false)}
+        />
+        <ErrorModal
+          isOpen={isErrorModalOpen}
+          onClose={() => setIsErrorModalOpen(false)}
+        />
       </div>
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
-      />
     </div>
   );
 }

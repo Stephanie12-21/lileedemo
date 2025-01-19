@@ -121,53 +121,54 @@ export async function POST(req) {
 
     console.log("Compte créé avec succès");
 
-
     // <-- creation stripe account
-    
+
     const account = await stripe.accounts.create({
-      country: 'FR',
+      country: "FR",
       email: newcomptePerso.email,
       controller: {
-          fees: {
-              payer: 'application'
-          },
-          losses:  {
-              payments: 'application'
-          },
-          stripe_dashboard: {
-              type: 'express'
-          },
+        fees: {
+          payer: "application",
+        },
+        losses: {
+          payments: "application",
+        },
+        stripe_dashboard: {
+          type: "express",
+        },
       },
       capabilities: {
-          transfers: {
-              requested: true,
-          },
-          card_payments: {
-              requested: true
-          }
+        transfers: {
+          requested: true,
+        },
+        card_payments: {
+          requested: true,
+        },
       },
-      
-      business_type: 'individual',
+
+      business_type: "individual",
       individual: {
-          email: newcomptePerso.email,
-          first_name: newcomptePerso.prenom,
-          last_name: newcomptePerso.last_name
+        email: newcomptePerso.email,
+        first_name: newcomptePerso.prenom,
+        last_name: newcomptePerso.last_name,
       },
       metadata: {
-          userId: newcomptePerso.id,
-          userRole: newcomptePerso.role 
+        userId: newcomptePerso.id,
+        userRole: newcomptePerso.role,
       },
-      default_currency: 'eur'
-  })
+      default_currency: "eur",
+    });
 
     await db.user.update({
-      where: {id: newcomptePerso.id},
+      where: { id: newcomptePerso.id },
       data: {
-          stripeAccountId: account.id
-      }
-    })
+        stripeAccountId: account.id,
+      },
+    });
 
     // -->
+    console.log("Compte créé avec succès");
+    console.log("Données envoyées avec succès à la base de données");
 
     return NextResponse.json(
       {

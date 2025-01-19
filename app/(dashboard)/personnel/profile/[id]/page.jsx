@@ -15,17 +15,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { ImagePlus, X } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-
 import Link from "next/link";
 import AnimatedSymbol from "@/components/MainComponents/Sections/Loading/AnimatedSymbol";
 
 const UserProfilePreview = () => {
   const { id: userId } = useParams();
-  const { data: session, update } = useSession();
+  const { data: session } = useSession();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -42,25 +40,23 @@ const UserProfilePreview = () => {
 
   const [verificationCodes, setVerificationCodes] = useState({
     email: "",
-    phone: "",
+    // phone: "",
   });
 
-  console.log("usesession hook session object", session);
-
-
   //  <--
-  const [profileLink, setProfileLink] = useState('')
+  const [profileLink, setProfileLink] = useState("");
   const generateProfileLink = async () => {
-    const formData = new FormData()
-    formData.append('userId', session?.user.id)
-    const response = await fetch('/api/stripe/account_link', {
-      method: 'POST',
-      body: formData
-    })
+    const formData = new FormData();
+    formData.append("userId", session?.user.id);
+    const response = await fetch("/api/stripe/account_link", {
+      method: "POST",
+      body: formData,
+    });
 
-    const accountLink = await response.json()
-    setProfileLink(accountLink.url)
-  }
+    const accountLink = await response.json();
+    setProfileLink(accountLink.url);
+  };
+
   // ->
 
   const fetchUserData = useCallback(async () => {
@@ -124,34 +120,34 @@ const UserProfilePreview = () => {
       }
 
       // Send SMS verification
-      const phone = `+${editedUser.phone}`;
-      try {
-        const response = await fetch("/api/user/verifPhone/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            Phone: phone,
-            prenom: editedUser.prenom,
-            verificationCode: generatedCodes.phone,
-          }),
-        });
+      // const phone = `+${editedUser.phone}`;
+      // try {
+      //   const response = await fetch("/api/user/verifPhone/", {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //     body: JSON.stringify({
+      //       Phone: phone,
+      //       prenom: editedUser.prenom,
+      //       verificationCode: generatedCodes.phone,
+      //     }),
+      //   });
 
-        if (!response.ok) {
-          throw new Error("Erreur lors de l'envoi du SMS");
-        }
-        console.log("SMS envoyé avec succès");
-        console.log(
-          "Code de vérification envoyé par SMS:",
-          generatedCodes.phone
-        );
-        setShowVerifInfo(true);
-      } catch (error) {
-        console.error(error);
-        alert(error.message);
-        return;
-      }
+      //   if (!response.ok) {
+      //     throw new Error("Erreur lors de l'envoi du SMS");
+      //   }
+      //   console.log("SMS envoyé avec succès");
+      //   console.log(
+      //     "Code de vérification envoyé par SMS:",
+      //     generatedCodes.phone
+      //   );
+      //   setShowVerifInfo(true);
+      // } catch (error) {
+      //   console.error(error);
+      //   alert(error.message);
+      //   return;
+      // }
     } else {
       setIsEditing(true);
     }
@@ -336,6 +332,7 @@ const UserProfilePreview = () => {
       }
     }
   };
+
   return (
     <div className="bg-gray-100 min-h-screen py-8">
       <div className="container mx-auto px-4">
@@ -493,6 +490,25 @@ const UserProfilePreview = () => {
                       Annuler
                     </button>
                   )}
+                  {profileLink ? (
+                    <Link href={profileLink} passHref>
+                      <Button
+                        variant="outline"
+                        className="w-full group mt-2 bg-primary hover:bg-primary text-white hover:text-white transition-colors duration-300"
+                      >
+                        <span className="mr-2">
+                          Connecter le compte à stripe
+                        </span>
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Button
+                      onClick={generateProfileLink}
+                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-300"
+                    >
+                      Générer le lien de connexion à stripe
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
@@ -506,11 +522,11 @@ const UserProfilePreview = () => {
         />
       )}
 
-    {
+      {/* {
       profileLink === "" ? 
       <Button onClick={generateProfileLink}>Generate profile link</Button> : 
       <Link href={profileLink}>Complete stripe profile</Link>
-      }
+      } */}
     </div>
   );
 };
@@ -565,7 +581,7 @@ const CodeVerificationDialog = ({ onVerify, onCancel }) => {
                 placeholder="Entrez le code reçu par email"
               />
             </div>
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label htmlFor="phoneCode">Code téléphone</Label>
               <Input
                 id="phoneCode"
@@ -573,7 +589,7 @@ const CodeVerificationDialog = ({ onVerify, onCancel }) => {
                 onChange={(e) => setPhoneCodeInput(e.target.value)}
                 placeholder="Entrez le code reçu par SMS"
               />
-            </div>
+            </div> */}
           </CardContent>
           <CardFooter className=" w-full flex flex-col justify-between space-y-4">
             <Button className="w-full" onClick={handleVerify}>
