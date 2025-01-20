@@ -463,7 +463,7 @@ export default function FormulaireContact({ params }) {
       return;
     }
 
-    const buyerId = session.user.id; // Utiliser session.user.id
+    const buyerId = session.user.id;
     const formData = new FormData();
     formData.append("annonceId", annonce.id);
     formData.append("priceId", annonce.priceId);

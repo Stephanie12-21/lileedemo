@@ -67,11 +67,11 @@ const Navigation = () => {
     //   name: "Abonnement",
     //   href: session ? `/admin/Abonnement` : "#",
     // },
-    // {
-    //   icon: DollarSign,
-    //   name: "Transactions",
-    //   href: session ? `/admin/transactions` : "#",
-    // },
+    {
+      icon: DollarSign,
+      name: "Transactions",
+      href: session ? `/admin/transactions` : "#",
+    },
     // {
     //   icon: Info,
     //   name: "Informations de paiement",
