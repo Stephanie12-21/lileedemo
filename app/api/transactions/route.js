@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    // Récupérer les transactions avec les détails des annonces et des utilisateurs associés
     const transactions = await db.transactions.findMany({
       orderBy: {
         createdAt: "desc",
@@ -11,10 +10,10 @@ export async function GET() {
       include: {
         annonce: {
           include: {
-            user: true, // Inclure les informations de l'utilisateur lié à l'annonce
+            user: true,
           },
         },
-        user: true, // Inclure les informations de l'utilisateur lié à la transaction
+        user: true,
       },
     });
 

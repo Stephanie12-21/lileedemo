@@ -201,7 +201,7 @@ const PubPage = () => {
 
   const handleSeeUserInfo = useCallback(
     (userId) => {
-      router.push(`/admin/users/${userId}`);
+      router.push(`/admin/transactions/${userId}`);
     },
     [router]
   );
