@@ -44,6 +44,10 @@ model user {
   stripeAccountCompleted        Boolean         @default(false)          
   // -->
 
+   // <--
+  transactions          transactions[]
+    // -->
+
 }
 
 enum statutUser {
@@ -135,6 +139,7 @@ model annonces {
   // <--
   priceId          String?
   // -->
+  transactions    transactions[]
 }
 
 enum statut {
@@ -283,4 +288,22 @@ model image {
   article   article  @relation(fields: [articleId], references: [id])
 }
 
+//pour les transactions
+model transactions {
+  id                Int       @id @default(autoincrement())
+  price             Decimal
+  quantity          Int
+  status            transactionStatus @default(PENDING)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  annonceId         Int
+  annonce           annonces @relation(fields: [annonceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId            Int
+  user              user      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
 
+enum transactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}

@@ -22,11 +22,11 @@ import {
 } from "@/components/ui/select";
 import { FaArrowRight } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Loader2, StarIcon, TagIcon } from "lucide-react";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
+import { useSession } from "next-auth/react";
 
 const PAYS = [
   { label: "Afghanistan", value: "afghanistan" },
@@ -224,6 +224,7 @@ const PAYS = [
 
 export default function FormulaireContact({ params }) {
   const { data: session } = useSession();
+
   const { id } = params;
   const router = useRouter();
   const [annonce, setAnnonce] = useState("");
@@ -236,8 +237,6 @@ export default function FormulaireContact({ params }) {
   const [category, setCategory] = useState("");
   const [subcategory, setSubCategory] = useState("");
   const [description, setDescription] = useState("");
-  // const [prix, setPrix] = useState("");
-  const [prixUnitaire, setPrixUnitaire] = useState("");
   const [typeTarif, setTypeTarif] = useState("");
   const [comments, setComments] = useState([]);
   const [userEmail, setUserEmail] = useState("");
@@ -249,10 +248,11 @@ export default function FormulaireContact({ params }) {
   const [codePostal, setCodePostal] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const [quantity, setQuantity] = useState(1); // Quantité initiale
-  const [prix, setPrix] = useState(prixUnitaire); // Sous-total initial
-  const [tva, setTva] = useState(prixUnitaire * 0.1); // TVA initiale
-  const [total, setTotal] = useState(prixUnitaire + prixUnitaire * 0.1); // Total initial
+  const [prixUnitaire, setPrixUnitaire] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const [prix, setPrix] = useState(0);
+  const [tva, setTva] = useState(0);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
     async function fetchAnnonce() {
@@ -285,12 +285,19 @@ export default function FormulaireContact({ params }) {
           setUserEmail(userEmail);
           setAnnonceId(data.id);
           setTitle(data.titre);
-          setPrixUnitaire(data.prix);
+          const fetchedPrixUnitaire = data.prix; // Récupération du prix unitaire depuis l'API
+          setPrixUnitaire(fetchedPrixUnitaire);
+
+          const initialPrix = fetchedPrixUnitaire * quantity; // Calcul du sous-total
+          setPrix(initialPrix);
+
+          const calculatedTva = initialPrix * 0.1; // Calcul de la TVA
+          setTva(calculatedTva);
+
+          const calculatedTotal = initialPrix + calculatedTva; // Calcul du total
+          setTotal(calculatedTotal);
           setCategory(data.categorieAnnonce);
           setSubCategory(data.sousCategorie);
-          setPrix(data.prix); // Initialisez le sous-total
-          setTva(data.prix * 0.1); // Initialisez la TVA
-          setTotal(data.prix + data.prix * 0.1); // Initialisez le total
           setTypeTarif(data.typeTarif);
           setDescription(data.description);
           setAdresse(data.adresse);
@@ -298,6 +305,10 @@ export default function FormulaireContact({ params }) {
           setUserDate(formattedDate);
           setUserPhoto(userPhoto);
           setUserId(userId);
+          console.log("Prix unitaire :", fetchedPrixUnitaire);
+          console.log("Prix initial (sous-total) :", initialPrix);
+          console.log("TVA :", calculatedTva);
+          console.log("Total :", calculatedTotal);
         } else {
           console.error("Annonce non trouvée, avec l'id annonce :", id);
         }
@@ -307,7 +318,7 @@ export default function FormulaireContact({ params }) {
     }
 
     fetchAnnonce();
-  }, [id]);
+  }, [id, quantity]);
 
   useEffect(() => {
     if (annonceId) {
@@ -443,152 +454,64 @@ export default function FormulaireContact({ params }) {
       </div>
     );
   }
+
   // <--
 
   const handleCheckout = async () => {
+    if (!session) {
+      console.error("Session not initialized!");
+      return;
+    }
+
+    const buyerId = session.user.id; // Utiliser session.user.id
     const formData = new FormData();
+    formData.append("annonceId", annonce.id);
     formData.append("priceId", annonce.priceId);
     formData.append("sellerId", annonce.user.id);
-    formData.append("buyerId", session?.user?.id);
-    formData.append("annonceId", annonce.id);
+    formData.append("buyerId", buyerId);
     formData.append("title", annonce.titre);
     formData.append("quantity", quantity);
-    const response = await fetch("/api/stripe/checkout", {
-      method: "POST",
-      body: formData,
-    });
 
-    const session = await response.json();
-    router.push(session.checkoutSession.url);
+    try {
+      const response = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to create checkout session: ${response.statusText}`
+        );
+      }
+
+      const checkoutSession = await response.json();
+      if (checkoutSession?.checkoutSession?.url) {
+        router.push(checkoutSession.checkoutSession.url);
+      } else {
+        console.error("Checkout session URL not found!");
+      }
+    } catch (error) {
+      console.error("An error occurred during checkout:", error);
+    }
   };
 
   // -->
   const handleQuantityChange = (e) => {
-    const newQuantity = parseInt(e.target.value, 10) || 1; // Assurer que newQuantity est un nombre entier
+    const newQuantity = parseInt(e.target.value, 10) || 1; // Si la quantité est invalide, on la force à 1
     setQuantity(newQuantity);
 
-    const newPrix = parseFloat(prixUnitaire) * newQuantity; // Utilisation de parseFloat pour être sûr que prixUnitaire est bien un nombre à virgule flottante
-    const newTva = parseFloat(newPrix * 0.1); // Calcul de la TVA avec parseFloat
-    const newTotal = parseFloat(newPrix + newTva); // Calcul du total avec parseFloat
+    const newPrix = parseFloat(prixUnitaire) * newQuantity; // Calculer le sous-total
+    const newTva = newPrix * 0.1; // Calcul de la TVA
+    const newTotal = newPrix + newTva; // Calcul du total
 
-    setPrix(newPrix);
-    setTva(newTva);
-    setTotal(newTotal);
+    setPrix(newPrix); // Mettre à jour le sous-total
+    setTva(newTva); // Mettre à jour la TVA
+    setTotal(newTotal); // Mettre à jour le total
   };
 
   return (
     <div className="container mx-auto py-10 px-10">
       <div className="flex flex-col lg:flex-row justify-center items-center  space-y-5 lg:space-y-0 lg:space-x-10 px-10">
-        <Card className="w-full max-w-md lg:max-w-lg xl:max-w-2xl h-auto p-2 shadow-md rounded-lg flex-shrink-0">
-          <CardHeader className="flex items-center justify-center">
-            <CardTitle className="text-center text-3xl mb-2">
-              Formulaire de réservation
-            </CardTitle>
-          </CardHeader>
-
-          <CardContent className="pt-5">
-            <div className="grid w-full items-center gap-4">
-              <div className="grid w-full items-center gap-2">
-                <div className="w-full space-y-2">
-                  <Label htmlFor="nomComplet">Nom complet</Label>
-                  <Input
-                    id="nomComplet"
-                    name="nomComplet"
-                    value={userName || ""}
-                    onChange={(e) => setUserName(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="email"
-                    className="text-right text-[#425466] font-medium text-[16px]"
-                  >
-                    Votre adresse email
-                  </Label>
-                  <Input
-                    id="email"
-                    placeholder="email@gmail.com"
-                    value={userEmail || ""}
-                    required
-                    onChange={(e) => setUserEmail(e.target.value)}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="num"
-                    className="text-right text-[#425466] font-medium text-[16px]"
-                  >
-                    Votre numéro de téléphone
-                  </Label>
-                  <PhoneInput
-                    country={"fr"}
-                    value={userPhone || ""}
-                    required
-                    onChange={setUserPhone}
-                    placeholder="Entrez votre numéro"
-                    inputStyle={{ width: "100%", height: "40px" }}
-                    buttonClass="custom-flag-style"
-                    inputClass="col-span-3 items-start w-full bg-[#edf2f7] text-[15px] text-[#27272E] font-medium"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="adresse">Adresse exacte</Label>
-                  <Input
-                    id="adresse"
-                    name="adresse"
-                    value={adresseuser}
-                    onChange={(e) => setAdresseUser(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="codePostal">Code postal</Label>
-                  <Input
-                    id="codePostal"
-                    name="codePostal"
-                    value={codePostal}
-                    onChange={(e) => setCodePostal(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="ville">Ville</Label>
-                  <Input
-                    id="ville"
-                    name="ville"
-                    value={ville}
-                    onChange={(e) => setVille(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="pays">Pays</Label>
-                  <Select
-                    onValueChange={handleSelectChange}
-                    value={selectedCountry}
-                    placeholder="Sélectionnez un pays"
-                    required
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Sélectionnez un pays" />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-[300px]">
-                      {PAYS.map((pays) => (
-                        <SelectItem key={pays.value} value={pays.value}>
-                          {pays.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
         <Card className="w-full max-w-md lg:max-w-lg xl:max-w-2xl h-auto p-2 shadow-md rounded-lg flex-shrink-0">
           <CardHeader className="flex items-center justify-center">
             <CardTitle className="text-center text-3xl mb-2">
@@ -657,12 +580,10 @@ export default function FormulaireContact({ params }) {
                 <Input
                   id="quantity"
                   type="number"
-                  name="quantity"
                   value={quantity}
                   onChange={handleQuantityChange}
                   min="1"
-                  required
-                  className="w-full"
+                  className="border rounded p-2"
                 />
               </div>
             </div>
@@ -673,7 +594,7 @@ export default function FormulaireContact({ params }) {
             <div className="w-full  p-6 space-y-4 bg-white rounded-lg shadow-sm">
               <div className="flex justify-between items-center text-base">
                 <span>Sous total</span>
-                <span>{parseFloat(prix).toFixed(2)} €</span>
+                <span>{parseFloat(prix).toFixed(2)} €</span>{" "}
               </div>
               <div className="flex justify-between items-center text-base text-muted-foreground">
                 <span>TVA(10%)</span>
