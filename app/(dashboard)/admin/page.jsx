@@ -20,7 +20,7 @@ const chartConfig = {
   annonces: { label: "Annonces", color: "#15213d" },
   utilisateurs: { label: "Utilisateurs", color: "#34d399" },
   entreprises: { label: "Entreprises", color: "#f19d13" },
-  articles: { label: "Articles", color: "#d9534f" },
+  transactions: { label: "Transactions", color: "#d9534f" },
 };
 
 const StatsCard = ({ title, value = 0, icon: Icon, gradient }) => (
@@ -63,8 +63,8 @@ const StatsDashboard = ({ stats }) => (
       gradient="bg-gradient-to-br from-[#f19d13] to-[#f19d13]"
     />
     <StatsCard
-      title="Articles de blog"
-      value={stats.articles}
+      title="Transactions"
+      value={stats.transactions}
       icon={Handshake}
       gradient="bg-gradient-to-br from-[#d9534f] to-[#d9534f]"
     />
@@ -84,7 +84,7 @@ const AdminPreview = () => {
         annonces: data.totalAnnonces,
         utilisateurs: data.totalUsers,
         entreprises: data.totalEntreprises,
-        articles: data.totalPartenaires,
+        transactions: data.totalPartenaires,
       });
 
       const groupedData = data.dailyStats.reduce((acc, entry) => {
@@ -96,14 +96,14 @@ const AdminPreview = () => {
             annonces: 0,
             utilisateurs: 0,
             entreprises: 0,
-            articles: 0,
+            transactions: 0,
             rawDate: date,
           };
         }
         acc[formattedDate].annonces += parseInt(entry.annonces, 10);
         acc[formattedDate].utilisateurs += parseInt(entry.utilisateurs, 10);
         acc[formattedDate].entreprises += parseInt(entry.entreprises, 10);
-        acc[formattedDate].articles += parseInt(entry.articles, 10);
+        acc[formattedDate].transactions += parseInt(entry.transactions, 10);
         return acc;
       }, {});
 
@@ -177,10 +177,10 @@ const AdminPreview = () => {
                   />
                   <Area
                     type="monotone"
-                    dataKey="articles"
+                    dataKey="transactions"
                     stackId="1"
-                    stroke={chartConfig.articles.color}
-                    fill={chartConfig.articles.color}
+                    stroke={chartConfig.transactions.color}
+                    fill={chartConfig.transactions.color}
                   />
                 </AreaChart>
               </ChartContainer>

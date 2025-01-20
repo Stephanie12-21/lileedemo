@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
   DropdownMenu,
@@ -36,6 +36,7 @@ import {
 import { Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import AnimatedSymbol from "@/components/MainComponents/Sections/Loading/AnimatedSymbol";
+import { useSession } from "next-auth/react";
 
 const PubPage = () => {
   const [users, setUsers] = useState([]);
@@ -46,13 +47,14 @@ const PubPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
+  const { data: session } = useSession();
+  const currentUserId = session?.user?.id;
+
   const fetchUsers = async () => {
     try {
       const response = await fetch("/api/transactions");
       const data = await response.json();
-
       console.log("Toutes les données :", data);
-
       setUsers(data);
     } catch (error) {
       toast.error("Erreur lors de la récupération :", error.message);
@@ -82,21 +84,21 @@ const PubPage = () => {
 
       const matchesSearch =
         user.annonce?.titre?.toLowerCase().includes(searchLower) ||
-        false ||
         user.annonce?.user?.prenom?.toLowerCase().includes(searchLower) ||
-        false ||
         user.annonce?.user?.nom?.toLowerCase().includes(searchLower) ||
-        false ||
         reference.toLowerCase().includes(searchLower);
 
       const matchesStatus =
         statusFilter === "all" ||
-        user.status?.toLowerCase() === statusFilter.toLowerCase() ||
-        false;
+        user.status?.toLowerCase() === statusFilter.toLowerCase();
 
-      return matchesSearch && matchesStatus;
+      const isUserSellerOrBuyer =
+        String(user.annonce?.user?.id) === String(currentUserId) ||
+        String(user.user?.id) === String(currentUserId);
+
+      return matchesSearch && matchesStatus && isUserSellerOrBuyer;
     });
-  }, [users, searchFilter, statusFilter]);
+  }, [users, searchFilter, statusFilter, currentUserId]);
 
   const columns = [
     {
@@ -129,7 +131,6 @@ const PubPage = () => {
       header: "Acheteur",
       cell: ({ row }) => `${row.original.user.prenom} ${row.original.user.nom}`,
     },
-
     {
       accessorKey: "total",
       header: "Total",
@@ -201,7 +202,7 @@ const PubPage = () => {
 
   const handleSeeUserInfo = useCallback(
     (userId) => {
-      router.push(`/admin/transactions/${userId}`);
+      router.push(`/personnel/transactions/${userId}`);
     },
     [router]
   );
