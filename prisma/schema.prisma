@@ -101,8 +101,6 @@ model profileImage {
   user      user     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-
-
 //pour les favoris
 model favoris {
   id                Int         @id @default(autoincrement())

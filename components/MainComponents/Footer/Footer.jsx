@@ -18,7 +18,7 @@ const Footer = () => {
 
       <div className="mt-8 py-4 text-center text-[#71717A] text-sm md:text-base">
         © {currentYear} made by{" "}
-        <span className="text-white">Khepri Services</span>
+        <span className="text-white">Stéphanie MAMINIAINA</span>
       </div>
     </div>
   );
