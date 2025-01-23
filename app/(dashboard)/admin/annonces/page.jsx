@@ -29,15 +29,7 @@ import ConfirmDeleteModal from "@/app/(dialog)/delete/page";
 
 import { SuccessModal } from "@/app/(dialog)/success/SuccessModal";
 import { ErrorModal } from "@/app/(dialog)/error/ErrorModal";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { AnimatePresence, motion } from "framer-motion";
 
 const Annonces = () => {
