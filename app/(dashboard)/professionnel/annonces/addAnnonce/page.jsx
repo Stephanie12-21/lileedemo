@@ -14,12 +14,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { X } from "lucide-react";
+import { Asterisk, X } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
+
+import { SuccessModal } from "@/app/(dialog)/success/SuccessModal";
+import { ErrorModal } from "@/app/(dialog)/error/ErrorModal";
+import AnimatedSymbol from "@/components/MainComponents/Sections/Loading/AnimatedSymbol";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 const AddAnnonce = () => {
   const router = useRouter();
@@ -35,6 +39,8 @@ const AddAnnonce = () => {
   const [adresse, setAdresse] = useState("");
   const [iframeSrc, setIframeSrc] = useState("");
   const [tarifType, setTarifType] = useState("");
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -131,20 +137,37 @@ const AddAnnonce = () => {
 
       const result = await response.json();
 
-      toast.success("Annonce ajoutée avec succès !", {
-        onClose: () => {
-          router.push(`/professionnel/annonces/`);
-          resetForm();
-        },
+      // <-- create a new stripe product and price
+
+      const productFormData = new FormData();
+      productFormData.append("id", result.Annonce.id);
+
+      await fetch("/api/stripe/product/", {
+        method: "POST",
+        body: productFormData,
       });
+
+      // -->
+
+      setIsSuccessModalOpen(true);
+
+      resetForm();
+
+      setTimeout(() => {
+        router.push(`/personnel/annonces/`);
+      }, 2000);
     } catch (error) {
+      setIsErrorModalOpen(true);
       console.error("Erreur :", error);
-      toast.error("Une erreur est survenue lors de l'ajout de l'annonce.");
     }
   };
 
   if (status === "loading") {
-    return <div>Chargement...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-[#15213d]">
+        <AnimatedSymbol />
+      </div>
+    );
   }
 
   const categoriesWithSubcategories = {
@@ -165,6 +188,27 @@ const AddAnnonce = () => {
         Ajouter une nouvelle annonce
       </h1>
       <div className="flex flex-col space-y-4 w-full mt-5">
+        {/* <Dialog>
+          <DialogTrigger asChild>
+            <button
+              className="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 focus:ring-4 focus:ring-offset-2 focus:ring-yellow-400 transition-all duration-200 transform hover:scale-105"
+              aria-label="Ajouter une annonce"
+            >
+              <Asterisk className="w-6 h-6 animate-spin" />
+            </button>
+          </DialogTrigger>
+
+          <DialogContent>
+            <div>
+              <div className="transition-transform hover:scale-105">
+                <p>
+                  Pour la localisation, partagez le lien depuis google map sans
+                  la balise &quot;iframe&apos;{" "}
+                </p>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog> */}
         <div className="space-y-3">
           <Label htmlFor="title">Titre:</Label>
           <Input
@@ -327,7 +371,7 @@ const AddAnnonce = () => {
           {errors.adresse && <Alert variant="error">{errors.adresse}</Alert>}
         </div>
 
-        <div className="space-y-3">
+        {/* <div className="space-y-3">
           <Label htmlFor="localisation">
             Localisation (prendre uniquement la source de l&apos;iframe Google
             Maps):
@@ -355,7 +399,7 @@ const AddAnnonce = () => {
               className="items-center"
             />
           )}
-        </div>
+        </div> */}
 
         <div className="space-y-3">
           <Label htmlFor="images">Images:</Label>
@@ -391,10 +435,13 @@ const AddAnnonce = () => {
         <Button onClick={handleSubmit}>Ajouter l&apos;annonce</Button>
       </div>
 
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
+      <SuccessModal
+        isOpen={isSuccessModalOpen}
+        onClose={() => setIsSuccessModalOpen(false)}
+      />
+      <ErrorModal
+        isOpen={isErrorModalOpen}
+        onClose={() => setIsErrorModalOpen(false)}
       />
     </div>
   );

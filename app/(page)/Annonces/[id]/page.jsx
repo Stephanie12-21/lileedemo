@@ -64,9 +64,9 @@ const InfoAnnonces = ({ params }) => {
   const [prix, setPrix] = useState("");
   const [typeTarif, setTypeTarif] = useState("");
   const [images, setImages] = useState([]);
-  const [localisation, setLocalisation] = useState("");
+  //const [localisation, setLocalisation] = useState("");
   const [adresse, setAdresse] = useState("");
-  const [iframeSrc, setIframeSrc] = useState("");
+  // const [iframeSrc, setIframeSrc] = useState("");
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
   const [editCommentId, setEditCommentId] = useState(null);
@@ -341,13 +341,13 @@ const InfoAnnonces = ({ params }) => {
           setTypeTarif(data.typeTarif);
           setDescription(data.description);
           setAdresse(data.adresse);
-          setLocalisation(data.localisation);
+          //setLocalisation(data.localisation);
           setImages(data.imageAnnonces);
           setUserName(userName);
           setUserDate(formattedDate);
           setUserPhoto(userPhoto);
           setUserId(userId);
-          if (data.localisation) setIframeSrc(data.localisation);
+          // if (data.localisation) setIframeSrc(data.localisation);
         } else {
           console.error("Annonce non trouvée, avec l'id annonce :", id);
         }
@@ -619,7 +619,7 @@ const InfoAnnonces = ({ params }) => {
 
       <div className="flex items-start w-full pt-10">
         <Tabs defaultValue="description" className="w-full">
-          <TabsList className="flex space-x-4 justify-between px-5">
+          <TabsList className="flex space-x-4 justify-center px-5">
             <TabsTrigger
               value="description"
               className="relative py-2 px-4 text-base font-medium"
@@ -632,12 +632,12 @@ const InfoAnnonces = ({ params }) => {
             >
               Avis et commentaires
             </TabsTrigger>
-            <TabsTrigger
+            {/* <TabsTrigger
               value="localisation"
               className="relative py-2 px-4 text-base font-medium"
             >
               Localisation et adresse
-            </TabsTrigger>
+            </TabsTrigger> */}
           </TabsList>
 
           <TabsContent value="description">
@@ -661,6 +661,12 @@ const InfoAnnonces = ({ params }) => {
                     <span className="font-semibold text-gray-700">
                       <strong>Prix :</strong> {prix} €
                       <span className="ml-1">{formatTypeTarif(typeTarif)}</span>
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-3 pt-9">
+                    <MapPin className="h-6 w-6 text-blue-500" />
+                    <span className="font-semibold text-gray-700">
+                      <strong>Adresse :</strong> {adresse}
                     </span>
                   </div>
                 </div>
@@ -890,7 +896,7 @@ const InfoAnnonces = ({ params }) => {
             </Card>
           </TabsContent>
 
-          <TabsContent value="localisation">
+          {/* <TabsContent value="localisation">
             <div className="flex items-center space-x-3 pt-9">
               <MapPin className="h-6 w-6 text-blue-500" />
               <span className="font-semibold text-gray-700">
@@ -912,7 +918,7 @@ const InfoAnnonces = ({ params }) => {
                 <p>L&apos; adresse est : {adresse}</p>
               )}
             </div>
-          </TabsContent>
+          </TabsContent> */}
         </Tabs>
       </div>
 

@@ -188,7 +188,7 @@ export async function PUT(request, { params }) {
     const sousCategorie = body.get("sousCategorie");
     const prix = body.get("prix");
     const typeTarif = body.get("typeTarif");
-    const localisation = body.get("localisation");
+    // const localisation = body.get("localisation");
     const adresse = body.get("adresse");
     const statut = body.get("statut");
     const userId = parseInt(body.get("userId"), 10);
@@ -201,7 +201,6 @@ export async function PUT(request, { params }) {
       !sousCategorie ||
       !statut ||
       !adresse ||
-      !localisation ||
       isNaN(userId)
     ) {
       return NextResponse.json(
@@ -218,7 +217,7 @@ export async function PUT(request, { params }) {
         adresse,
         typeTarif,
         prix,
-        localisation,
+        // localisation,
         categorieAnnonce,
         sousCategorie,
         statut,

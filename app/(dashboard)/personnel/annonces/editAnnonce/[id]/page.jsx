@@ -35,7 +35,6 @@ const ArticleDetailPageModif = ({ params }) => {
     description: "",
     category: "",
     subcategory: "",
-    localisation: "",
     adresse: "",
     prix: "",
     typeTarif: "",
@@ -76,34 +75,34 @@ const ArticleDetailPageModif = ({ params }) => {
             subcategory: data.sousCategorie,
             prix: data.prix,
             typeTarif: data.typeTarif,
-            localisation: data.localisation,
+            // localisation: data.localisation,
             adresse: data.adresse,
             files: [],
           });
           setContenu(data.description ? JSON.parse(data.description) : {});
-          setIframeSrc(data.localisation || "");
+          //setIframeSrc(data.localisation || "");
         })
         .catch((err) => setError(err.message));
     }
   }, [id]);
 
-  const handleLocalisationChange = (e) => {
-    const value = e.target.value;
-    setFormData((prev) => ({ ...prev, localisation: value }));
-    const regex = /https:\/\/www\.google\.com\/maps\/embed\?pb=([^&]+)/;
-    const match = value.match(regex);
+  // const handleLocalisationChange = (e) => {
+  //   const value = e.target.value;
+  //   setFormData((prev) => ({ ...prev, localisation: value }));
+  //   const regex = /https:\/\/www\.google\.com\/maps\/embed\?pb=([^&]+)/;
+  //   const match = value.match(regex);
 
-    if (match) {
-      setIframeSrc(value);
-      setErrors((prevErrors) => ({ ...prevErrors, localisation: undefined }));
-    } else {
-      setIframeSrc("");
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        localisation: "Veuillez entrer un lien valide d'iframe Google Maps.",
-      }));
-    }
-  };
+  //   if (match) {
+  //     setIframeSrc(value);
+  //     setErrors((prevErrors) => ({ ...prevErrors, localisation: undefined }));
+  //   } else {
+  //     setIframeSrc("");
+  //     setErrors((prevErrors) => ({
+  //       ...prevErrors,
+  //       localisation: "Veuillez entrer un lien valide d'iframe Google Maps.",
+  //     }));
+  //   }
+  // };
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -136,7 +135,7 @@ const ArticleDetailPageModif = ({ params }) => {
     formDataToSend.append("description", JSON.stringify(contenu));
     formDataToSend.append("categorieAnnonce", formData.category);
     formDataToSend.append("sousCategorie", formData.subcategory);
-    formDataToSend.append("localisation", formData.localisation);
+    //formDataToSend.append("localisation", formData.localisation);
     formDataToSend.append("prix", formData.prix);
     formDataToSend.append("typeTarif", formData.typeTarif);
     formDataToSend.append("statut", statut);
@@ -161,7 +160,7 @@ const ArticleDetailPageModif = ({ params }) => {
         description: "",
         category: "",
         subcategory: "",
-        localisation: "",
+        // localisation: "",
         adresse: "",
         prix: "",
         typeTarif: "",
@@ -378,7 +377,7 @@ const ArticleDetailPageModif = ({ params }) => {
           />
         </div>
 
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <label
             htmlFor="localisation"
             className="block text-lg font-medium text-gray-700"
@@ -411,7 +410,7 @@ const ArticleDetailPageModif = ({ params }) => {
               className="w-full"
             />
           </div>
-        )}
+        )} */}
 
         <div className="mb-4">
           <label
