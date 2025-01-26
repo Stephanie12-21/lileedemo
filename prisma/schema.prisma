@@ -46,6 +46,7 @@ model user {
 
    // <--
   transactions          transactions[]
+  adresseFacturation         adresseFacturation[]
     // -->
 
 }
@@ -216,6 +217,20 @@ model moyenpaiement {
   user            user      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model adresseFacturation {
+  id              Int       @id @default(autoincrement())
+  nom             String    @unique
+  adresse         String
+  codePostal      String
+  ville           String
+  pays            String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  userId          Int
+  user            user      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+}
+
 //pour les partenariats
 
 model engagement {
@@ -289,6 +304,7 @@ model image {
 //pour les transactions
 model transactions {
   id                Int       @id @default(autoincrement())
+  dateRange         Json?
   price             Decimal
   quantity          Int
   status            transactionStatus @default(PENDING)

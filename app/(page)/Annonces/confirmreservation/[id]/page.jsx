@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 import {
   Card,
   CardContent,
@@ -11,26 +14,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { FaArrowRight } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Loader2, StarIcon, TagIcon } from "lucide-react";
+import { CalendarIcon, Loader2, StarIcon, TagIcon } from "lucide-react";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import { useSession } from "next-auth/react";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 export default function FormulaireContact({ params }) {
   const { data: session } = useSession();
-
+  const [date, setDate] = useState("");
   const { id } = params;
   const router = useRouter();
   const [annonce, setAnnonce] = useState("");
@@ -251,7 +251,44 @@ export default function FormulaireContact({ params }) {
   }
 
   // <--
+  // const handleCheckout = async () => {
+  //   if (!session) {
+  //     console.error("Session not initialized!");
+  //     return;
+  //   }
 
+  //   const buyerId = session.user.id;
+  //   const formData = new FormData();
+  //   formData.append("date", date);
+  //   formData.append("annonceId", annonce.id);
+  //   formData.append("priceId", annonce.priceId);
+  //   formData.append("sellerId", annonce.user.id);
+  //   formData.append("buyerId", buyerId);
+  //   formData.append("title", annonce.titre);
+  //   formData.append("quantity", quantity);
+
+  //   try {
+  //     const response = await fetch("/api/stripe/checkout", {
+  //       method: "POST",
+  //       body: formData,
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error(
+  //         `Failed to create checkout session: ${response.statusText}`
+  //       );
+  //     }
+
+  //     const checkoutSession = await response.json();
+  //     if (checkoutSession?.checkoutSession?.url) {
+  //       router.push(checkoutSession.checkoutSession.url);
+  //     } else {
+  //       console.error("Checkout session URL not found!");
+  //     }
+  //   } catch (error) {
+  //     console.error("An error occurred during checkout:", error);
+  //   }
+  // };
   const handleCheckout = async () => {
     if (!session) {
       console.error("Session not initialized!");
@@ -259,7 +296,25 @@ export default function FormulaireContact({ params }) {
     }
 
     const buyerId = session.user.id;
+
+    // Vérifiez que les dates sont valides
+    const { from, to } = date || {};
+    const parsedFromDate = new Date(from);
+    const parsedToDate = new Date(to);
+
+    if (
+      !from ||
+      !to ||
+      isNaN(parsedFromDate.getTime()) ||
+      isNaN(parsedToDate.getTime())
+    ) {
+      console.error("Les dates fournies sont invalides !");
+      return;
+    }
+
     const formData = new FormData();
+    formData.append("from", parsedFromDate.toISOString());
+    formData.append("to", parsedToDate.toISOString());
     formData.append("annonceId", annonce.id);
     formData.append("priceId", annonce.priceId);
     formData.append("sellerId", annonce.user.id);
@@ -291,17 +346,18 @@ export default function FormulaireContact({ params }) {
   };
 
   // -->
+
   const handleQuantityChange = (e) => {
-    const newQuantity = parseInt(e.target.value, 10) || 1; // Si la quantité est invalide, on la force à 1
+    const newQuantity = parseInt(e.target.value, 10) || 1;
     setQuantity(newQuantity);
 
-    const newPrix = parseFloat(prixUnitaire) * newQuantity; // Calculer le sous-total
-    const newTva = newPrix * 0.1; // Calcul de la TVA
-    const newTotal = newPrix + newTva; // Calcul du total
+    const newPrix = parseFloat(prixUnitaire) * newQuantity;
+    const newTva = newPrix * 0.1;
+    const newTotal = newPrix + newTva;
 
-    setPrix(newPrix); // Mettre à jour le sous-total
-    setTva(newTva); // Mettre à jour la TVA
-    setTotal(newTotal); // Mettre à jour le total
+    setPrix(newPrix);
+    setTva(newTva);
+    setTotal(newTotal);
   };
 
   return (
@@ -370,7 +426,51 @@ export default function FormulaireContact({ params }) {
               </div>
               <div className="space-y-2 p-2 font-semibold">
                 <Label htmlFor="quantity" className="text-gray-700">
-                  Quantité
+                  Durée de la réservation:
+                </Label>
+
+                <div className="relative flex-1">
+                  <CalendarIcon className="text-[#15213d] w-5 h-5 absolute left-2 top-1/2 transform -translate-y-1/2" />
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        id="date"
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start pl-10 text-left font-normal",
+                          !date && "text-white"
+                        )}
+                      >
+                        {date?.from ? (
+                          date.to ? (
+                            <>
+                              {format(date.from, "dd MMM yyyy", { locale: fr })}{" "}
+                              - {format(date.to, "dd MMM yyyy", { locale: fr })}
+                            </>
+                          ) : (
+                            format(date.from, "dd MMM yyyy", { locale: fr })
+                          )
+                        ) : (
+                          <span className="text-gray-700">Quand</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0" align="start">
+                      <Calendar
+                        initialFocus
+                        mode="range"
+                        defaultMonth={date?.from}
+                        selected={date}
+                        onSelect={setDate}
+                        numberOfMonths={2}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
+              <div className="space-y-2 p-2 font-semibold">
+                <Label htmlFor="quantity" className="text-gray-700">
+                  Quantité (nombre d&apos;unités) :
                 </Label>
                 <Input
                   id="quantity"
@@ -402,7 +502,6 @@ export default function FormulaireContact({ params }) {
             </div>
             <Button
               className="bg-[#0f172a] text-white py-2 rounded-lg w-full"
-              // onClick={() => handlePayAnnonce(annonceId)}
               onClick={handleCheckout}
               disabled={loading}
             >

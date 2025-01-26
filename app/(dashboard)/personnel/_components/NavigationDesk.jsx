@@ -11,7 +11,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
-import { FaBullhorn } from "react-icons/fa";
+import { FaBullhorn, FaFileInvoice } from "react-icons/fa";
 
 const Navigation = () => {
   const pathname = usePathname();
@@ -29,6 +29,11 @@ const Navigation = () => {
       icon: TrendingUp,
       name: "Transactions",
       href: "/personnel/transactions",
+    },
+    {
+      icon: FaFileInvoice,
+      name: "Facturation",
+      href: "/personnel/facturation",
     },
   ];
 

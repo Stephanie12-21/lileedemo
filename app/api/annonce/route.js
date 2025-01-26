@@ -13,12 +13,6 @@ async function sendSuspensionEmail() {
     },
   });
 
-  // const mailOptions = {
-  //   from: `"Lilee" <${process.env.SMTP_USER}>`,
-  //   to: process.env.SMTP_USER,
-  //   subject: "Notification de validation d'annonces en attente",
-  //   text: `Bonjour,\n\nDe nouvelles annonces sont en attente de validation. Veuillez les examiner et les approuver ou rejeter selon votre politique.\n\nL'équipe Lilee.`,
-  // };
   const mailOptions = {
     from: `"Lilee" <${process.env.SMTP_USER}>`,
     to: process.env.SMTP_USER,
@@ -163,16 +157,6 @@ export async function POST(request) {
     },
     { status: 200 }
   );
-  // } catch (error) {
-  //   console.error(
-  //     "Erreur lors de la création de l'annonce et des images :",
-  //     error
-  //   );
-  //   return NextResponse.json(
-  //     { message: "Erreur interne du serveur." },
-  //     { status: 500 }
-  //   );
-  // }
 }
 
 export async function GET(request) {

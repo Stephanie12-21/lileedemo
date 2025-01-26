@@ -2,7 +2,7 @@
 // import { NextResponse } from "next/server";
 
 // export async function GET(req, { params }) {
-//   const { id: transactionId } = params; // Récupérer l'ID de la transaction depuis les paramètres d'URL
+//   const { id: transactionId } = params;
 
 //   if (!transactionId) {
 //     return NextResponse.json(
@@ -37,11 +37,20 @@
 //       );
 //     }
 
+//     // Formatage de la date
+//     const createdAt = new Date(transaction.createdAt);
+//     const formattedDate = `${createdAt.getDate().toString().padStart(2, "0")}${(
+//       createdAt.getMonth() + 1
+//     )
+//       .toString()
+//       .padStart(2, "0")}${createdAt.getFullYear()}`;
+
 //     return NextResponse.json(
 //       {
 //         annonceUserId: transaction.annonce.userId,
 //         buyerUserId: transaction.user.id,
 //         transactionStatus: transaction.status,
+//         transactionDate: formattedDate, // Ajouter la date formatée
 //       },
 //       { status: 200 }
 //     );
@@ -53,11 +62,13 @@
 //     );
 //   }
 // }
+
 import { db } from "@/lib/db";
+import { id } from "date-fns/locale";
 import { NextResponse } from "next/server";
 
 export async function GET(req, { params }) {
-  const { id: transactionId } = params; // Récupérer l'ID de la transaction depuis les paramètres d'URL
+  const { id: transactionId } = params;
 
   if (!transactionId) {
     return NextResponse.json(
@@ -74,6 +85,7 @@ export async function GET(req, { params }) {
       include: {
         annonce: {
           select: {
+            id: true,
             userId: true,
           },
         },
@@ -92,20 +104,40 @@ export async function GET(req, { params }) {
       );
     }
 
-    // Formatage de la date
+    // Formatage de la date de création
     const createdAt = new Date(transaction.createdAt);
-    const formattedDate = `${createdAt.getDate().toString().padStart(2, "0")}${(
-      createdAt.getMonth() + 1
-    )
+    const formattedDate = `${createdAt
+      .getDate()
       .toString()
-      .padStart(2, "0")}${createdAt.getFullYear()}`;
+      .padStart(2, "0")}/${(createdAt.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}/${createdAt.getFullYear()}`;
+
+    // Si 'from' et 'to' existent, on les formatte en une plage de dates (daterange)
+    const fromDate = transaction.dateRange?.from
+      ? new Date(transaction.dateRange.from)
+      : null;
+    const toDate = transaction.dateRange?.to
+      ? new Date(transaction.dateRange.to)
+      : null;
+
+    const dateRange =
+      fromDate && toDate
+        ? `${fromDate.toLocaleDateString()} - ${toDate.toLocaleDateString()}`
+        : fromDate
+        ? `À partir de : ${fromDate.toLocaleDateString()}`
+        : toDate
+        ? `Jusqu&apos;à : ${toDate.toLocaleDateString()}`
+        : "Aucune date";
 
     return NextResponse.json(
       {
         annonceUserId: transaction.annonce.userId,
         buyerUserId: transaction.user.id,
         transactionStatus: transaction.status,
-        transactionDate: formattedDate, // Ajouter la date formatée
+        transactionDate: formattedDate,
+        annonceId: transaction.annonce.id,
+        dateRange,
       },
       { status: 200 }
     );
