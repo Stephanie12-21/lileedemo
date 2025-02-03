@@ -60,6 +60,21 @@ const dataIcons = [
     img: "/icons/twitter.svg",
     name: "Twitter",
   },
+  {
+    name: "Lilee",
+    url: "https://maps.app.goo.gl/cHCgfdiczhJN6CQW9",
+    img: "/icons/icons(1).svg",
+  },
+  {
+    name: "06.50.37.68.37",
+    url: "06.50.37.68.37",
+    img: "/icons/icons(8).svg",
+  },
+  {
+    name: "contact@lilee.fr",
+    url: "contact@lilee.fr",
+    img: "/icons/icons(7).svg",
+  },
 ];
 
 const Footer = () => {

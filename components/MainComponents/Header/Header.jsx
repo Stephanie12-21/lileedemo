@@ -1,13 +1,11 @@
-import React from "react";
-import { Separator } from "@/components/ui/separator";
+"use client";
 import NavBar from "./SubHeader/NavBar";
-import TopHeader from "./TopHeader/TopHeader";
+
+import { React } from "react";
 
 const Header = () => {
   return (
     <div className="bg-[#15213D]">
-      <TopHeader />
-      <Separator />
       <div>
         <div className="h-[88px] ">
           <NavBar />
