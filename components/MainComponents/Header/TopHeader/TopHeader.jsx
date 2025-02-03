@@ -225,47 +225,4 @@ export function ListContacts() {
   );
 }
 
-export const ListIcons = () => {
-  const dataIcons = [
-    {
-      url: "https://www.facebook.com/lileelogementspmr?locale=fr_FR",
-      img: "/icons/icons(6).svg",
-      name: "Facebook",
-    },
-    {
-      url: "https://www.youtube.com/@lileepmr",
-      img: "/icons/icons(3).svg",
-      name: "YouTube",
-    },
-    {
-      url: "https://www.linkedin.com/company/86267153/admin/",
-      img: "/icons/icons(2).svg",
-      name: "LinkedIn",
-    },
-    {
-      url: "https://www.instagram.com/lilee.fr/",
-      img: "/icons/icons(4).svg",
-      name: "Instagram",
-    },
-  ];
-
-  return (
-    <div className="flex justify-center items-center gap-x-10">
-      {dataIcons.map((icon, index) => (
-        <div key={index} className="flex flex-col items-center ">
-          <Link href={icon.url} target="_blank" rel="noopener noreferrer">
-            <Image
-              src={icon.img}
-              width={32}
-              height={32}
-              alt={icon.name}
-              className="hover:scale-110 transition-transform duration-200"
-            />
-          </Link>
-        </div>
-      ))}
-    </div>
-  );
-};
-
 export default TopHeader;

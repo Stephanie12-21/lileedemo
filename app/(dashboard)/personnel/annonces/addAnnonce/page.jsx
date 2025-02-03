@@ -60,23 +60,23 @@ const AddAnnonce = () => {
     setErrors({});
   };
 
-  const handleLocalisationChange = (e) => {
-    const value = e.target.value;
-    setLocalisation(value);
-    const regex = /https:\/\/www\.google\.com\/maps\/embed\?pb=([^&]+)/;
-    const match = value.match(regex);
+  // const handleLocalisationChange = (e) => {
+  //   const value = e.target.value;
+  //   setLocalisation(value);
+  //   const regex = /https:\/\/www\.google\.com\/maps\/embed\?pb=([^&]+)/;
+  //   const match = value.match(regex);
 
-    if (match) {
-      setIframeSrc(value);
-      setErrors((prevErrors) => ({ ...prevErrors, localisation: undefined }));
-    } else {
-      setIframeSrc("");
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        localisation: "Veuillez entrer un lien valide d'iframe Google Maps.",
-      }));
-    }
-  };
+  //   if (match) {
+  //     setIframeSrc(value);
+  //     setErrors((prevErrors) => ({ ...prevErrors, localisation: undefined }));
+  //   } else {
+  //     setIframeSrc("");
+  //     setErrors((prevErrors) => ({
+  //       ...prevErrors,
+  //       localisation: "Veuillez entrer un lien valide d'iframe Google Maps.",
+  //     }));
+  //   }
+  // };
 
   const handleImageChange = (e) => {
     const selectedImages = Array.from(e.target.files);
@@ -95,7 +95,7 @@ const AddAnnonce = () => {
       !description ||
       !category ||
       !subCategory ||
-      !localisation ||
+      // !localisation ||
       !adresse ||
       !prix ||
       !tarifType ||
@@ -113,7 +113,7 @@ const AddAnnonce = () => {
     formData.append("category", category);
     formData.append("subcategory", subCategory);
     formData.append("adresse", adresse);
-    formData.append("localisation", localisation);
+    //formData.append("localisation", localisation);
     formData.append("statut", statut);
     formData.append("userId", session?.user.id);
     formData.append("prix", prix);
