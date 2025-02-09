@@ -49,12 +49,12 @@ async function sendMessageContact(nom, prenom, email, phone, objet, message) {
 
     <p style="font-size: 16px; margin-bottom: 15px;">
       Merci,<br>
-      L'équipe de votre site.
+      L'équipe de Lilee.
     </p>
   </div>
 
   <div style="text-align: center; padding-top: 20px; border-top: 1px solid #eee; color: #666; font-size: 12px;">
-    <p>© 2024 Votre Site. Tous droits réservés.</p>
+    <p>© 2025 Lilee. Tous droits réservés.</p>
   </div>
 </div>
 

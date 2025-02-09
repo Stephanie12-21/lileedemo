@@ -45,21 +45,21 @@ const dataIcons = [
     img: "/icons/icons(4).svg",
     name: "Instagram",
   },
-  {
-    url: "https://www.instagram.com/lilee.fr/",
-    img: "/icons/tiktok.svg",
-    name: "TikTok",
-  },
-  {
-    url: "https://www.instagram.com/lilee.fr/",
-    img: "/icons/snapchat.svg",
-    name: "Snapchat",
-  },
-  {
-    url: "https://www.instagram.com/lilee.fr/",
-    img: "/icons/twitter.svg",
-    name: "Twitter",
-  },
+  // {
+  //   url: "https://www.instagram.com/lilee.fr/",
+  //   img: "/icons/tiktok.svg",
+  //   name: "TikTok",
+  // },
+  // {
+  //   url: "https://www.instagram.com/lilee.fr/",
+  //   img: "/icons/snapchat.svg",
+  //   name: "Snapchat",
+  // },
+  // {
+  //   url: "https://www.instagram.com/lilee.fr/",
+  //   img: "/icons/twitter.svg",
+  //   name: "Twitter",
+  // },
   {
     name: "Lilee",
     url: "https://maps.app.goo.gl/cHCgfdiczhJN6CQW9",

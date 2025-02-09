@@ -304,7 +304,7 @@ model image {
 //pour les transactions
 model transactions {
   id                Int       @id @default(autoincrement())
-  dateRange         Json?
+  dateRange         Json  @default("{}")
   price             Decimal
   quantity          Int
   status            transactionStatus @default(PENDING)

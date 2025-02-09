@@ -43,7 +43,7 @@ async function sendSuspensionEmail() {
       </div>
 
       <div style="text-align: center; padding-top: 20px; border-top: 1px solid #eee; color: #666; font-size: 12px;">
-        <p>© 2024 Lilee. Tous droits réservés.</p>
+        <p>© 2025 Lilee. Tous droits réservés.</p>
       </div>
     </div>
   `,

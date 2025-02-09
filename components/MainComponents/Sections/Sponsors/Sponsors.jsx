@@ -17,7 +17,7 @@ const Sponsors = () => {
   ];
 
   return (
-    <div className="container mx-auto py-5">
+    <div className="container mx-auto">
       <h1 className="text-4xl font-bold text-[#15213d] text-center mt-20 ">
         Ils nous soutiennent
       </h1>

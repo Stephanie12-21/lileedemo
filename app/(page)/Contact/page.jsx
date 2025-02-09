@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
@@ -13,7 +13,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { toast } from "react-toastify";
+import { SuccessModal } from "@/app/(dialog)/success/SuccessModal";
+import { ErrorModal } from "@/app/(dialog)/error/ErrorModal";
 
 const Contact = () => {
   const [phone, setPhone] = useState("");
@@ -24,6 +25,8 @@ const Contact = () => {
   const [objet, setObjet] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,10 +56,10 @@ const Contact = () => {
         );
       }
 
-      toast.success("Message envoyé avec succès !");
+      setIsSuccessModalOpen(true);
       handleResetForm();
     } catch (error) {
-      toast.error("Une erreur s'est produite lors de l'envoi du message.");
+      setIsErrorModalOpen(true);
       setError("Une erreur s'est produite lors de l'envoi du message.");
     } finally {
       setLoading(false);
@@ -73,7 +76,7 @@ const Contact = () => {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row justify-center items-center pt-10 pb-10 space-y-5 lg:space-y-0 lg:space-x-10 px-5">
+    <div className="flex flex-col lg:flex-row justify-center items-center pt-10 pb-10 space-y-5 lg:space-y-0 lg:space-x-10 px-5 mx-4 md:mx-8 lg:mx-16">
       <Card className="w-full max-w-md lg:max-w-lg xl:max-w-2xl h-auto p-5 shadow-lg rounded-lg flex-shrink-0">
         <CardHeader className="flex items-center justify-center">
           <CardTitle className="text-center text-3xl">
@@ -201,23 +204,23 @@ const Contact = () => {
             >
               {loading ? "Envoi en cours..." : "Envoyer le message"}
             </Button>
-            <Button className="bg-[#0f172a] text-white py-2 rounded-lg w-full mb-4 mx-4">
+            <Button className="border border-[#0f172a] bg-inherit text-[#0f172a] hover:bg-inherit hover:text-[#0f172a] py-2 rounded-lg w-full mb-4 mx-4">
               Annuler
             </Button>
           </CardFooter>
         </form>
       </Card>
+      <SuccessModal
+        isOpen={isSuccessModalOpen}
+        onClose={() => setIsSuccessModalOpen(false)}
+      />
+      <ErrorModal
 
-      <div className="relative shadow-lg w-full max-w-md lg:max-w-lg xl:max-w-2xl h-[900px] lg:h-[900px] xl:h-[900px] flex-shrink-0 rounded-lg  overflow-hidden">
-        <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2888.4757995109226!2d3.8222888756976987!3d43.617455054742706!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12b6afc85016162d%3A0x196b4165c87eb3f9!2sLilee!5e0!3m2!1sfr!2smg!4v1725788916061!5m2!1sfr!2smg"
-          style={{ border: 0 }}
-          allowFullScreen=""
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-          className="object-cover w-full h-full"
-        />
-      </div>
+
+
+        isOpen={isErrorModalOpen}
+        onClose={() => setIsErrorModalOpen(false)}
+      />
     </div>
   );
 };

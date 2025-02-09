@@ -64,9 +64,9 @@ const InfoAnnonces = ({ params }) => {
   const [prix, setPrix] = useState("");
   const [typeTarif, setTypeTarif] = useState("");
   const [images, setImages] = useState([]);
-  //const [localisation, setLocalisation] = useState("");
+  const [localisation, setLocalisation] = useState("");
   const [adresse, setAdresse] = useState("");
-  // const [iframeSrc, setIframeSrc] = useState("");
+  const [iframeSrc, setIframeSrc] = useState("");
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
   const [editCommentId, setEditCommentId] = useState(null);
@@ -341,13 +341,13 @@ const InfoAnnonces = ({ params }) => {
           setTypeTarif(data.typeTarif);
           setDescription(data.description);
           setAdresse(data.adresse);
-          //setLocalisation(data.localisation);
+          setLocalisation(data.localisation);
           setImages(data.imageAnnonces);
           setUserName(userName);
           setUserDate(formattedDate);
           setUserPhoto(userPhoto);
           setUserId(userId);
-          // if (data.localisation) setIframeSrc(data.localisation);
+          if (data.localisation) setIframeSrc(data.localisation);
         } else {
           console.error("Annonce non trouvée, avec l'id annonce :", id);
         }
@@ -424,15 +424,14 @@ const InfoAnnonces = ({ params }) => {
   }
 
   return (
-    <div className="container mx-auto py-10 px-20">
+    <div className="container mx-auto py-10 px-4 md:px-20">
       <Link href="/Annonces">
-        <Button className="py-5 text-[18px] rounded-[10px] space-x-3">
-          <FaArrowLeft className="ml-2 mr-4" />
+        <Button className="py-5 text-base md:text-[18px] rounded-[10px] space-x-3">
+          <FaArrowLeft className="ml-2 mr-2" />
           Retour
         </Button>
       </Link>
-
-      <div className="pt-10 pb-10 flex flex-col md:flex-row items-center space-x-0 md:space-x-20">
+      <div className="pt-10 pb-10 flex flex-col md:flex-row items-start space-x-0 md:space-x-20">
         <div className="relative w-full md:w-auto">
           {images[0]?.path && (
             <div>
@@ -534,19 +533,19 @@ const InfoAnnonces = ({ params }) => {
         </div>
 
         <div className="w-full md:w-[50%] mt-6 md:mt-0">
-          <Card className="w-full md:w-[500px] space-y-6 flex flex-col shadow-lg rounded-lg bg-white p-4 hover:shadow-2xl transition-shadow duration-300">
+          <Card className="w-full min-w-[360px] space-y-6 flex flex-col shadow-lg rounded-lg bg-white p-2 sm:p-3 md:p-4 lg:p-6 hover:shadow-2xl transition-shadow duration-300">
             <CardHeader className="flex flex-col space-y-4">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-xl font-bold text-[#152447] hover:underline">
+              <div className="flex items-center justify-between flex-wrap">
+                <CardTitle className="text-base sm:text-xl md:text-xl font-bold text-[#152447] hover:underline">
                   {title}
                 </CardTitle>
                 <div className="flex space-x-1">
                   {renderStars(averageRating)}
                 </div>
               </div>
-              <CardDescription className="text-[#141414] font-medium text-base space-y-4">
+              <CardDescription className="text-[#141414] font-medium text-base sm:text-sm md:text-base lg:text-lg space-y-4">
                 <div
-                  className="text-base font-medium leading-relaxed"
+                  className="leading-relaxed"
                   dangerouslySetInnerHTML={{
                     __html:
                       description.length > 100
@@ -555,23 +554,19 @@ const InfoAnnonces = ({ params }) => {
                         : description.replace(/^"|"$/g, ""),
                   }}
                 />
-
-                <div className="flex items-start space-x-4 pt-4">
-                  <div>
-                    <Image
-                      src={userPhoto}
-                      alt="Photo de profil de l'utilisateur"
-                      width={65}
-                      height={65}
-                      className="w-16 h-16 rounded-full object-cover border-2 border-gray-300"
-                    />
-                  </div>
-
-                  <div className="flex flex-col p-0 space-y-1">
-                    <span className="text-[18px] font-bold text-[#666]">
+                <div className="flex items-start space-x-3 pt-4">
+                  <Image
+                    src={userPhoto}
+                    alt="Photo de profil de l'utilisateur"
+                    width={50}
+                    height={50}
+                    className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-full object-cover border-2 border-gray-300"
+                  />
+                  <div className="flex flex-col space-y-1">
+                    <span className="text-sm sm:text-base md:text-lg font-bold text-[#666]">
                       {userName}
                     </span>
-                    <span className="text-[16px] text-gray-500">
+                    <span className="text-xs sm:text-sm md:text-base text-gray-500">
                       Membre depuis : {userDate}
                     </span>
                   </div>
@@ -579,37 +574,30 @@ const InfoAnnonces = ({ params }) => {
               </CardDescription>
             </CardHeader>
 
-            <CardFooter className="flex flex-col justify-center space-y-4 mt-4 w-full">
+            <CardFooter className="flex flex-col justify-center space-y-2 sm:space-y-3 md:space-y-4 mt-4 w-full">
               {session && session.user ? (
-                <Button
-                  variant="default"
-                  className="text-white py-2 w-full px-4 rounded-lg shadow-md hover:shadow-lg transition-all"
-                  onClick={handleChat}
-                >
-                  Discuter avec l&apos;annonceur
-                </Button>
+                <>
+                  <Button
+                    variant="default"
+                    className="text-white text-wrap text-xs sm:text-sm md:text-base lg:text-base py-2 px-3 sm:px-4 md:px-5 lg:px-6 w-full rounded-md sm:rounded-lg md:rounded-xl shadow hover:shadow-lg transition-all"
+                    onClick={handleChat}
+                  >
+                    Discuter
+                  </Button>
+                  <Button
+                    variant="default"
+                    className="text-white text-xs sm:text-sm md:text-base lg:text-base py-2 px-3 sm:px-4 md:px-5 lg:px-6 w-full rounded-md sm:rounded-lg md:rounded-xl shadow hover:shadow-lg transition-all"
+                    onClick={() => handlePayment(annonceId)}
+                  >
+                    Réserver
+                  </Button>
+                </>
               ) : (
                 <Button
-                  className="bg-gray-300 text-[#353945] w-full hover:bg-gray-400 py-2 px-4 rounded-lg shadow-md transition-all"
+                  className="bg-gray-300 text-[#353945] text-xs sm:text-sm md:text-base lg:text-base py-2 px-3 sm:px-4 md:px-5 lg:px-6 w-full rounded-md sm:rounded-lg md:rounded-xl shadow hover:bg-gray-400 transition-all"
                   onClick={() => router.push("/login")}
                 >
-                  Connectez-vous pour discuter
-                </Button>
-              )}
-              {session && session.user ? (
-                <Button
-                  variant="default"
-                  className="text-white py-2 w-full px-4 rounded-lg shadow-md hover:shadow-lg transition-all"
-                  onClick={() => handlePayment(annonceId)}
-                >
-                  Réserver cet article
-                </Button>
-              ) : (
-                <Button
-                  className="bg-gray-300 text-[#353945] w-full hover:bg-gray-400 py-2 px-4 rounded-lg shadow-md transition-all"
-                  onClick={() => router.push("/login")}
-                >
-                  Connectez-vous pour pouvoir réserver
+                  Se connecter
                 </Button>
               )}
             </CardFooter>
@@ -618,26 +606,20 @@ const InfoAnnonces = ({ params }) => {
       </div>
 
       <div className="flex items-start w-full pt-10">
-        <Tabs defaultValue="description" className="w-full">
-          <TabsList className="flex space-x-4 justify-center px-5">
+        <Tabs defaultValue="description" className="relative w-full">
+          <TabsList className="relative flex md:space-x-20 space-x-2 justify-center px-5">
             <TabsTrigger
               value="description"
-              className="relative py-2 px-4 text-base font-medium"
+              className="relative py-2 px-1 md:px-4 text-sm md:text-base font-medium"
             >
-              Description détaillée
+              Description 
             </TabsTrigger>
             <TabsTrigger
               value="avis"
-              className="relative py-2 px-4 text-base font-medium"
+              className="relative py-2 px-4 text-sm md:text-base font-medium"
             >
-              Avis et commentaires
+              Avis 
             </TabsTrigger>
-            {/* <TabsTrigger
-              value="localisation"
-              className="relative py-2 px-4 text-base font-medium"
-            >
-              Localisation et adresse
-            </TabsTrigger> */}
           </TabsList>
 
           <TabsContent value="description">
@@ -661,12 +643,6 @@ const InfoAnnonces = ({ params }) => {
                     <span className="font-semibold text-gray-700">
                       <strong>Prix :</strong> {prix} €
                       <span className="ml-1">{formatTypeTarif(typeTarif)}</span>
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-3 pt-9">
-                    <MapPin className="h-6 w-6 text-blue-500" />
-                    <span className="font-semibold text-gray-700">
-                      <strong>Adresse :</strong> {adresse}
                     </span>
                   </div>
                 </div>
@@ -696,7 +672,7 @@ const InfoAnnonces = ({ params }) => {
                   expériences avec les autres.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-2">
+              {/* <CardContent className="space-y-2">
                 <div className="mb-6 flex justify-between items-center space-x-3">
                   <Input
                     type="text"
@@ -892,33 +868,42 @@ const InfoAnnonces = ({ params }) => {
                     </div>
                   );
                 })}
+              </CardContent> */}
+              <CardContent className="space-y-2">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-3 space-y-2 sm:space-y-0">
+                  <Input
+                    type="text"
+                    placeholder="Exprimez-vous..."
+                    className="border border-gray-300 p-2 w-full rounded-lg"
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                  />
+                  <Button
+                    className="py-4 px-5 text-base rounded-lg relative w-full sm:w-auto"
+                    onClick={handlePublish}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                  >
+                    Publier
+                    <motion.div
+                      className="inline-block ml-2"
+                      animate={{
+                        x: isHovered ? 5 : 0,
+                        opacity: isHovered ? 1 : 0.7,
+                      }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 20,
+                      }}
+                    >
+                      <ArrowRight className="w-5 h-5" />
+                    </motion.div>
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
-
-          {/* <TabsContent value="localisation">
-            <div className="flex items-center space-x-3 pt-9">
-              <MapPin className="h-6 w-6 text-blue-500" />
-              <span className="font-semibold text-gray-700">
-                <strong>Adresse :</strong> {adresse}
-              </span>
-            </div>
-            <div className="w-full  pt-9">
-              {iframeSrc ? (
-                <iframe
-                  src={iframeSrc}
-                  fill
-                  style={{ border: "0" }}
-                  allowFullScreen=""
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  className="object-cover w-full h-[490px] rounded-lg"
-                ></iframe>
-              ) : (
-                <p>L&apos; adresse est : {adresse}</p>
-              )}
-            </div>
-          </TabsContent> */}
         </Tabs>
       </div>
 
@@ -932,13 +917,11 @@ const InfoAnnonces = ({ params }) => {
           </Link>
         </div>
       </div>
-
       <ConfirmDeleteModal
         isOpen={showDeleteModal}
         onClose={handleCloseModal}
         onConfirm={handleConfirmDelete}
       />
-
       <StarRatingDialog
         isOpen={showModalRating}
         annonceId={annonceId}

@@ -23,7 +23,6 @@ import { useEffect, useState } from "react";
 import { SuccessModal } from "@/app/(dialog)/success/SuccessModal";
 import { ErrorModal } from "@/app/(dialog)/error/ErrorModal";
 import AnimatedSymbol from "@/components/MainComponents/Sections/Loading/AnimatedSymbol";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 const AddAnnonce = () => {
   const router = useRouter();
