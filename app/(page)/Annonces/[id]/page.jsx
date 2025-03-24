@@ -612,13 +612,13 @@ const InfoAnnonces = ({ params }) => {
               value="description"
               className="relative py-2 px-1 md:px-4 text-sm md:text-base font-medium"
             >
-              Description 
+              Description
             </TabsTrigger>
             <TabsTrigger
               value="avis"
               className="relative py-2 px-4 text-sm md:text-base font-medium"
             >
-              Avis 
+              Avis
             </TabsTrigger>
           </TabsList>
 
@@ -648,7 +648,7 @@ const InfoAnnonces = ({ params }) => {
                 </div>
                 <div className="space-y-1 ">
                   <h1 className="text-3xl font-bold my-8 text-start">
-                    Ajouter une nouvelle annonce
+                    Description de l&apos;annonce
                   </h1>
                   <div
                     className="container px-5"

@@ -215,9 +215,6 @@ const Contact = () => {
         onClose={() => setIsSuccessModalOpen(false)}
       />
       <ErrorModal
-
-
-
         isOpen={isErrorModalOpen}
         onClose={() => setIsErrorModalOpen(false)}
       />
