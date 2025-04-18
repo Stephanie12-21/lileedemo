@@ -56,12 +56,12 @@ export default function Login() {
 
       const updatedSession = await getSession();
 
-      console.log(updatedSession)
+      console.log(updatedSession);
       await new Promise((resolve, reject) => {
         setTimeout(() => {
-          resolve('Ok')
+          resolve("Ok");
         }, 5000);
-      })
+      });
 
       const statutUser = updatedSession?.user?.statutUser;
 

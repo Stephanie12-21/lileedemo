@@ -66,7 +66,7 @@ const ArticleForm = () => {
         resetForm();
 
         setTimeout(() => {
-          router.push("/admin/blog");
+          router.push("/blog");
         }, 5000);
       } else {
         setIsErrorModalOpen(true);

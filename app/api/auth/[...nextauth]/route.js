@@ -85,7 +85,7 @@ export const authOptions = {
           statutUser: existingComptePerso.statutUser,
           image: imageUrl,
           stripeAccountId: existingComptePerso.stripeAccountId,
-          stripeAccountCompleted: existingComptePerso.stripeAccountCompleted
+          stripeAccountCompleted: existingComptePerso.stripeAccountCompleted,
         };
       },
     }),
@@ -117,10 +117,9 @@ export const authOptions = {
 
   callbacks: {
     async jwt({ token, trigger, user, session }) {
-
-      if(trigger === "update" && session?.stripeAccountId){
-          token.stripeAccountId = session.stripeAccountId
-          return token
+      if (trigger === "update" && session?.stripeAccountId) {
+        token.stripeAccountId = session.stripeAccountId;
+        return token;
       }
       if (user) {
         // Mise à jour des informations dans le token
@@ -137,7 +136,6 @@ export const authOptions = {
         token.stripeAccountId = user.stripeAccountId || null;
         token.stripeAccountCompleted = user.stripeAccountCompleted || false;
         // ->
-      
       } else {
         // Lorsqu'il n'y a pas d'utilisateur, mais que le token contient des informations
         token.user = {
@@ -149,10 +147,10 @@ export const authOptions = {
           name: token.nom || null,
           statutUser: token.statutUser || null,
           prenom: token.prenom || null,
-          
+
           // <--
           stripeAccountId: token.stripeAccountId || null,
-          stripeAccountCompleted: token.stripeAccountCompleted || false
+          stripeAccountCompleted: token.stripeAccountCompleted || false,
           // -->
         };
       }
@@ -176,7 +174,7 @@ export const authOptions = {
 
         // <--
         stripeAccountId: token.stripeAccountId || null,
-        stripeAccountComplete: token.stripeAccountCompleted || false
+        stripeAccountComplete: token.stripeAccountCompleted || false,
         // -->
       };
 

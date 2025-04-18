@@ -12,7 +12,6 @@ export async function GET(req, { params }) {
   }
 
   try {
-    // Rechercher l'utilisateur par ID
     const user = await db.user.findUnique({
       where: { id: parseInt(userId, 10) },
       include: {
@@ -27,7 +26,6 @@ export async function GET(req, { params }) {
       );
     }
 
-    // Exclure le mot de passe de la réponse
     const { hashPassword, ...userData } = user;
 
     return NextResponse.json(
@@ -57,14 +55,12 @@ export async function PUT(request, { params }) {
       });
     }
 
-    // Extraire les données du formulaire
     const nom = body.get("nom");
     const prenom = body.get("prenom");
     const email = body.get("email");
     const phone = body.get("phone");
-    const images = body.getAll("image"); // Récupérer plusieurs fichiers
+    const images = body.getAll("image");
 
-    // Validation des données
     if (!nom || !prenom || !email || !phone) {
       return new NextResponse(
         JSON.stringify({ message: "Tous les champs doivent être renseignés." }),
@@ -72,7 +68,6 @@ export async function PUT(request, { params }) {
       );
     }
 
-    // Mise à jour des informations de l'utilisateur
     const updatedUser = await db.user.update({
       where: { id: parseInt(id, 10) },
       data: {
@@ -86,7 +81,6 @@ export async function PUT(request, { params }) {
       },
     });
 
-    // Si des fichiers d'image ont été fournis, mettre à jour les images
     if (images.length > 0) {
       await db.profileImage.deleteMany({
         where: { userId: updatedUser.id },
@@ -148,7 +142,6 @@ export async function DELETE(req, { params }) {
   }
 
   try {
-    // Rechercher l'utilisateur et les images associées par ID
     const user = await db.user.findUnique({
       where: { id: parseInt(userId, 10) },
       include: {
@@ -163,12 +156,10 @@ export async function DELETE(req, { params }) {
       );
     }
 
-    // Supprimer les images associées
     await db.profileImage.deleteMany({
       where: { userId: user.id },
     });
 
-    // Supprimer l'utilisateur
     await db.user.delete({
       where: { id: parseInt(userId, 10) },
     });

@@ -77,7 +77,12 @@ const Blog = () => {
       <h1 className="text-4xl md:text-5xl text-primary font-bold text-center mb-12">
         Blog & Presse
       </h1>
-      {error && <p className="text-red-500 text-center mb-8">{error}</p>}
+      {/* {error && <p className="text-red-500 text-center mb-8">{error}</p>} */}
+      {articles.length === 0 && (
+        <p className="text-center text-gray-500">
+          Aucun article disponible encore.
+        </p>
+      )}
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         {articles.map((article, index) => (
           <motion.div

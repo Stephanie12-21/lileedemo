@@ -219,9 +219,34 @@ const Annonce = () => {
               </CarouselItem>
             ))
           ) : annonces.length === 0 ? (
-            <div className="container flex mx-auto p-10">
-              <div className="w-full rounded-md bg-[#15213d] p-4 px-6 flex items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
+            // <div className="container flex mx-auto p-10">
+            //   <div className="w-full rounded-md bg-[#15213d] p-4 px-6 flex items-center justify-between gap-4">
+            //     <div className="flex items-center gap-4">
+            //       <div className="bg-white/10 rounded-full p-2">
+            //         <Megaphone className="h-5 w-5 text-white" />
+            //       </div>
+            //       <div className="text-white">
+            //         <h3 className="font-semibold text-lg">
+            //           Soyez le premier !
+            //         </h3>
+            //         <p className="text-white/80">
+            //           Créez la première annonce sur Lilee
+            //         </p>
+            //       </div>
+            //     </div>
+            //     <Link href="/login">
+            //       <Button
+            //         variant="secondary"
+            //         className="whitespace-nowrap hover:bg-white hover:text-[#15213d] transition-colors"
+            //       >
+            //         Créer une annonce
+            //       </Button>
+            //     </Link>
+            //   </div>
+            // </div>
+            <div className="container mx-auto p-4 sm:p-6 md:p-10">
+              <div className="w-full rounded-md bg-[#15213d] p-4 sm:px-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                   <div className="bg-white/10 rounded-full p-2">
                     <Megaphone className="h-5 w-5 text-white" />
                   </div>
@@ -237,7 +262,7 @@ const Annonce = () => {
                 <Link href="/login">
                   <Button
                     variant="secondary"
-                    className="whitespace-nowrap hover:bg-white hover:text-[#15213d] transition-colors"
+                    className="whitespace-nowrap hover:bg-white hover:text-[#15213d] transition-colors w-full sm:w-auto"
                   >
                     Créer une annonce
                   </Button>

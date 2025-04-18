@@ -46,7 +46,7 @@ export async function POST(request) {
 
     const transactionData = await db.transactions.create({
       data: {
-        dateRange, 
+        dateRange,
         annonceId,
         price: price.unit_amount / 100,
         quantity,

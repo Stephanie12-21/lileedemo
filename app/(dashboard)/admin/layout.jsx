@@ -46,7 +46,6 @@ import { Input } from "@/components/ui/input";
 import { SuccessModal } from "@/app/(dialog)/success/SuccessModal";
 import { ErrorModal } from "@/app/(dialog)/error/ErrorModal";
 
-
 export default function LayoutAdmin({ children }) {
   const { data: session } = useSession();
   const router = useRouter();

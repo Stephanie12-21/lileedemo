@@ -174,7 +174,7 @@ const Footer = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Votre adresse email"
-                className="bg-transparent text-white"
+                className="bg-transparent text-white h-10"
               />
               <Button
                 onClick={handleSubmit}

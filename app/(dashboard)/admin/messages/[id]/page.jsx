@@ -104,7 +104,7 @@ const User = ({ userData, setSelectedChatroom }) => {
       const snapshot = await get(chatroomRef);
 
       if (snapshot.exists()) {
-        toast.info("La chatroom existe déjà !");
+        toast.info("La discussion existe déjà !");
         return;
       }
 

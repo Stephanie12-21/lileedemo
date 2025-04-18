@@ -1,8 +1,8 @@
 import nodemailer from "nodemailer";
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
 
 import jwt from "jsonwebtoken";
+import { db } from "@/lib/db";
 
 async function sendNewsletterEmail(email) {
   const transporter = nodemailer.createTransport({
