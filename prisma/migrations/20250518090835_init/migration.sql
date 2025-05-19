@@ -150,20 +150,6 @@ CREATE TABLE "temoignages" (
 );
 
 -- CreateTable
-CREATE TABLE "moyenpaiement" (
-    "id" SERIAL NOT NULL,
-    "cardNumber" TEXT NOT NULL,
-    "nameOnCard" TEXT NOT NULL,
-    "cardCVC" INTEGER NOT NULL,
-    "cardExpiry" TIMESTAMP(3) NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-    "userId" INTEGER NOT NULL,
-
-    CONSTRAINT "moyenpaiement_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "adresseFacturation" (
     "id" SERIAL NOT NULL,
     "nom" TEXT NOT NULL,
@@ -274,12 +260,6 @@ CREATE UNIQUE INDEX "company_nomSociete_key" ON "company"("nomSociete");
 CREATE UNIQUE INDEX "annonces_titre_key" ON "annonces"("titre");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "moyenpaiement_cardNumber_key" ON "moyenpaiement"("cardNumber");
-
--- CreateIndex
-CREATE UNIQUE INDEX "moyenpaiement_cardCVC_key" ON "moyenpaiement"("cardCVC");
-
--- CreateIndex
 CREATE UNIQUE INDEX "adresseFacturation_nom_key" ON "adresseFacturation"("nom");
 
 -- CreateIndex
@@ -317,9 +297,6 @@ ALTER TABLE "commentaire" ADD CONSTRAINT "commentaire_userId_fkey" FOREIGN KEY (
 
 -- AddForeignKey
 ALTER TABLE "temoignages" ADD CONSTRAINT "temoignages_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "moyenpaiement" ADD CONSTRAINT "moyenpaiement_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "adresseFacturation" ADD CONSTRAINT "adresseFacturation_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;

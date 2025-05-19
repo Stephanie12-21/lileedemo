@@ -208,7 +208,9 @@ const Footer = () => {
 
         <div className="mt-8 text-center text-[#71717A] text-base">
           © {currentYear} Conçu par{" "}
-          <span className="text-[#fca311] font-semibold">Khepri Services</span>
+          <span className="text-[#fca311] font-semibold">
+            Stéphanie MAMINAINA
+          </span>
         </div>
       </div>
       <ToastContainer />
