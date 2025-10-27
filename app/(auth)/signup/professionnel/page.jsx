@@ -15,7 +15,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
-import { z } from "zod";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { Eye, EyeOff } from "lucide-react";
@@ -240,9 +239,6 @@ const SignUpPage = () => {
     const sanitizedSiret = siret.replace(/\s/g, "");
 
     if (!/^\d{14}$/.test(sanitizedSiret)) {
-      console.error(
-        "Erreur : Le numéro de SIRET doit contenir exactement 14 chiffres."
-      );
       setErrorMessage(
         "Le numéro de SIRET doit contenir exactement 14 chiffres."
       );
@@ -251,52 +247,33 @@ const SignUpPage = () => {
     }
 
     try {
-      const response = await fetch(
-        `https://api.insee.fr/entreprises/sirene/V3.11/siret/${sanitizedSiret}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer c92450d3-cef4-3717-a0dc-445ce239aaeb`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch("/api/user/verifySiret", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ siret: sanitizedSiret }),
+      });
 
-      if (response.status === 404) {
-        console.error("Erreur : Le numéro de SIRET n'existe pas.");
-        setErrorMessage("Le numéro de SIRET n'existe pas.");
-        setSiretValid(false);
-      } else if (!response.ok) {
-        const errorText = await response.json();
-        console.error(
-          "Erreur lors de la vérification du numéro de SIRET :",
-          errorText
-        );
+      const result = await response.json();
+
+      if (!response.ok) {
         setErrorMessage(
-          errorText.message ||
-            "Erreur lors de la vérification du numéro de SIRET."
+          result.error || "Erreur lors de la vérification du SIRET"
         );
         setSiretValid(false);
-      } else {
-        const data = await response.json();
-        if (data && data.etablissement) {
-          setErrorMessage("");
-          setCompanyInfo(data.etablissement);
+        return;
+      }
 
-          setSiretValid(true);
-        } else {
-          console.error(
-            "Erreur : Le SIRET a été trouvé, mais la propriété attendue n'est pas présente."
-          );
-          setErrorMessage(
-            "Le numéro de SIRET est valide, mais des informations sont manquantes."
-          );
-          setSiretValid(true);
-        }
+      if (result.valid) {
+        setCompanyInfo(result.company);
+        setErrorMessage("");
+        setSiretValid(true);
+      } else {
+        setErrorMessage("Numéro de SIRET introuvable.");
+        setSiretValid(false);
       }
     } catch (error) {
-      console.error("Erreur lors de la vérification du SIRET :", error);
-      setErrorMessage("Erreur lors de la vérification du SIRET.");
+      console.error("Erreur SIRET :", error);
+      setErrorMessage("Impossible de vérifier le SIRET pour le moment.");
       setSiretValid(false);
     }
   };
