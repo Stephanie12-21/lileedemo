@@ -291,57 +291,54 @@ export default function FormulaireContact({ params }) {
   // };
   const handleCheckout = async () => {
     if (!session) {
-      console.error("Session not initialized!");
+      alert("Vous devez être connecté pour continuer");
       return;
     }
 
-    const buyerId = session.user.id;
-
-    // Vérifiez que les dates sont valides
-    const { from, to } = date || {};
-    const parsedFromDate = new Date(from);
-    const parsedToDate = new Date(to);
-
-    if (
-      !from ||
-      !to ||
-      isNaN(parsedFromDate.getTime()) ||
-      isNaN(parsedToDate.getTime())
-    ) {
-      console.error("Les dates fournies sont invalides !");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("from", parsedFromDate.toISOString());
-    formData.append("to", parsedToDate.toISOString());
-    formData.append("annonceId", annonce.id);
-    formData.append("priceId", annonce.priceId);
-    formData.append("sellerId", annonce.user.id);
-    formData.append("buyerId", buyerId);
-    formData.append("title", annonce.titre);
-    formData.append("quantity", quantity);
+    // ✅ Empêcher plusieurs clics
+    setLoading(true);
 
     try {
+      // ✅ Vérification des dates
+      if (!date?.from || !date?.to) {
+        alert("Veuillez choisir une date de début et une date de fin");
+        setLoading(false);
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("from", new Date(date.from).toISOString());
+      formData.append("to", new Date(date.to).toISOString());
+      formData.append("annonceId", annonce.id);
+      formData.append("priceId", annonce.priceId);
+      formData.append("sellerId", annonce.user.id);
+      formData.append("buyerId", session.user.id);
+      formData.append("title", annonce.titre);
+      formData.append("quantity", quantity);
+
       const response = await fetch("/api/stripe/checkout", {
         method: "POST",
         body: formData,
       });
 
       if (!response.ok) {
-        throw new Error(
-          `Failed to create checkout session: ${response.statusText}`
-        );
+        const errorText = await response.text();
+        console.error("Stripe error:", errorText);
+        alert("Erreur de paiement. Vérifiez le serveur Stripe.");
+        return;
       }
 
-      const checkoutSession = await response.json();
-      if (checkoutSession?.checkoutSession?.url) {
-        router.push(checkoutSession.checkoutSession.url);
+      const data = await response.json();
+      if (data?.checkoutSession?.url) {
+        window.location.href = data.checkoutSession.url;
       } else {
-        console.error("Checkout session URL not found!");
+        alert("Erreur: URL de paiement introuvable.");
       }
     } catch (error) {
-      console.error("An error occurred during checkout:", error);
+      console.error(error);
+      alert("Erreur inattendue lors du paiement.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -388,24 +385,7 @@ export default function FormulaireContact({ params }) {
                   className="w-16 h-16 rounded-full object-cover border-2 border-gray-300"
                 />
               </div>
-              <p>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                Obcaecati vero iste aperiam placeat eum illum sunt officia rerum
-                impedit porro ipsum ducimus nostrum quam quis, tempore
-                perferendis! Nemo soluta, aut minima, libero itaque dolorem
-                excepturi id nesciunt, asperiores iure nobis. Blanditiis eius
-                laboriosam exercitationem hic placeat assumenda ad! Deleniti sit
-                reiciendis maiores dignissimos officia, porro optio pariatur?
-                Hic deleniti minima atque placeat repellendus repellat? Velit,
-                quia corrupti. Minima vitae nihil ab eveniet. Laboriosam, ad
-                corrupti delectus minus iusto repellat officia. Odio accusamus
-                atque sequi quod maiores fuga impedit distinctio. Nam dolor
-                consequuntur illo aliquam aperiam ut temporibus sit id nulla
-                eius! Excepturi aperiam consequuntur laboriosam similique
-                laborum repellat, quisquam quia non, corporis, amet iusto quidem
-                doloremque omnis! Eligendi possimus adipisci esse? Laudantium
-                voluptates dolor architecto.
-              </p>
+
               <div className="flex flex-col p-0 space-y-1">
                 <span className="text-[18px] font-bold text-[#666]">
                   {userName}

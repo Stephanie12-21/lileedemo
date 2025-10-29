@@ -1,88 +1,67 @@
 import { NextResponse } from "next/server";
 
-export async function GET(req) {
+export async function POST(request) {
   try {
-    const { siret } = await req.json();
+    // Récupérer le SIRET depuis la requête
+    const { siret } = await request.json();
 
-    if (!siret || !/^\d{14}$/.test(siret)) {
+    if (!siret) {
       return NextResponse.json(
-        { error: "SIRET invalide : doit contenir exactement 14 chiffres." },
+        { valid: false, data: null, errorMessage: "Le SIRET est requis." },
         { status: 400 }
       );
     }
 
-    // --- Récupération TOKEN depuis la nouvelle API INSEE ---
-    const tokenResponse = await fetch(
-      "https://portail-api.insee.fr/api/oauth/token",
-      {
-        method: "POST",
-        headers: {
-          Authorization:
-            "Basic " +
-            Buffer.from(
-              `${process.env.INSEE_CLIENT_ID}:${process.env.INSEE_CLIENT_SECRET}`
-            ).toString("base64"),
-          "Content-Type": "application/x-www-form-urlencoded",
+    // Supprimer les espaces et vérifier la longueur
+    const sanitizedSiret = siret.replace(/\s/g, "");
+    if (!/^\d{14}$/.test(sanitizedSiret)) {
+      return NextResponse.json(
+        {
+          valid: false,
+          data: null,
+          errorMessage: "Le SIRET doit contenir 14 chiffres.",
         },
-        body: "grant_type=client_credentials&scope=openid", // IMPORTANT
-      }
+        { status: 400 }
+      );
+    }
+
+    // Extraire les 9 premiers chiffres (SIREN) pour Pappers
+    const siren = sanitizedSiret.slice(0, 9);
+
+    const apiKey = process.env.NEXT_PUBLIC_PAPPERS_API_KEY || "";
+    const response = await fetch(
+      `https://api.pappers.fr/v2/entreprise?siren=${siren}&api_token=${apiKey}`
     );
 
-    // Vérification réponse du token
-    let tokenData;
-    try {
-      tokenData = await tokenResponse.json();
-    } catch {
+    if (!response.ok) {
       return NextResponse.json(
-        { error: "Réponse invalide du serveur INSEE (token)" },
-        { status: 500 }
-      );
-    }
-
-    if (!tokenData.access_token) {
-      return NextResponse.json(
-        { error: "Impossible d’obtenir un token INSEE" },
-        { status: 500 }
-      );
-    }
-
-    // --- Vérification du SIRET ---
-    const verifyResponse = await fetch(
-      `https://api.insee.fr/entreprises/sirene/V3.11/siret/${siret}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${tokenData.access_token}`,
-          Accept: "application/json",
+        {
+          valid: false,
+          data: null,
+          errorMessage: "Impossible de récupérer les données.",
         },
-      }
-    );
-
-    if (verifyResponse.status === 404) {
-      return NextResponse.json(
-        { valid: false, message: "SIRET introuvable." },
-        { status: 404 }
+        { status: response.status }
       );
     }
 
-    if (!verifyResponse.ok) {
-      return NextResponse.json(
-        { error: "Erreur lors de la vérification du SIRET." },
-        { status: 500 }
-      );
+    const data = await response.json();
+    console.log("Données reçues de Pappers :", data);
+
+    if (data && Object.keys(data).length > 0) {
+      return NextResponse.json({ valid: true, data, errorMessage: "" });
+    } else {
+      return NextResponse.json({
+        valid: false,
+        data: null,
+        errorMessage: "Entreprise introuvable.",
+      });
     }
-
-    const data = await verifyResponse.json();
-
-    return NextResponse.json({
-      valid: true,
-      company: data.etablissement,
-    });
   } catch (error) {
-    console.error("Erreur serveur :", error);
-    return NextResponse.json(
-      { error: "Erreur serveur lors de la vérification du SIRET" },
-      { status: 500 }
-    );
+    console.error("Erreur lors de la vérification du SIRET :", error);
+    return NextResponse.json({
+      valid: false,
+      data: null,
+      errorMessage: "Erreur serveur lors de la vérification du SIRET.",
+    });
   }
 }

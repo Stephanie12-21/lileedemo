@@ -199,21 +199,11 @@ const SignUpPage = () => {
     formData.append("siret", siret);
     formData.append(
       "nomSociete",
-      companyInfo.uniteLegale.denominationUniteLegale
+      companyInfo.denomination || companyInfo.nom_entreprise
     );
-    formData.append(
-      "adresse",
-      `${companyInfo.adresseEtablissement.numeroVoieEtablissement} ${companyInfo.adresseEtablissement.typeVoieEtablissement} ${companyInfo.adresseEtablissement.libelleVoieEtablissement}`
-    );
-    formData.append(
-      "codePostal",
-      companyInfo.adresseEtablissement.codePostalEtablissement
-    );
-    formData.append(
-      "ville",
-      companyInfo.adresseEtablissement.libelleCommuneEtablissement
-    );
-
+    formData.append("adresse", companyInfo.siege?.adresse_ligne_1 || "");
+    formData.append("codePostal", companyInfo.siege?.code_postal || "");
+    formData.append("ville", companyInfo.siege?.ville || "");
     if (imageFile) {
       formData.append("imageFile", imageFile);
     }
@@ -257,18 +247,18 @@ const SignUpPage = () => {
 
       if (!response.ok) {
         setErrorMessage(
-          result.error || "Erreur lors de la vérification du SIRET"
+          result.errorMessage || "Erreur lors de la vérification du SIRET"
         );
         setSiretValid(false);
         return;
       }
 
-      if (result.valid) {
-        setCompanyInfo(result.company);
+      if (result.valid && result.data) {
+        setCompanyInfo(result.data);
         setErrorMessage("");
         setSiretValid(true);
       } else {
-        setErrorMessage("Numéro de SIRET introuvable.");
+        setErrorMessage(result.errorMessage || "Numéro de SIRET introuvable.");
         setSiretValid(false);
       }
     } catch (error) {
@@ -365,7 +355,9 @@ const SignUpPage = () => {
                         type="text"
                         name="nomSociete"
                         placeholder="Le nom de votre société"
-                        value={companyInfo.uniteLegale.denominationUniteLegale}
+                        value={
+                          companyInfo.nom_entreprise || companyInfo.denomination
+                        }
                         onChange={(e) => setNomSociete(e.target.value)}
                         className="w-full p-2 border border-gray-300 rounded"
                       />
@@ -377,7 +369,7 @@ const SignUpPage = () => {
                         type="text"
                         name="adresse"
                         placeholder="L'adresse"
-                        value={`${companyInfo.adresseEtablissement.numeroVoieEtablissement} ${companyInfo.adresseEtablissement.typeVoieEtablissement} ${companyInfo.adresseEtablissement.libelleVoieEtablissement}`}
+                        value={`${companyInfo.siege.adresse_ligne_1} `}
                         onChange={(e) => setAdresse(e.target.value)}
                         className="w-full p-2 border border-gray-300 rounded"
                       />
@@ -391,10 +383,7 @@ const SignUpPage = () => {
                         type="text"
                         name="codePostal"
                         placeholder="Le code postal de votre société"
-                        value={
-                          companyInfo.adresseEtablissement
-                            .codePostalEtablissement
-                        }
+                        value={companyInfo.siege.code_postal}
                         onChange={(e) => setCodePostal(e.target.value)}
                         className="w-full p-2 border border-gray-300 rounded"
                       />
@@ -409,10 +398,7 @@ const SignUpPage = () => {
                         type="text"
                         name="ville"
                         placeholder="Le ville de localisation"
-                        value={
-                          companyInfo.adresseEtablissement
-                            .libelleCommuneEtablissement
-                        }
+                        value={companyInfo.siege.ville}
                         onChange={(e) => setVille(e.target.value)}
                         className="w-full p-2 border border-gray-300 rounded"
                       />

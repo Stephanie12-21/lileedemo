@@ -66,7 +66,6 @@ export async function POST(request) {
   const description = body.get("description");
   const categorieAnnonce = body.get("category");
   const sousCategorie = body.get("subcategory");
-  // const localisation = body.get("localisation");
   const adresse = body.get("adresse");
   const statut = body.get("statut");
   const imageFiles = body.getAll("images");
@@ -124,7 +123,6 @@ export async function POST(request) {
       description,
       categorieAnnonce,
       sousCategorie,
-      //localisation,
       adresse,
       prix,
       typeTarif,

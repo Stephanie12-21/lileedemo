@@ -35,9 +35,7 @@ const AddAnnonce = () => {
   const [description, setDescription] = useState({});
   const [images, setImages] = useState([]);
   const [errors, setErrors] = useState({});
-  const [localisation, setLocalisation] = useState("");
   const [adresse, setAdresse] = useState("");
-  const [iframeSrc, setIframeSrc] = useState("");
   const [tarifType, setTarifType] = useState("");
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
@@ -53,29 +51,9 @@ const AddAnnonce = () => {
     setDescription("");
     setCategory("");
     setSubCategory("");
-    setLocalisation("");
     setAdresse("");
     setImages([]);
-    setIframeSrc("");
     setErrors({});
-  };
-
-  const handleLocalisationChange = (e) => {
-    const value = e.target.value;
-    setLocalisation(value);
-    const regex = /https:\/\/www\.google\.com\/maps\/embed\?pb=([^&]+)/;
-    const match = value.match(regex);
-
-    if (match) {
-      setIframeSrc(value);
-      setErrors((prevErrors) => ({ ...prevErrors, localisation: undefined }));
-    } else {
-      setIframeSrc("");
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        localisation: "Veuillez entrer un lien valide d'iframe Google Maps.",
-      }));
-    }
   };
 
   const handleImageChange = (e) => {
@@ -95,7 +73,6 @@ const AddAnnonce = () => {
       !description ||
       !category ||
       !subCategory ||
-      !localisation ||
       !adresse ||
       !prix ||
       !tarifType ||
@@ -113,7 +90,6 @@ const AddAnnonce = () => {
     formData.append("category", category);
     formData.append("subcategory", subCategory);
     formData.append("adresse", adresse);
-    formData.append("localisation", localisation);
     formData.append("statut", statut);
     formData.append("userId", session?.user.id);
     formData.append("prix", prix);
@@ -188,27 +164,6 @@ const AddAnnonce = () => {
         Ajouter une nouvelle annonce
       </h1>
       <div className="flex flex-col space-y-4 w-full mt-5">
-        {/* <Dialog>
-          <DialogTrigger asChild>
-            <button
-              className="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 focus:ring-4 focus:ring-offset-2 focus:ring-yellow-400 transition-all duration-200 transform hover:scale-105"
-              aria-label="Ajouter une annonce"
-            >
-              <Asterisk className="w-6 h-6 animate-spin" />
-            </button>
-          </DialogTrigger>
-
-          <DialogContent>
-            <div>
-              <div className="transition-transform hover:scale-105">
-                <p>
-                  Pour la localisation, partagez le lien depuis google map sans
-                  la balise &quot;iframe&apos;{" "}
-                </p>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog> */}
         <div className="space-y-3">
           <Label htmlFor="title">Titre:</Label>
           <Input
@@ -370,36 +325,6 @@ const AddAnnonce = () => {
           />
           {errors.adresse && <Alert variant="error">{errors.adresse}</Alert>}
         </div>
-
-        {/* <div className="space-y-3">
-          <Label htmlFor="localisation">
-            Localisation (prendre uniquement la source de l&apos;iframe Google
-            Maps):
-          </Label>
-          <Input
-            type="text"
-            id="localisation"
-            value={localisation}
-            onChange={handleLocalisationChange}
-            required
-            error={errors.localisation}
-          />
-          {errors.localisation && (
-            <Alert variant="destructive">{errors.localisation}</Alert>
-          )}
-          {iframeSrc && (
-            <iframe
-              src={iframeSrc}
-              width="1200"
-              height="500"
-              style={{ border: "0", marginTop: "10px" }}
-              allowFullScreen
-              loading="lazy"
-              title="Localisation"
-              className="items-center"
-            />
-          )}
-        </div> */}
 
         <div className="space-y-3">
           <Label htmlFor="images">Images:</Label>

@@ -64,9 +64,7 @@ const InfoAnnonces = ({ params }) => {
   const [prix, setPrix] = useState("");
   const [typeTarif, setTypeTarif] = useState("");
   const [images, setImages] = useState([]);
-  const [localisation, setLocalisation] = useState("");
   const [adresse, setAdresse] = useState("");
-  const [iframeSrc, setIframeSrc] = useState("");
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
   const [editCommentId, setEditCommentId] = useState(null);
@@ -341,13 +339,11 @@ const InfoAnnonces = ({ params }) => {
           setTypeTarif(data.typeTarif);
           setDescription(data.description);
           setAdresse(data.adresse);
-          setLocalisation(data.localisation);
           setImages(data.imageAnnonces);
           setUserName(userName);
           setUserDate(formattedDate);
           setUserPhoto(userPhoto);
           setUserId(userId);
-          if (data.localisation) setIframeSrc(data.localisation);
         } else {
           console.error("Annonce non trouvée, avec l'id annonce :", id);
         }
@@ -645,6 +641,12 @@ const InfoAnnonces = ({ params }) => {
                       <span className="ml-1">{formatTypeTarif(typeTarif)}</span>
                     </span>
                   </div>
+                  <div className="flex items-center space-x-3">
+                    <TagIcon className="text-blue-500 h-6 w-6" />
+                    <span className="font-semibold text-gray-700">
+                      <strong>Adresse:</strong> {adresse}
+                    </span>
+                  </div>
                 </div>
                 <div className="space-y-1 ">
                   <h1 className="text-3xl font-bold my-8 text-start">
@@ -672,7 +674,7 @@ const InfoAnnonces = ({ params }) => {
                   expériences avec les autres.
                 </CardDescription>
               </CardHeader>
-              {/* <CardContent className="space-y-2">
+              <CardContent className="space-y-2">
                 <div className="mb-6 flex justify-between items-center space-x-3">
                   <Input
                     type="text"
@@ -868,7 +870,7 @@ const InfoAnnonces = ({ params }) => {
                     </div>
                   );
                 })}
-              </CardContent> */}
+              </CardContent>
               <CardContent className="space-y-2">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-3 space-y-2 sm:space-y-0">
                   <Input

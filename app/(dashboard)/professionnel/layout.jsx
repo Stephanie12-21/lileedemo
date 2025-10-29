@@ -143,7 +143,7 @@ export default function LayoutAdmin({ children }) {
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden  md:block bg-primary">
-        <div className="flex h-full max-h-screen flex-col gap-2">
+        <div className="flex flex-col gap-2">
           <div className="flex h-14 items-center py-10 px-4 lg:h-[60px] lg:px-6 ">
             <Link href="/" className="flex items-center gap-2  font-semibold">
               <Image
@@ -402,14 +402,14 @@ export default function LayoutAdmin({ children }) {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+          <ToastContainer
+            position="top-center"
+            autoClose={5000}
+            hideProgressBar={false}
+          />
         </header>
-        <div className="container mx-auto">{children}</div>
+        <div>{children}</div>
       </div>
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
-      />
     </div>
   );
 }
