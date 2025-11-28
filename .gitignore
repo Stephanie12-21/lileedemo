@@ -39,4 +39,5 @@ next-env.d.ts
 # test_file
 stripe.md
 
+
 /generated/prisma
